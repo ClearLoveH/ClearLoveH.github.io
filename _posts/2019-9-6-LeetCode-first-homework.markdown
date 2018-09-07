@@ -1,8 +1,8 @@
 ---
 layout:     post
-title:      "LeetCode problems 0"
-subtitle:   "Add Two Numbers"
-date:       2018-9-6 15:30
+title:      "LeetCode problems ②"
+subtitle:   "Two Sum"
+date:       2018-9-7 15:50
 author:     "Heng"
 header-img: "img/post-bg-2015.jpg"
 tags:
