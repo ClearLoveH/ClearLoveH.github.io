@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "LeetCode problems ②"
+title:      "LeetCode problems 1"
 subtitle:   "Two Sum"
 date:       2018-9-7 15:50
 author:     "Heng"
