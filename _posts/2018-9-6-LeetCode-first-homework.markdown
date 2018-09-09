@@ -39,10 +39,81 @@ tags:
     1. 因为此题是将数字用倒序链表来表示，链表头是数字的最低位，相比与链表头是数字最高位的表示方法，这种方法减少了许多计算时的难度。
     2. 我们在做数的加法运算时，都是从最低位开始加，满十则向前进一，在此题我们也是贯彻这种计算思路不变，不过难点在于计算结果也需要用链表表示。
     3. 申请一个新的结果链表用于存储结果，从两个计算链表的头节点开始相加，计算结果存入结果链表的头节点。
-    4. 申请一个变量carry=0，用于存储进位。若当前位的相加结果result >= 10，result = result % 10，carry = 1。将result值存入链表当前节点中，分别访问三条链表的下一个节点（list = list -> next）。
+    4. 申请一个变量carry=0，用于存储进位。若当前位的相加结果currentCarrySum >= 10，currentCarrySum = currentCarrySum % 10，carry = 1。将currentCarrySum值存入链表当前节点中，分别访问三条链表的下一个节点（list = list -> next）。
     5. 重复第4步直至两个计算数链表都访问完(list1->next != NULL && list2-> next != NULL)。
     6. 需要注意的是，这里我们可以用%求余，也可以用减法-10的方式来获取每一位计算结果的余数，选择%而不用-是因为取余%的运算时间开销更少。
 
 - Code for c++:
-
     
+        /**
+         * Definition for singly-linked list.
+         * struct ListNode {
+         *     int val;
+         *     ListNode *next;
+         *     ListNode(int x) : val(x), next(NULL) {}
+         * };
+         */
+        class Solution {
+        public:
+            ListNode* addTwoNumbers(ListNode* list1, ListNode* list2) {
+                int carry = 0;
+                int currentCarrySum = list1->val + list2->val + carry;
+                if (currentCarrySum >= 10) {
+                    currentCarrySum = currentCarrySum % 10;
+                    carry = 1;
+                }
+                else carry = 0;
+                
+                ListNode* currentCarrySum = new ListNode(currentCarrySum);
+                ListNode* resultPointer = currentCarrySum;
+
+                list1 = list1->next;
+                list2 = list2->next; 
+                //在两位运算数在当前位数的值不为0时
+                while (list1 != NULL && list2 != NULL) {
+                    int currentCarrySum = list1->val + list2->val + carry;
+                    if (currentCarrySum >= 10) {
+                        currentCarrySum = currentCarrySum % 10;
+                        carry = 1;
+                    }
+                    else carry = 0;
+                        
+                    resultPointer->next = new ListNode(currentCarrySum);
+                    resultPointer = resultPointer->next;
+                    list1 = list1->next;
+                    list2 = list2->next;
+                }
+
+                //将运算数list1和list2中较长的那个数剩下的位数进行处理
+                while (list1 != NULL) {
+                    if (list1->val + carry == 10) {
+                        resultPointer->next = new ListNode(0);
+                        carry = 1;
+                    }
+                    else {
+                        resultPointer->next = new ListNode(list1->val + carry);
+                        carry = 0;
+                    }
+                    resultPointer = resultPointer->next;
+                    list1 = list1->next;
+                }
+                while (list2 != NULL) {
+                    if (list2->val + carry == 10) {
+                        resultPointer->next = new ListNode(0);
+                        carry = 1;
+                    }
+                    else {
+                        resultPointer->next = new ListNode(list2->val + carry);
+                        carry = 0;
+                    }
+                    resultPointer = resultPointer->next;
+                    list2 = list2->next;
+                }
+                //若最终进位仍位1，最后在结果链表再添上一位
+                if (carry == 1) 
+                    resultPointer->next = new ListNode(1);
+                return currentCarrySum;
+            }
+        };
+
+
