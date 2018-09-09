@@ -5,6 +5,7 @@ subtitle:   "Add Two Numbers"
 date:       2018-9-6 15:30
 author:     "Heng"
 header-img: "img/post-bg-2015.jpg"
+catalog: true
 tags:
     - LeetCode
 ---
@@ -13,28 +14,35 @@ tags:
 
 ---
 
-### 1. Add two numbers
+#  Add two numbers 
+>Difficulty: Medium
 
-#### Description:
+##### Description: 
 
-        You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
-
-        You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+-   You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+<br>You may assume the two numbers do not contain any leading zero, except the number 0 itself.
 
     
-        给您两个非空链表，表示两个非负整数。这些数字以相反的顺序存储，每个节点都包含一个数字。将两个数字相加，并将其作为链表返回。
- 
-        你可以假设这两个数字不包含任何前导零，除了数字0本身。
-        
-#### Exanple:
+- 给您两个非空链表，表示两个非负整数。这些数字以相反的顺序存储，每个节点都包含一个数字。将两个数字相加，并将其作为链表返回。<br>你可以假设这两个数字不包含任何前导零，除了数字0本身。
+
+##### Example:
 
     Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
     Output: 7 -> 0 -> 8
     Explanation: 342 + 465 = 807.
 
-#### My answer:
-
->解题思路：
+##### My answer:
 
 
->Code for c++:
+- 解题思路：
+
+    1. 因为此题是将数字用倒序链表来表示，链表头是数字的最低位，相比与链表头是数字最高位的表示方法，这种方法减少了许多计算时的难度。
+    2. 我们在做数的加法运算时，都是从最低位开始加，满十则向前进一，在此题我们也是贯彻这种计算思路不变，不过难点在于计算结果也需要用链表表示。
+    3. 申请一个新的结果链表用于存储结果，从两个计算链表的头节点开始相加，计算结果存入结果链表的头节点。
+    4. 申请一个变量carry=0，用于存储进位。若当前位的相加结果result >= 10，result = result % 10，carry = 1。将result值存入链表当前节点中，分别访问三条链表的下一个节点（list = list -> next）。
+    5. 重复第4步直至两个计算数链表都访问完(list1->next != NULL && list2-> next != NULL)。
+    6. 需要注意的是，这里我们可以用%求余，也可以用减法-10的方式来获取每一位计算结果的余数，选择%而不用-是因为取余%的运算时间开销更少。
+
+- Code for c++:
+
+    
