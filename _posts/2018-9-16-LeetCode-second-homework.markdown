@@ -80,7 +80,8 @@ Example:
             int myAtoi(string str) {
                 int i=0, result=0, sign=1, temp;
 
-                //忽视所有前导的空格,若 i >= str.length()，则后面的判断都不会发生，直接跳转至return 语句，既返回0值。
+                //忽视所有前导的空格,若 i >= str.length()，则后面的判断都不会发生
+                //从而直接跳转至return 语句，返回0值。
                 while(i < str.length() && str[i] == ' ')
                     i++;
                 
@@ -100,8 +101,10 @@ Example:
                     //逐位进行计算。
                     result = result * 10 + (str[i] - '0');
 
-                    //此步用于满足题目的最后一个要求，既计算的最终结果不能溢出。若下溢，则返回INT_MIN，上溢则返回INT_MAX。
-                    //如果溢出，计算的结果将会发生改变，我们通过temp保存计算前结果，再与计算后结果进行比较，若值不相等，或者result变为负数则说明溢出，此时再判断上下溢，并返回相应值。
+                    //此步用于满足题目的最后一个要求，既计算的最终结果不能溢出。
+                    //若下溢，则返回INT_MIN，上溢则返回INT_MAX。
+                    //如果溢出，计算的结果将会发生改变，我们通过temp保存计算前结果，
+                    //再与计算后结果进行比较，若值不相等，或者result变为负数则说明溢出，此时再判断上下溢，并返回相应值。
                     if(result < 0 || temp != (result - (str[i] - '0'))/10)
                         return sign == 1 ? INT_MAX : INT_MIN;
                     
