@@ -4,7 +4,7 @@ title:      "LeetCode problems 2"
 subtitle:   "String to Integer (atoi)"
 date:       2018-9-16 13:42
 author:     "Heng"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/艾欧尼亚.jpg"
 catalog: true
 tags:
     - LeetCode
