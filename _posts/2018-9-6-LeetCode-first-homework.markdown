@@ -44,7 +44,7 @@ tags:
     6. 最后，将两个运算数中，位数长的那个数剩下的位数加入到result链表中，return。
     7. 需要注意的是，这里我们可以用%求余，也可以用减法-10的方式来获取每一位计算结果的余数，选择%而不用-是因为取余%的运算时间开销更少。
 
-- Code for c++:
+- Code for C++:
     
         /**
          * Definition for singly-linked list.
