@@ -4,7 +4,7 @@ title:      "VMware搭建私有云"
 subtitle:   "服务计算博客"
 date:       2018-9-21 8:42
 author:     "Heng"
-header-img: "img/艾欧尼亚.jpg"
+header-img: "img/德玛西亚.jpg"
 catalog: true
 tags:
     - 服务计算
