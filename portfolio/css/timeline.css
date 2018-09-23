@@ -217,11 +217,11 @@ header h1 {
     margin-top: 26px;
     margin-bottom: 10px;
 	line-height: 1;
-	color:black;
+	color:white;
 }
 header p{
 	text-align: center;
-	color: #252728;
+	color: white;
 	font-size: 16px;
 	line-height: 1.6em;
 	letter-spacing: 1px;
