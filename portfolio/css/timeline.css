@@ -17,12 +17,14 @@ body, html {
 	/*color: #000;*/
 	/*text-decoration: none;*/
 }
+.container > header{
+	background-image: url("../images/弗雷尔卓德3.jpg");
+}
 
 .main, .container > header {
 	width: 90%;
 	max-width: 69em;
 	margin: 0 auto;
-	background-image: url("../images/弗雷尔卓德3.jpg");
 }
 
 @font-face {
