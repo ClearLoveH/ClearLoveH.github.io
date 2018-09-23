@@ -19,7 +19,7 @@ body, html {
 }
 .container > header{
 	background-image: url("../images/弗雷尔卓德3.jpg");
-	background-size: 940px 500px;
+	background-size: cover;
 }
 
 .main, .container > header {
