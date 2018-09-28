@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      "乌班图安装go语言开发环境"
+title:      "Ubuntu下安装go语言开发环境"
 subtitle:   "服务计算博客"
 date:       2018-9-28 16:00
 author:     "Heng"
-header-img: "img/德玛西亚2.jpg"
+header-img: "img/艾欧尼亚.jpg"
 catalog: true
 tags:
     - 服务计算
