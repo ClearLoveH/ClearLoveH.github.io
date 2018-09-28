@@ -43,6 +43,7 @@
 // you try to trace through "use strict" call chains. (#13335)
 //
 
+//鼠标特效
 $(document).ready(function(){
     var a_index = 0;
     $("body").click(function(e){
