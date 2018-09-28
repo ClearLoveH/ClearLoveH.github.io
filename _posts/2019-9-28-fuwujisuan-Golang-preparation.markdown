@@ -18,7 +18,7 @@ tags:
 ## 基本环境搭建
 ---
 
-#### 小插曲：Ubuntu中yum的安装
+### 小插曲：Ubuntu中yum的安装
 
 > 因为我安装的是乌班图虚拟机，Ubuntu默认的包管理器为apt，而yum是Fedora，RedHat以及CentOS的包管理器。这里也顺带讨论下乌班图下yum的安装步骤及遇到的问题。
 
