@@ -64,7 +64,7 @@ The divisor will never be 0.
     - 而对于两个正数的减法来实现除法，我们记商quotient=0，余数为dibisor = n，通过`满n加一`的思路，被除数不断的减去除数，每减一次我们就将商加一，直到被除数<=0为止。
 
 - Code for C++:
-
+```c++
         class Solution {
         public:
             int divide(int dividend, int divisor) {
@@ -100,5 +100,5 @@ The divisor will never be 0.
                 return quotient * sign ;
             }
         };
-        
+```        
 >注：这题有一个大坑就是int的范围是我们需要考虑的。针对Input的被除数为`-2147483648` 的情况，我们需要特殊考虑，INT的最小值为`[-2^31 , 2^31 - 1]`,我们的算法将被除数取绝对值后，这种情况就会导致overflow溢出，所以此刻我们需要特殊考虑。

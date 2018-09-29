@@ -45,7 +45,7 @@ tags:
     7. 需要注意的是，这里我们可以用%求余，也可以用减法-10的方式来获取每一位计算结果的余数，选择%而不用-是因为取余%的运算时间开销更少。
 
 - Code for C++:
-    
+```c++
         /**
          * Definition for singly-linked list.
          * struct ListNode {
@@ -118,5 +118,5 @@ tags:
                 return result;
             }
         };
-
+```
 
