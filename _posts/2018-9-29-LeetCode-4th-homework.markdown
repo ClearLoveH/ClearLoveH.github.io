@@ -58,21 +58,17 @@ tags:
 - Code for C++:
 
     - 节点的定义：
-
     ```c++
-        Definition for singly-linked list.
-                struct ListNode {
-                    int val;
-                    ListNode *next;
-                    ListNode(int x) : val(x), next(NULL) {}
-                };
-
+        struct ListNode {
+            int val;
+            ListNode *next;
+            ListNode(int x) : val(x), next(NULL) {}
+        };    
     ```
 
     - 我的结果：
-    
     ```c++
-            class Solution {
+        class Solution {
                 public:
                 ListNode* swapPairs(ListNode* head) {       
                     if(head==NULL)
@@ -87,8 +83,8 @@ tags:
                         temp->next=swapPairs(temp1);
                     }
                 return head;
-                }
-            };
+            }
+        };
     ``` 
 
 >注：此题看似简单，实则思路很多，而对于处理完第一对节点之后该怎么继续下去，我在本题目的思路是使用递推方法，调用函数自身，` temp->next=swapPairs(temp->next)` 将交换结束前的第三个节点作为后续剩下节点构成的链表的头节点，调用此方法，从而达到向后继续遍历的目的。
