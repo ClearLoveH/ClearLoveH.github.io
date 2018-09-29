@@ -53,29 +53,38 @@ tags:
     - 若链表共有奇数个节点，最后必然会剩下一个，这个该如何处理是我们再写遍历循环时需要考虑的条件。
     `(考虑在遍历的循环条件中就判断出剩下节点是否只剩一个)`
     - 题目相对简单，于是我们在算法的复杂度上需多花些功夫。
+    - 还有个注意点就是题目的最后一个要求——不允许改变节点的值，题目应该是不允许我们钻空子直接更改两个节点的value，而是需要去改变
 - Code for C++:
 
-    节点的定义：
+    - 节点的定义：
 
-        Definition for singly-linked list.
-        struct ListNode {
-            int val;
-            ListNode *next;
-            ListNode(int x) : val(x), next(NULL) {}
-        };
+            Definition for singly-linked list.
+            struct ListNode {
+                int val;
+                ListNode *next;
+                ListNode(int x) : val(x), next(NULL) {}
+            };
+
 
     - 我的结果：
 
             class Solution {
-            public:
-                ListNode* swapPairs(ListNode* head) {     ListNode * temp = head;   
-                    while(temp && temp->next){
-                        temp=head->next;
-                        head=temp;
-                        head->next=head;
+                public:
+                ListNode* swapPairs(ListNode* head) {       
+                    if(head==NULL)
+                        return NULL;
+                    ListNode *temp = head , *temp1;   
+                    //(head && head->next) 判断条件用于判断是否到达最后的节点
+                    if(head && head->next){ 
+                        head=head->next;
+                        temp1=head->next;
+                        head->next=temp;
+                        //使用递推方法，引用函数本身，以达到持续访问玩所有节点的目的。
+                        temp->next=swapPairs(temp1);
                     }
+                return head;
                 }
             };
         
-        
->注：此题看似简单，实则
+
+>注：此题看似简单，实则思路很多，而对于处理完第一对节点之后该怎么继续下去，我在本题目的思路是使用递推方法，调用函数自身，` temp->next=swapPairs(temp->next)` 将交换结束前的第三个节点作为后续剩下节点构成的链表的头节点，调用此方法，从而达到向后继续遍历的目的。
