@@ -56,18 +56,21 @@ tags:
     - 还有个注意点就是题目的最后一个要求——`不允许改变节点的值`，题目应该是不允许我们钻空子直接更改两个节点的value，而是需要去直接改变节点的链接关系。
 
 - Code for C++:
-    ```c++
+
     - 节点的定义：
 
-            Definition for singly-linked list.
-            struct ListNode {
-                int val;
-                ListNode *next;
-                ListNode(int x) : val(x), next(NULL) {}
-            };
+    ```c++
+        Definition for singly-linked list.
+                struct ListNode {
+                    int val;
+                    ListNode *next;
+                    ListNode(int x) : val(x), next(NULL) {}
+                };
 
     ```
+
     - 我的结果：
+    
     ```c++
             class Solution {
                 public:
