@@ -56,7 +56,7 @@ tags:
     - 还有个注意点就是题目的最后一个要求——`不允许改变节点的值`，题目应该是不允许我们钻空子直接更改两个节点的value，而是需要去直接改变节点的链接关系。
 
 - Code for C++:
-
+```c++
     - 节点的定义：
 
             Definition for singly-linked list.
@@ -66,9 +66,9 @@ tags:
                 ListNode(int x) : val(x), next(NULL) {}
             };
 
-
+```
     - 我的结果：
-
+```c++
             class Solution {
                 public:
                 ListNode* swapPairs(ListNode* head) {       
@@ -86,6 +86,6 @@ tags:
                 return head;
                 }
             };
-        
+``` 
 
 >注：此题看似简单，实则思路很多，而对于处理完第一对节点之后该怎么继续下去，我在本题目的思路是使用递推方法，调用函数自身，` temp->next=swapPairs(temp->next)` 将交换结束前的第三个节点作为后续剩下节点构成的链表的头节点，调用此方法，从而达到向后继续遍历的目的。
