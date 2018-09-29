@@ -13,14 +13,7 @@ layout: default
         background-image: url('{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}')
     }
 
-    {% if page.header-mask %}
-    header.intro-header .header-mask{
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        background: rgba(0,0,0, {{ page.header-mask }});
-    }
-    {% endif %}
+
 </style>
 <header class="intro-header" >
     <div class="header-mask"></div>
@@ -122,6 +115,17 @@ layout: default
                 </div>
             </div>
         {% endif %}
+
+    <!--leancloud-->
+        {% if site.leancloud.enable %}
+        <span id="{{ page.url }}" class="leancloud_visitors" data-flag-title="{{ page.title }}">
+         <span class="post-meta-divider">|</span>
+         <span class="post-meta-item-text"> Hits:  </span>
+         <span class="leancloud-visitors-count"></span>
+        </span>
+    {% endif %}
+ 
+
 
     <!-- Sidebar Container -->
             <div class="

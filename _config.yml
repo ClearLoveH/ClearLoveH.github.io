@@ -20,7 +20,11 @@ zhihu_username:     ridiculous-47-82
 github_username:    ClearLoveH
 twitter_username:   964683913@qq.com
 
-
+#leancloud
+leancloud:
+    enable: true
+    app_id: 0LiA6yWWYffJrBz7Htf4sCdS-gzGzoHsz
+    app_key: lpqlyRppBmPbpxoA97rbY6VF
 
 # Build settings
 # from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
