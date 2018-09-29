@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "LeetCode problems 4"
-subtitle:   "Divide Two Integers"
+subtitle:   "Swap Nodes in Pairs"
 date:       2018-9-29 15:27
 author:     "Heng"
 header-img: "img/恕瑞玛3.jpg"
@@ -40,60 +40,42 @@ tags:
 
 #### Example:
 
-    Input: dividend = 10, divisor = 3
-    Output: 3
-
-    Input: dividend = 7, divisor = -3
-    Output: -2
+    Given 1->2->3->4
+    you should return the list as 2->1->4->3.
 
 #### My answer:
 
 - 解题思路：
 
-    - 此题考点在于不使用除法，乘法，mod运算符来实现除法运算，很明显的，题目在暗示我们去使用减法来实现除法。
-    - 思路是很简单的，但是实现起来是有很多的坑需要我们去填。
-    - 原题目中有一个词组非常绕口，就是 `truncate toward zero `———— `数轴上向零的方向取整趋零截尾`  ，理解了一下就是对于小数部分我们是需要进行处理的，是往靠近0的方向来舍去，即只留下整数部分，不进行四舍五入的处理。
-    - 具体实现的话其实不难，我们将计算过程分为两步：
-        - 我们先判断一下两个计算数的符号，同负异正，先判断出最终计算结果的正负号。
-        - 然后对两个计算数取绝对值，将问题转为两个正数的除法，再通过减法来将商求出。
-    - 而对于两个正数的减法来实现除法，我们记商quotient=0，余数为dibisor = n，通过`满n加一`的思路，被除数不断的减去除数，每减一次我们就将商加一，直到被除数<=0为止。
-
+    - 许久没有做链表题目了，于此选取了一个看起来比较有趣的链表中节点交换的问题。题目虽然不长，但是也有我们需要思考的地方。
+    - 此题无疑是要遍历链表全部节点的，为了减少算法复杂度，我们需要在遍历过程中就进行节点的交换。
+    - 每对节点交换完成后需继续下一对的交换。
+    - 若链表共有奇数个节点，最后必然会剩下一个，这个该如何处理是我们再写遍历循环时需要考虑的条件。
+    `(考虑在遍历的循环条件中就判断出剩下节点是否只剩一个)`
+    - 题目相对简单，于是我们在算法的复杂度上需多花些功夫。
 - Code for C++:
 
-        class Solution {
-        public:
-            int divide(int dividend, int divisor) {
-                int sign = 1;
-                int quotient=0;
-                if(divisor == 1)
-                    return dividend;
-                else if(divisor == -1){
-                    if(dividend == INT_MIN)
-                        return INT_MAX;
-                    else return -dividend;
-                }
-                if(divisor < 0 ){
-                    sign = -sign;       
-                    divisor = -divisor;
-                }
-                if(dividend < 0){
-                    if(dividend == INT_MIN){
-                        dividend = INT_MAX;
-                        quotient += 1;
-                        dividend -= divisor - 1;
-                    }
-                    else dividend = -dividend;
-                    sign = -sign;
-                }
+    节点的定义：
 
-                while(dividend > 0){
-                    dividend -= divisor;
-                    if(dividend < 0)
-                        break;
-                    quotient += 1;
-                }
-                return quotient * sign ;
-            }
+        Definition for singly-linked list.
+        struct ListNode {
+            int val;
+            ListNode *next;
+            ListNode(int x) : val(x), next(NULL) {}
         };
+
+    - 我的结果：
+
+            class Solution {
+            public:
+                ListNode* swapPairs(ListNode* head) {     ListNode * temp = head;   
+                    while(temp && temp->next){
+                        temp=head->next;
+                        head=temp;
+                        head->next=head;
+                    }
+                }
+            };
         
->注：这题有一个大坑就是int的范围是我们需要考虑的。针对Input的被除数为`-2147483648` 的情况，我们需要特殊考虑，INT的最小值为`[-2^31 , 2^31 - 1]`,我们的算法将被除数取绝对值后，这种情况就会导致overflow溢出，所以此刻我们需要特殊考虑。
+        
+>注：此题看似简单，实则
