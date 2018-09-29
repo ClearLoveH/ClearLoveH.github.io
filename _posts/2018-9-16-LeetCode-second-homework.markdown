@@ -74,7 +74,7 @@ Example:
     针对上述要求我们对不同情况进行分类讨论最后计算出结果即可。
 
 - Code for C++:
-```c++
+```java
         class Solution {
         public:
             int myAtoi(string str) {

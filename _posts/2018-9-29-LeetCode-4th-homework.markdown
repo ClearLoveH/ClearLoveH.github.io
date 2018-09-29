@@ -74,12 +74,14 @@ tags:
                     if(head==NULL)
                         return NULL;
                     ListNode *temp = head , *temp1;   
+
                     //(head && head->next) 判断条件用于判断是否到达最后的节点
-                    
+
                     if(head && head->next){ 
                         head=head->next;
                         temp1=head->next;
                         head->next=temp;
+                        
                         //使用递推方法，引用函数本身，以达到持续访问玩所有节点的目的。
 
                         temp->next=swapPairs(temp1);
