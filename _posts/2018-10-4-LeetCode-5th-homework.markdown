@@ -56,7 +56,7 @@ tags:
 
 - Code for C++:
 
-    ```c++
+    ```java
         class Solution {
         public:
             vector<vector<int>> threeSum(vector<int>& nums) {
@@ -85,7 +85,7 @@ tags:
                             while(front < back && b == nums[front])
                                 front++;    
                             while(front < back && c == nums[back])
-                                back++;
+                                back--;
                         }
                         else if( a+b+c < 0)
                             front++;
