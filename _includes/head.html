@@ -9,7 +9,8 @@
     
     <title>{% if page.title %}{{ page.title }} - {{ site.SEOTitle }}{% else %}{{ site.SEOTitle }}{% endif %}</title>
 
-    
+    <!--快速分享至社交网络的css-->
+    <link rel="stylesheet" href="{{ "/css/share.min.css " | prepend: site.baseurl }}">
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="{{ site.baseurl }}/pwa/manifest.json">
