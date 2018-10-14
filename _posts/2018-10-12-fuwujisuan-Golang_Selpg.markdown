@@ -4,7 +4,7 @@ title:      "用Go语言实现Selpg命令行程序"
 subtitle:   "服务计算博客"
 date:       2018-10-12 9:33
 author:     "Heng"
-header-img: "img/艾欧尼亚2.jpg"
+header-img: "img/比尔吉沃特.jpg"
 catalog: true
 tags:
     - 服务计算
