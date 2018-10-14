@@ -69,5 +69,6 @@ tags:
 
 #### 实验结果：
 
-
+- `selpg -s1 -e1 test`
+    ![](..\img\in-post\post-fuwujisuan\selpg\1.png)
 
