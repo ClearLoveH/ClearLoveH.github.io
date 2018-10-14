@@ -71,40 +71,40 @@ tags:
 
 - `selpg -s1 -e1 test`——默认每20行为一页
 
-    ![](..\img\in-post\post-fuwujisuan\selpg\1.png)
+    ![](/img/in-post/post-fuwujisuan/selpg/1.png)
 
 - ` selpg -s1 -e1 -l15 test`
 
-    ![](..\img\in-post\post-fuwujisuan\selpg\5.png)
+    ![](/img/in-post/post-fuwujisuan/selpg/5.png)
 
 - `selpg -s1 -e1 test >testout.txt`
 
     把第一页输出至`testout.txt`文件中
     
-    ![](..\img\in-post\post-fuwujisuan\selpg\2.png)
+    ![](/img/in-post/post-fuwujisuan/selpg/2.png)
 
 - `selpg -s1 -e1 -l10 test >testout.txt`
 
     把第一页的前10行输出至该文件中
 
-    ![](..\img\in-post\post-fuwujisuan\selpg\3.png)
+    ![](/img/in-post/post-fuwujisuan/selpg/3.png)
 
 - `错误参数`
 
-    ![](..\img\in-post\post-fuwujisuan\selpg\4.png)
+    ![](/img/in-post/post-fuwujisuan/selpg/4.png)
 
 - `测试带换页符的文件`
     
     - 创建带换页符文件
 
-        ![](..\img\in-post\post-fuwujisuan\selpg\6.png)
+        ![](/img/in-post/post-fuwujisuan/selpg/6.png)
 
     - `selpg -s1 -e4 -f out >testout.txt`
 
-        ![](..\img\in-post\post-fuwujisuan\selpg\7.png)
+        ![](/img/in-post/post-fuwujisuan/selpg/7.png)
 
 - ` selpg -s1 -e1 test | grep -n "1"`
 
     测试查找文件里符合条件的字符串
 
-    ![](..\img\in-post\post-fuwujisuan\selpg\8.png)
+    ![](/img/in-post/post-fuwujisuan/selpg/8.png)
