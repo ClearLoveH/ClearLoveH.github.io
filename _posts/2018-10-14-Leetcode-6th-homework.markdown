@@ -10,6 +10,9 @@ tags:
     - LeetCode
 ---
 
+>做了几周算法题目之后，有了点自己的感悟，现在需要慢慢提高所选题目的难度了，给自己点高要求。
+
+---
 
 # Median of Two Sorted Arrays    
 
