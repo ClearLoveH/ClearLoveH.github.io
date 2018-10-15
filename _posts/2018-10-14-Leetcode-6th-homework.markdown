@@ -58,3 +58,37 @@ You may assume nums1 and nums2 cannot be both empty.
     - 但是上课我们只是将算法描述出来，并没有具体的去实现，所以现在在这我就需要把这个思路用户代码具体的实现出来。
 
 - Code for C++:
+
+    ```java
+    class Solution {
+    public:
+        double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+            if(nums1.size()> nums2.size())
+                nums1.swap(nums2);
+            //如果一个数组为空，则直接求另一个数组的中位数即可
+            if(nums1.empty())
+                return (nums2.size()% 2)? nums2[nums2.size()/ 2]: double(nums2[nums2.size()/ 2]+ nums2[nums2.size()/ 2- 1])/ 2;
+            int l= min(*nums1.begin(), *nums2.begin()), r= max(*nums1.rbegin(), *nums2.rbegin()), sum_size= nums1.size()+ nums2.size(), mid= 0;
+            int temp= binary_search(l, r, sum_size/ 2+ 1, nums1, nums2);
+            if(sum_size% 2)
+                return temp;
+            int temp2= binary_search(l, r, sum_size/ 2, nums1, nums2);
+            return double(temp+ temp2)/ 2;
+        }
+        
+    private:
+        int binary_search(int l, int r, int m, vector<int> nums1, vector<int> nums2){
+            while(l< r){
+                int temp= (r- l)/ 2+ l;
+                int p1= upper_bound(nums1.begin(), nums1.end(), temp)- nums1.begin();
+                int p2= upper_bound(nums2.begin(), nums2.end(), temp)- nums2.begin();
+                if(p1+ p2< m)
+                    l= temp+ 1;
+                else
+                    r= temp;
+            }
+            return l;
+        }
+    };
+    ```
+
