@@ -106,10 +106,14 @@ Example 5:
             //初始化
             bool flag[s_Size+1][p_Size+1]={false};
             memset(flag,0,sizeof(flag));
+            //flag[0][0]代表着空字符串与空模式匹配，设为true
             flag[0][0]=true;
+
             for(int i=1;i<p_Size+1;i++){
-                if(p[i-1]=='*')flag[0][i]=flag[0][i-2];
+                if(p[i-1]=='*')
+                    flag[0][i]=flag[0][i-2];
             }
+            
             for(int i=1;i<s_Size+1;i++){
                 for(int j=1;j<p_Size+1;j++){
                     if(p[j-1]=='.')
@@ -117,12 +121,9 @@ Example 5:
                     else if(p[j-1]=='*'){
                         if(p[j-2]!=s[i-1] && p[j-2]!='.')
                             flag[i][j]=flag[i][j-2];
-                        else
-                            flag[i][j]=flag[i][j-1]||flag[i-1][j]||flag[i][j-2];
+                        else flag[i][j]=flag[i][j-1] || flag[i-1][j] || flag[i][j-2];
                     }
-                    else{
-                        flag[i][j]=flag[i-1][j-1]&&p[j-1]==s[i-1];
-                    }
+                    else flag[i][j]=flag[i-1][j-1] && p[j-1]==s[i-1];
                 }
             }
             return flag[s_Size][p_Size];
