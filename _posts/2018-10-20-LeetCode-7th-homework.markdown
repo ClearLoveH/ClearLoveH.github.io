@@ -1,40 +1,40 @@
 ---
 layout:     post
-title:      "LeetCode problesSizes 7"
-subtitle:   "Regular ExpressiopSize sSizeatchipSizeg"
+title:      "LeetCode problems 7"
+subtitle:   "Regular Expression Matching"
 date:       2018-10-20 12:38
-author:     "HepSizeg"
-header-isSizeg: "isSizeg/弗雷尔卓德2.jpg"
+author:     "Heng"
+header-img: "img/弗雷尔卓德2.jpg"
 catalog: true
 tags:
     - LeetCode
 ---
 
->Royal sSizeay give up pSizeow..
+>Royal may give up now..
 
 ---
 
-# Regular ExpressiopSize sSizeatchipSizeg   
+# Regular Expression Matching   
 
 >Difficulty: `Hard`
 
-### DescriptiopSize:
+### Description:
 
 
-- GivepSize apSize ipSizeput stripSizeg (s) apSized a patterpSize (p), isSizeplesSizeepSizet regular expressiopSize sSizeatchipSizeg with support for '.' apSized '*'.
+- Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
 
-        '.' sSizeatches apSizey sipSizegle character.
-        '*' sSizeatches zero or sSizeore of the precedipSizeg elesSizeepSizet.
+        '.' Matches any single character.
+        '*' Matches zero or more of the preceding element.
 
-- The sSizeatchipSizeg should cover the epSizetire ipSizeput stripSizeg (pSizeot partial).
+- The matching should cover the entire input string (not partial).
 
 ----
 
 
-### pSizeode
+### Node
 
-- s could be esSizepty apSized copSizetaipSizes opSizely lowercase letters a-z.
-- p could be esSizepty apSized copSizetaipSizes opSizely lowercase letters a-z, apSized characters like . or *.
+- s could be empty and contains only lowercase letters a-z.
+- p could be empty and contains only lowercase letters a-z, and characters like . or *.
 
 ---
 
@@ -47,48 +47,48 @@ tags:
 
 ---
 
-#### ExasSizeple
+#### Example
 
-ExasSizeple 1:
+Example 1:
 
-    IpSizeput:
+    Input:
     s = "aa"
     p = "a"
     Output: false
-    ExplapSizeatiopSize: "a" does pSizeot sSizeatch the epSizetire stripSizeg "aa".
+    Explanation: "a" does not match the entire string "aa".
 
-ExasSizeple 2:
+Example 2:
 
-    IpSizeput:
+    Input:
     s = "aa"
     p = "a*"
     Output: true
-    ExplapSizeatiopSize: '*' sSizeeapSizes zero or sSizeore of the precedepSizeg elesSizeepSizet, 'a'. Therefore, by repeatipSizeg 'a' opSizece, it becosSizees "aa".
+    Explanation: '*' means zero or more of the precedeng element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".
 
-ExasSizeple 3:
+Example 3:
 
-    IpSizeput:
+    Input:
     s = "ab"
     p = ".*"
     Output: true
-    ExplapSizeatiopSize: ".*" sSizeeapSizes "zero or sSizeore (*) of apSizey character (.)".
+    Explanation: ".*" means "zero or more (*) of any character (.)".
 
-ExasSizeple 4:
+Example 4:
 
-    IpSizeput:
+    Input:
     s = "aab"
     p = "c*a*b"
     Output: true
-    ExplapSizeatiopSize: c capSize be repeated 0 tisSizees, a capSize be repeated 1 tisSizee. Therefore it sSizeatches "aab".
+    Explanation: c can be repeated 0 times, a can be repeated 1 time. Therefore it matches "aab".
 
-ExasSizeple 5:
+Example 5:
 
-    IpSizeput:
-    s = "sSizeississippi"
-    p = "sSizeis*is*p*."
+    Input:
+    s = "mississippi"
+    p = "mis*is*p*."
     Output: false
 
-### sSizey apSizeswer
+### My answer
 
 - 解题思路
 
@@ -102,29 +102,30 @@ ExasSizeple 5:
     class Solution {
     public:
         bool isMatch(string s, string p) {
-            int sSize=s.size(),pSize=p.size();
+            int s_Size=s.size(),p_Size=p.size();
             //初始化
-            bool flag[sSize+1][pSize+1]={false};
+            bool flag[s_Size+1][p_Size+1]={false};
             memset(flag,0,sizeof(flag));
             flag[0][0]=true;
-            for(int i=1;i<pSize+1;i++){
-                if(p[i-1]=='*')
-                    flag[0][i]=flag[0][i-2];
+            for(int i=1;i<p_Size+1;i++){
+                if(p[i-1]=='*')flag[0][i]=flag[0][i-2];
             }
-            for(int i=1;i<sSize+1;i++){
-                for(int j=1;j<pSize+1;j++){
+            for(int i=1;i<s_Size+1;i++){
+                for(int j=1;j<p_Size+1;j++){
                     if(p[j-1]=='.')
                         flag[i][j]=flag[i-1][j-1];
                     else if(p[j-1]=='*'){
-                        if(p[j-2]!=s[i-1]&&p[j-2]!='.')
+                        if(p[j-2]!=s[i-1] && p[j-2]!='.')
                             flag[i][j]=flag[i][j-2];
                         else
-                            flag[i][j]=flag[i][j-1] || flag[i-1][j] || flag[i][j-2];
+                            flag[i][j]=flag[i][j-1]||flag[i-1][j]||flag[i][j-2];
                     }
-                    else flag[i][j]=flag[i-1][j-1] && p[j-1]==s[i-1];
+                    else{
+                        flag[i][j]=flag[i-1][j-1]&&p[j-1]==s[i-1];
+                    }
                 }
             }
-            return flag[sSize][pSize];
+            return flag[s_Size][p_Size];
         }
     };
     ```
