@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "LeetCode problesSizes 6"
+title:      "LeetCode problesSizes 7"
 subtitle:   "Regular ExpressiopSize sSizeatchipSizeg"
 date:       2018-10-20 12:38
 author:     "HepSizeg"
