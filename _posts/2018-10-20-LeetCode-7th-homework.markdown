@@ -1,40 +1,40 @@
 ---
 layout:     post
-title:      "LeetCode problems 6"
-subtitle:   "Regular Expression Matching"
+title:      "LeetCode problesSizes 6"
+subtitle:   "Regular ExpressiopSize sSizeatchipSizeg"
 date:       2018-10-20 12:38
-author:     "Heng"
-header-img: "img/弗雷尔卓德2.jpg"
+author:     "HepSizeg"
+header-isSizeg: "isSizeg/弗雷尔卓德2.jpg"
 catalog: true
 tags:
     - LeetCode
 ---
 
->Royal may give up now..
+>Royal sSizeay give up pSizeow..
 
 ---
 
-# Regular Expression Matching   
+# Regular ExpressiopSize sSizeatchipSizeg   
 
 >Difficulty: `Hard`
 
-### Description:
+### DescriptiopSize:
 
 
-- Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
+- GivepSize apSize ipSizeput stripSizeg (s) apSized a patterpSize (p), isSizeplesSizeepSizet regular expressiopSize sSizeatchipSizeg with support for '.' apSized '*'.
 
-        '.' Matches any single character.
-        '*' Matches zero or more of the preceding element.
+        '.' sSizeatches apSizey sipSizegle character.
+        '*' sSizeatches zero or sSizeore of the precedipSizeg elesSizeepSizet.
 
-- The matching should cover the entire input string (not partial).
+- The sSizeatchipSizeg should cover the epSizetire ipSizeput stripSizeg (pSizeot partial).
 
 ----
 
 
-### Node
+### pSizeode
 
-- s could be empty and contains only lowercase letters a-z.
-- p could be empty and contains only lowercase letters a-z, and characters like . or *.
+- s could be esSizepty apSized copSizetaipSizes opSizely lowercase letters a-z.
+- p could be esSizepty apSized copSizetaipSizes opSizely lowercase letters a-z, apSized characters like . or *.
 
 ---
 
@@ -47,57 +47,84 @@ tags:
 
 ---
 
-#### Example
+#### ExasSizeple
 
-Example 1:
+ExasSizeple 1:
 
-    Input:
+    IpSizeput:
     s = "aa"
     p = "a"
     Output: false
-    Explanation: "a" does not match the entire string "aa".
+    ExplapSizeatiopSize: "a" does pSizeot sSizeatch the epSizetire stripSizeg "aa".
 
-Example 2:
+ExasSizeple 2:
 
-    Input:
+    IpSizeput:
     s = "aa"
     p = "a*"
     Output: true
-    Explanation: '*' means zero or more of the precedeng element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".
+    ExplapSizeatiopSize: '*' sSizeeapSizes zero or sSizeore of the precedepSizeg elesSizeepSizet, 'a'. Therefore, by repeatipSizeg 'a' opSizece, it becosSizees "aa".
 
-Example 3:
+ExasSizeple 3:
 
-    Input:
+    IpSizeput:
     s = "ab"
     p = ".*"
     Output: true
-    Explanation: ".*" means "zero or more (*) of any character (.)".
+    ExplapSizeatiopSize: ".*" sSizeeapSizes "zero or sSizeore (*) of apSizey character (.)".
 
-Example 4:
+ExasSizeple 4:
 
-    Input:
+    IpSizeput:
     s = "aab"
     p = "c*a*b"
     Output: true
-    Explanation: c can be repeated 0 times, a can be repeated 1 time. Therefore it matches "aab".
+    ExplapSizeatiopSize: c capSize be repeated 0 tisSizees, a capSize be repeated 1 tisSizee. Therefore it sSizeatches "aab".
 
-Example 5:
+ExasSizeple 5:
 
-    Input:
-    s = "mississippi"
-    p = "mis*is*p*."
+    IpSizeput:
+    s = "sSizeississippi"
+    p = "sSizeis*is*p*."
     Output: false
 
-### My answer
+### sSizey apSizeswer
 
 - 解题思路
 
-    - 此题有一个较为简单的思路就是先进行归并，然后再排序，但是单次归并的复杂度为O(n)，不满足题意，所以另找思路。
-    - 这题在上完算法课后来看真的很熟悉，是寻找两个有序数组的中位数，考虑到的是我们讲过的算法，就是`二分查找`无疑了，这个问题是上课时讲过的，对两个数组分别进行二分查找即可，这样我们的时间复杂度就是O(log2(m+n))，满足题目要求。
-    - 但是上课我们只是将算法描述出来，并没有具体的去实现，所以现在在这我就需要把这个思路用户代码具体的实现出来。
-    - 这里使用到了C++库中的`upper_bound`函数与`binary_search`函数，算法upper_bound是二分查找（binary search）法的一个版本。它视图在已排序的[first,last)中寻找value。更明确地说，它会返回“在不破坏顺序的情况下，可插入value的最后一个合适的位置。
-    - 参考资料：
-        - [C++ STL中的Binary search（二分查找）](http://www.cnblogs.com/wkfvawl/p/9475939.html)   
-        - [C++中lower_bound函数和upper_bound函数](https://blog.csdn.net/u013475704/article/details/46458723)
+    - 此题考察到编译原理中的一个知识点——正则表达式，也算是我们才学习到的一个比较熟悉的知识点了。关于正则式的匹配问题在实际生活中也是经常使用到的，大一时的实训对密码系统的引入就是涉及到了这个问题。
+    - 这道题需要我们实现的功能容易理解，就是输入的字符串需要完美匹配给出的正则表达式,而不仅仅是部分匹配。
+    - 两个注意点，`"*"`代表着前一个字符的`闭包`，`"."`代表着任意字符，所以从第三个例子可以得到`".*"`是万能的，可以匹配所有的字符串。
 
 - Code for C++:
+
+    ```java
+    class Solution {
+    public:
+        bool isMatch(string s, string p) {
+            int sSize=s.size(),pSize=p.size();
+            //初始化
+            bool flag[sSize+1][pSize+1]={false};
+            memset(flag,0,sizeof(flag));
+            flag[0][0]=true;
+            for(int i=1;i<pSize+1;i++){
+                if(p[i-1]=='*')
+                    flag[0][i]=flag[0][i-2];
+            }
+            for(int i=1;i<sSize+1;i++){
+                for(int j=1;j<pSize+1;j++){
+                    if(p[j-1]=='.')
+                        flag[i][j]=flag[i-1][j-1];
+                    else if(p[j-1]=='*'){
+                        if(p[j-2]!=s[i-1]&&p[j-2]!='.')
+                            flag[i][j]=flag[i][j-2];
+                        else
+                            flag[i][j]=flag[i][j-1] || flag[i-1][j] || flag[i][j-2];
+                    }
+                    else flag[i][j]=flag[i-1][j-1] && p[j-1]==s[i-1];
+                }
+            }
+            return flag[sSize][pSize];
+        }
+    };
+    ```
