@@ -202,6 +202,7 @@ function randomHexColor() { //随机生成十六进制颜色
 <!--代码放置于</body>上方-->
 <!--博客动态背景设置-->
 <script>
+    var color=randomHexColor();
     !function(){
     function n(n,e,t){
     return n.getAttribute(e)||t
@@ -213,7 +214,7 @@ function randomHexColor() { //随机生成十六进制颜色
     function t(){
         var t=e("script"),o=t.length,i=t[o-1];
         return{
-            l:o,z:n(i,"zIndex",-1),o:n(i,"opacity",.3),c:n(i,"color","0,0,0"),n:n(i,"count",52*6)
+            l:o,z:n(i,"zIndex",-1),o:n(i,"opacity",.4),c:n(i,"color",color),n:n(i,"count",52*3)
         }
     }
     function o(){

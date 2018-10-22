@@ -2,7 +2,6 @@
   .post-container,
   .sidebar-container {
     padding-right: 5%;
-    box-shadow: 0px 0px 2px 1px #909090;
   }
 }
 @media (min-width: 768px) {
