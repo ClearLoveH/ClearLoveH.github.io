@@ -50,39 +50,70 @@ tags:
 
 - 解题思路
 
-    - 
+    - 本题需要我们将提供的几个有序链表合并成一个新的有序链表，具体实现思路有两种：
+        - Merge Sort，归并算法。注意如果我们逐一合并，会导致时间复杂度太大——O(n^2)，不合要求，所以只能两两归并来解决此题。
+        - 堆排序，这种算法我之前使用的比较少，就通过自己学习了解该方法，尝试将其应用于解决此题。
+            - [关于STL的priorit_queue](https://www.cnblogs.com/Deribs4/p/5657746.html)
+            - priorit_queue是一种优先级队列，`他的底层是用堆来实现的`，每次为队列push一个新的元素，priorit_queue都会动态的根据优先级来进行排序，所以此题于此显得非常简单了，我们只需要将所有节点push进优先级队列中，即可自动完成排序。
+                - 如果不使用priorit_queue也能自己实现一个最大堆或最小堆，同时的方法去使用即可。
+            - 注意priorit_queue默认是从大至小排序的，我们只需要修改一下队列排序的比较方式即可。
 
 - Code for C++:
 
-    ```java
-    class Solution {
-    public:
-        bool isMatch(string s, string p) {
-            int s_Size=s.size(),p_Size=p.size();
-            //初始化
-            bool flag[s_Size+1][p_Size+1]={false};
-            memset(flag,0,sizeof(flag));
-            //flag[0][0]代表着空字符串与空模式匹配，设为true
-            flag[0][0]=true;
+    - 归并：（思路不难，贴出关键的合并部分）每次合并后都返回合并链表的头节点，最终把list中所有的链表都合并完成，返回头节点即可。
+        ```java
+        //分治每次循环都对n除以2，知道n==1为止，归并完成
+        //此处 n = list.size()
+        while (n > 1) {    
+            int k = (n + 1) / 2;    
+            for (int i = 0; i < n / 2; i++)    
+                lists[i] = mergeTwoLists(lists[i], lists[i + k]);    
+            n = k;    
+        }    
+        return lists[0]; 
+        //在mergeTwoLists函数里我们常规的对两个链表归并即可。
+        ```
 
-            for(int i=1;i<p_Size+1;i++){
-                if(p[i-1]=='*')
-                    flag[0][i]=flag[0][i-2];
-            }
-            
-            for(int i=1;i<s_Size+1;i++){
-                for(int j=1;j<p_Size+1;j++){
-                    if(p[j-1]=='.')
-                        flag[i][j]=flag[i-1][j-1];
-                    else if(p[j-1]=='*'){
-                        if(p[j-2]!=s[i-1] && p[j-2]!='.')
-                            flag[i][j]=flag[i][j-2];
-                        else flag[i][j] = flag[i][j-1] || flag[i-1][j] || flag[i][j-2];
-                    }
-                    else flag[i][j]=flag[i-1][j-1] && p[j-1]==s[i-1];
+    - 堆排序：
+        ```java
+        /**
+        * Definition for singly-linked list.
+        * struct ListNode {
+        *     int val;
+        *     ListNode *next;
+        *     ListNode(int x) : val(x), next(NULL) {}
+        * };
+        */
+        class Solution {
+        public:
+            struct cmp{
+                bool operator() (ListNode l1,ListNode l2){
+                    return l1.val < l2.val;
                 }
+            };
+            ListNode* mergeKLists(vector<ListNode*>& lists) {
+                //修改排序方式从小到大
+                //priority_queue<Type, Container, Functional>
+                priority_queue<ListNode, vector<ListNode*>, cmp> queue;
+
+                //先把每个节点push进去
+                for(int i=0;i<lists.size();i++){
+                    queue.push(lists[i]);  
+                    ListNode *temp=lists[i];
+                    while(temp->next!=NULL){
+                        queue.push(temp->next);
+                        temp=temp->next;
+                    }
+                }
+                ListNode *result=queue.top();   
+                ListNode *nextNode=NULL;
+                result->next=nextNode;
+                while(!queue.empty()){
+                    nextNode=queue.top();  
+                    queue.pop(); 
+                    nextNode=nextNode->next;
+                }
+                return result;
             }
-            return flag[s_Size][p_Size];
-        }
-    };
-    ```
+        };
+        ```
