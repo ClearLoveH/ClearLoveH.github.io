@@ -57,7 +57,7 @@ tags:
             - priorit_queue是一种优先级队列，`他的底层是用堆来实现的`，每次为队列push一个新的元素，priorit_queue都会动态的根据优先级来进行排序，所以此题于此显得非常简单了，我们只需要将所有节点push进优先级队列中，即可自动完成排序。
                 - 如果不使用priorit_queue也能自己实现一个最大堆或最小堆，同时的方法去使用即可。
             - 注意priorit_queue默认是从大至小排序的，我们只需要修改一下队列排序的比较方式即可。
-
+            - 注意对空输入的处理
 - Code for C++:
 
     - 归并：（思路不难，贴出关键的合并部分）每次合并后都返回合并链表的头节点，最终把list中所有的链表都合并完成，返回头节点即可。
@@ -87,31 +87,35 @@ tags:
         class Solution {
         public:
             struct cmp{
-                bool operator() (ListNode l1,ListNode l2){
-                    return l1.val < l2.val;
+                bool operator() (ListNode *l1,ListNode *l2){
+                    return l1->val > l2->val;
                 }
             };
             ListNode* mergeKLists(vector<ListNode*>& lists) {
+                if(lists.size()==0)
+                    return NULL;
                 //修改排序方式从小到大
                 //priority_queue<Type, Container, Functional>
                 priority_queue<ListNode, vector<ListNode*>, cmp> queue;
 
                 //先把每个节点push进去
                 for(int i=0;i<lists.size();i++){
-                    queue.push(lists[i]);  
                     ListNode *temp=lists[i];
-                    while(temp->next!=NULL){
-                        queue.push(temp->next);
+                    while(temp!=NULL){
+                        queue.push(temp);
                         temp=temp->next;
                     }
                 }
-                ListNode *result=queue.top();   
-                ListNode *nextNode=NULL;
-                result->next=nextNode;
+                ListNode *result=NULL;   
+                ListNode *temp=result;
+                ListNode *newNode=NULL;
                 while(!queue.empty()){
-                    nextNode=queue.top();  
+                    newNode=queue.top();
+                    if(temp!=NULL)
+                        temp->next=newNode;
+                    else result=newNode;
+                    temp=newNode;
                     queue.pop(); 
-                    nextNode=nextNode->next;
                 }
                 return result;
             }
