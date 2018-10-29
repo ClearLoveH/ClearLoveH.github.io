@@ -58,23 +58,66 @@ tags:
                 - 如果不使用priorit_queue也能自己实现一个最大堆或最小堆，同时的方法去使用即可。
             - 注意priorit_queue默认是从大至小排序的，我们只需要修改一下队列排序的比较方式即可。
             - 注意对空输入的处理
+        - 经过两种算法权衡之后，优先级队列使用耗时很大，所以最后还是使用了二分合并。
+        
 - Code for C++:
 
-    - 归并：（思路不难，贴出关键的合并部分）每次合并后都返回合并链表的头节点，最终把list中所有的链表都合并完成，返回头节点即可。
+    - 归并：每次合并后都返回合并链表的头节点，最终把list中所有的链表都合并完成，返回头节点即可。
         ```java
-        //分治每次循环都对n除以2，知道n==1为止，归并完成
-        //此处 n = list.size()
-        while (n > 1) {    
-            int k = (n + 1) / 2;    
-            for (int i = 0; i < n / 2; i++)    
-                lists[i] = mergeTwoLists(lists[i], lists[i + k]);    
-            n = k;    
-        }    
-        return lists[0]; 
-        //在mergeTwoLists函数里我们常规的对两个链表归并即可。
+        /**
+        * Definition for singly-linked list.
+        * struct ListNode {
+        *     int val;
+        *     ListNode *next;
+        *     ListNode(int x) : val(x), next(NULL) {}
+        * };
+        */
+        class Solution {
+            public:
+                ListNode* mergeKLists(vector<ListNode*>& lists) {
+                    if(lists.size()==0)
+                        return NULL;
+                    //分治每次循环都对n除以2，知道n==1为止，归并完成
+                    int n = lists.size();
+                    while (n > 1) {    
+                        int k = (n + 1) / 2;    
+                        for (int i = 0; i < n / 2; i++)    
+                            lists[i] = mergeTwoLists(lists[i], lists[i + k]);    
+                        n = k;    
+                    }    
+                    return lists[0]; 
+                    
+                }
+                //在mergeTwoLists函数里我们常规的对两个链表归并即可。
+                ListNode *mergeTwoLists(ListNode *list1,ListNode *list2){
+                    if(list1==NULL)
+                        return list2;
+                    if(list2==NULL)
+                        return list1;
+                    //头节点result此处的值无意义，最终返回的是result->next
+                    ListNode *result=new ListNode(0);
+                    ListNode *newNode=result;
+                    while(list1!=NULL && list2!=NULL){
+                        if(list1->val < list2->val){
+                            newNode->next=list1;
+                            list1=list1->next;
+                        }
+                        else {
+                            newNode->next=list2;
+                            list2=list2->next;
+                        }
+                        newNode=newNode->next;
+                    }
+                    if(list1!=NULL){
+                        newNode->next=list1;
+                    }
+                    else newNode->next=list2;
+                    return result->next;
+                }
+            };
         ```
 
-    - 堆排序：
+    - 堆排序：(算法无误，但是由于每次插入都需要重排，耗时很大，最终有些案列超时，所以还是使用二分合并为好)
         ```java
         /**
         * Definition for singly-linked list.
@@ -88,7 +131,7 @@ tags:
         public:
             struct cmp{
                 bool operator() (ListNode *l1,ListNode *l2){
-                    return l1->val > l2->val;
+                    return l1->val >= l2->val;
                 }
             };
             ListNode* mergeKLists(vector<ListNode*>& lists) {
