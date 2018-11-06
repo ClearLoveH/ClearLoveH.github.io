@@ -49,7 +49,7 @@ tags:
 
 - 解题思路
 
-    - 
+    - 此题思路比较简单，我的解题思路就是对链表每K个节点分别进行倒序，操作完之后进行下一步K节点的倒序，一直到最后剩下的小于K的剩余节点保持原序不变，此题就解出来了。
         
 - Code for C++:
 
@@ -90,7 +90,6 @@ tags:
                 for (int turn=0;turn<round;turn++){
                     ListNode* firstK = pNode;
                     for (int i=1;i<k;i++){
-                        cout<<pNode->val<<endl;
                         ListNode* temp = pNext->next;
                         pNext->next = pNode;
                         pNode = pNext;
