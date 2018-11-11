@@ -60,7 +60,7 @@ tags:
 
 - Code for C++:
 
-    ```c++
+    ```c
         class Solution {
         public:
             vector<int> findSubstring(string s, vector<string>& words) {
