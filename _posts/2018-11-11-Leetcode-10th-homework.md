@@ -50,7 +50,7 @@ tags:
     words = ["word","student"]
     Output: []
 
-### My answer
+### My answerwer
 
 - 解题思路
 
@@ -60,17 +60,19 @@ tags:
 
 - Code for C++:
 
-    ```go
+    ```java
         class Solution {
         public:
             vector<int> findSubstring(string s, vector<string>& words) {
-                unordered_map<string, int> wrodFreq; // word frequency
-                vector<int>                ans;
+                // word frequency
+                unordered_map<string, int> wrodFreq; 
+                vector<int>                answer;
                 int                        slen;
-                int                        wordCount, wordlen; // word count and word len 
+                // word count and word len 
+                int                        wordCount, wordlen; 
                 
                 if (words.empty())
-                    return ans;
+                    return answer;
                 for (string word : words)
                     wrodFreq[word]++;
                 
@@ -94,9 +96,9 @@ tags:
                     }
                     //若j循环完全，证明words中所有的word都被连接上了，此时j = wordCount，则该子串有效
                     if (j == wordCount) 
-                        ans.push_back(i);
+                        answer.push_back(i);
                 }
-                return ans;
+                return answer;
             }
         };
     ```
