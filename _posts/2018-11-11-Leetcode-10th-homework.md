@@ -60,8 +60,8 @@ tags:
 
 - Code for C++:
 
-    ```java
-    
+    ```c++
+
         /**
         * Definition for singly-linked list.
         * struct ListNode {
