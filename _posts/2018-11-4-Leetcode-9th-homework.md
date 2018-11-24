@@ -4,7 +4,7 @@ title:      "LeetCode problems 9"
 subtitle:   "Reverse Nodes in k-Group"
 date:       2018-11-4 9:25
 author:     "Heng"
-header-img: "img/弗雷尔卓德3.jpg"
+header-img: "img/弗雷尔卓德2.jpg"
 catalog: true
 tags:
     - LeetCode

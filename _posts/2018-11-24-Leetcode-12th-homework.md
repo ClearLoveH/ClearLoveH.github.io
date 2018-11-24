@@ -4,7 +4,7 @@ title:      "LeetCode problems 12"
 subtitle:   "First Missing Positive"
 date:       2018-11-24 17:32
 author:     "Heng"
-header-img: "img/艾欧尼亚.jpg"
+header-img: "img/弗雷尔卓德2.jpg"
 catalog: true
 tags:
     - LeetCode
