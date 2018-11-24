@@ -78,17 +78,21 @@ tags:
         public:
             int firstMissingPositive(vector<int>& nums) {
                 for(int i=0;i<nums.size();i++){
-                    //如果当前位置i下出现了比所有数的和还大的值，或者负数值都可以直接忽略，节约空间。对于符合要求的值就将其与其应该在的位置的数进行交换。
-                    //使用wihle循环目的是保证交换到当前位置下的数也要被交换到该处的位置上，直到当前位置下的数是满足要求的，才进行下一个数的操作。
+                    //如果当前位置i下出现了比所有数的和还大的值，或者负数值都可以直接忽略，节约空间。
+                    //对于符合要求的值就将其与其应该在的位置的数进行交换。
+                    //使用wihle循环目的是保证交换到当前位置下的数也要被交换到该处的位置上.
+                    //直到当前位置下的数是满足要求的，才进行下一个数的操作。
                     while(nums[i]>0 && nums[i]<=nums.size() && nums[i]!=i+1 && nums[nums[i]-1]!=nums[i]){
-                        //nums[nums[i]-1]!=nums[i]) 为了保证不会出现无限互相交换（while循环无法终止），已经满足要求的数我们也没必要进行交换。
-                        int flag=nums[i];
-                        //对当前位置马上要被交换到的位置上的数也进行判断，负数及超过数组size的数都可舍弃——直接替换;符合要求的数保留，并进行交换
-                        if(nums[flag-1]>0 && nums[flag-1]<=nums.size()){
-                            nums[i]=nums[flag-1];
-                            nums[flag-1]=flag;
+                        //nums[nums[i]-1]!=nums[i]) 为了保证不会出现无限互相交换（while循环无法终止）
+                        //已经满足要求的数我们也没必要进行交换。
+                        int temp=nums[i];
+                        //对当前位置马上要被交换到的位置上的数也进行判断，负数及超过数组size的数都可舍弃——直接替换;
+                        //符合要求的数保留，并进行交换
+                        if(nums[temp-1]>0 && nums[temp-1]<=nums.size()){
+                            nums[i]=nums[temp-1];
+                            nums[temp-1]=temp;
                         }else{
-                            nums[flag-1]=flag;
+                            nums[temp-1]=temp;
                             break;
                         }
                     }
