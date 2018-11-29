@@ -69,6 +69,9 @@ tags:
 - 对 /unknown 给出开发中的提示，返回码 501
 ![](/img/in-post/post-fuwujisuan/cloudGo/12.png)
 
+- 客户端返回数据
+![](/img/in-post/post-fuwujisuan/cloudGo/13.png)
+
 
 ---
 
