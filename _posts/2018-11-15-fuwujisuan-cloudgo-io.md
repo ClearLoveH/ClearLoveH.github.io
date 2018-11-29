@@ -47,15 +47,15 @@ tags:
     ![](/img/in-post/post-fuwujisuan/cloudGo/10.png)
     ![](/img/in-post/post-fuwujisuan/cloudGo/11.png)
 
-- 支持简单 js 访问，输入`http://127.0.0.1:8080/today`访问js，显示当前时间
+- 支持简单 js 访问，输入`http://127.0.0.1:8080/timeNow`访问js，显示当前时间
 ![](/img/in-post/post-fuwujisuan/cloudGo/2.png)
 
     ```go
-    mx.HandleFunc("/today", apitest(formatter)).Methods("GET")
+    mx.HandleFunc("/timeNow", showTime(formatter)).Methods("GET")
     ```
-    `对url为"/today"的请求进行处理，具体实现是下面定义的apitest函数`，主要实现是获得并显示出当前请求的具体时间。
+    `对url为"/timeNow"的请求进行处理，具体实现是下面定义的showTime函数`，主要实现是获得并显示出当前请求的具体时间。
     ```go
-    func apitest(formatter *render.Render) http.HandlerFunc {
+    func showTime(formatter *render.Render) http.HandlerFunc {
         return func(w http.ResponseWriter, req *http.Request) {
             formatter.Text(w, http.StatusOK,"The date now is: " +  time.Now().Format("2006/01/02 15:04:05"))
         }
