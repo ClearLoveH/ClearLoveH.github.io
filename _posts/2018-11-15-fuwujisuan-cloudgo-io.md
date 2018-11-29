@@ -54,7 +54,7 @@ tags:
     mx.HandleFunc("/timeNow", showTime(formatter)).Methods("GET")
     ```
     `对url为"/timeNow"的请求进行处理，具体实现是下面定义的showTime函数`，主要实现是获得并显示出当前请求的具体时间。
-    ```go
+    ```java
     func showTime(formatter *render.Render) http.HandlerFunc {
         return func(w http.ResponseWriter, req *http.Request) {
             formatter.Text(w, http.StatusOK,"The date now is: " +  time.Now().Format("2006/01/02 15:04:05"))
