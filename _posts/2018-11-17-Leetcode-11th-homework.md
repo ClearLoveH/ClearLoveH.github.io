@@ -47,7 +47,7 @@ tags:
     Output: 4
     Explanation: The longest valid parentheses substring is "()()"
 
-### My answerwer
+### My answer
 
 - 解题思路
 
