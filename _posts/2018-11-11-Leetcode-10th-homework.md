@@ -50,7 +50,7 @@ tags:
     words = ["word","student"]
     Output: []
 
-### My answerwer
+### My answer
 
 - 解题思路
 
