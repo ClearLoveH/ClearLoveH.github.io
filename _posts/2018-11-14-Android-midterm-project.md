@@ -24,8 +24,11 @@ tags:
     ![](/img/in-post/post-Android/midterm_pro/images/preview.gif)
     ![](/img/in-post/post-Android/midterm_pro/images/preview2.gif)
 
+<iframe width="560" height="315" src="http://tv.sohu.com/upload/static/share/share_play.html#90268916_9365222_0_9001_0" frameborder="0" allowfullscreen></iframe>
 
-[项目展示视频]()
+
+
+[项目展示视频](http://v.youku.com/v_show/id_XMzk2MTcxOTM2NA==.html?spm=a2h3j.8428770.3416059.1)
 
 
 ## 二、本人负责部分
