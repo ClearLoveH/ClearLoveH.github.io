@@ -16,12 +16,11 @@ tags:
 
 ## 一、期中项目
 
-王者荣耀英雄大全
+### 王者荣耀英雄大全
 
 ---
 
 ### 项目预览：
-
 ![](/img/in-post/post-Android/midterm_pro/images/preview.gif)
 
 [项目展示视频]()
