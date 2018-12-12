@@ -19,7 +19,7 @@ tags:
 ---
 ## 一、实验题目 
 
-## 基本的UI界面设计
+### 基本的UI界面设计
 
 ---
 
@@ -28,6 +28,7 @@ tags:
 实现题目所要求的UI界面
   
 ![](/img/in-post/post-Android/lab1/截图/preview.jpg)
+
 
 各控件的要求:
 
