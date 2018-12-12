@@ -3,7 +3,7 @@ title:  恒的博客
 SEOTitle: 恒的博客 | ClearLoveH
 header-img: img/HOME_BG.jpg
 email: 964683913@qq.com
-description: "关于前端与设计、黑客与画家 | 我恒，Web & Mobile Lover，Software Engineer | 这里是 恒 的个人博客，与你一起发现更大的世界。"
+description: "关于前端与安卓，java与go | 我恒，Web & Mobile Lover，Software Engineer | 这里是 恒 的个人博客，与你一起发现更大的世界。"
 keyword: " 博客, 个人网站, 互联网, Web, JavaScript, 前端, 设计"
 url: ""              # your host, for absolute URL
 baseurl: ""          # for example, '/blog' if your blog hosted on 'host/blog'
@@ -36,6 +36,8 @@ anchorjs: true                          # if you want to customize anchor. check
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
 #timezone: CN  
 
+gems:
+  - jemoji
 
 
 # Gems
