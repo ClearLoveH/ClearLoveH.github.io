@@ -22,6 +22,9 @@ tags:
 
 ### 项目预览：
 
+![](/img/in-post/post-Android/midterm_pro/images/preview.gif)
+
+[项目展示视频]()
 
 
 ## 二、本人负责部分
