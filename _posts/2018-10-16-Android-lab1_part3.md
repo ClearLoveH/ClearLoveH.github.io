@@ -2,7 +2,7 @@
 layot:     post
 title:      "中山大学智慧健康服务平台应用开发"
 subtitle:   "Intent、Bundle的使用以及RecyclerView、ListView的应用"
-date:       2018-10-16 13:39
+date:       2018-10-16 12:55
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
 catalog: true

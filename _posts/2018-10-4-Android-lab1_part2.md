@@ -2,7 +2,7 @@
 layot:     post
 title:      "中山大学智慧健康服务平台应用开发"
 subtitle:   "基础的事件处理"
-date:       2018-10-4 13:39
+date:       2018-10-4 16:24
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
 catalog: true
