@@ -30,7 +30,9 @@ tags:
 
 
 
-[项目展示视频](http://v.youku.com/v_show/id_XMzk2MTcxOTM2NA==.html?spm=a2h3j.8428770.3416059.1)
+
+
+- [项目展示视频](http://v.youku.com/v_show/id_XMzk2MTcxOTM2NA==.html?spm=a2h3j.8428770.3416059.1)
 
 ---
 
@@ -42,6 +44,7 @@ tags:
 * 产品设计
 * 应用添加入场动画、修改应用图标
 
+---
 
 ## 三、课堂实验结果
 
