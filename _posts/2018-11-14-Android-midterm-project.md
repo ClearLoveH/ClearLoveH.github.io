@@ -22,6 +22,8 @@ tags:
 
 ### 项目预览：
 ![](/img/in-post/post-Android/midterm_pro/images/preview.gif)
+![](/img/in-post/post-Android/midterm_pro/images/preview2.gif)
+
 
 [项目展示视频]()
 
