@@ -9,10 +9,6 @@ tags:
     - Android
 ---
 
->Royal may give up now..
-
----
-
 >Invictus Gaming——We are the champion！.
 
 ---
