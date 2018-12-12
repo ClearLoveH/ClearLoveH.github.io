@@ -2,7 +2,7 @@
 layot:     post
 title:      "中山大学智慧健康服务平台应用开发"
 subtitle:   "Broadcast 使用"
-date:       2018-10-22 13:39
+date:       2018-10-22 14:15
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
 catalog: true
