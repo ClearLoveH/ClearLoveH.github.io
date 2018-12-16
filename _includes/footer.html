@@ -161,12 +161,12 @@
 <script src="http://cdn.staticfile.org/jquery/2.1.0/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/emoji/0.2.2/emoji.js"></script> -->
 
+
 <!--鼠标点击特效-->
-<script type="text/javascript" >
+<script type="text/javascript">
     $(document).ready(function(){
         var a_index = 0;
         $("body").click(function(e){
-            var temp = "";
             var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善");
             var $i = $("<span/>").text(a[a_index]);
             a_index = (a_index + 1) % a.length;
