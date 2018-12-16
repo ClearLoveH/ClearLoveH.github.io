@@ -96,8 +96,11 @@ service-worker: true
 # Friends
 friends: [
     {
+        title: "Doris",
+        href: "https://github.com/DorisYeung"
+    },{
         title: "WYF",
-        href: "https://i.wwyf.top"
+        href: "https://github.com/wwyf"
     },{
         title: "BensonYan",
         href: "https://github.com/YanB25"
@@ -106,7 +109,7 @@ friends: [
         href: "https://github.com/zhongwq"
     },{
         title: "CookiesChen",
-        href: "http://cookieschen.cn"
+        href: "https://github.com/cookieschen"
     },{
         title: "Limsanity",
         href: "https://github.com/Limsanity"
