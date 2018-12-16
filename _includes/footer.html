@@ -3,7 +3,7 @@
     <div class="container">
         <div class="row">
                 <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=1)" width="80%" color=#987cb9 SIZE=3>
-            <p class="copyright text-muted">喜欢这个博客就分享一下吧 </p>
+            <p class="copyright text-muted">:kissing_heart: 喜欢这个博客就分享一下吧 :point_down:</p>
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
                 <li class="row">
@@ -104,7 +104,7 @@
                     <span id="busuanzi_container_site_pv">
                             本站总访问量<span id="busuanzi_value_site_pv"></span>次
                     </span> 
-                    :kissing_heart:
+                    :blush:
                     <span id="busuanzi_container_site_uv">
                             您是本站第<span id="busuanzi_value_site_uv"></span>位访客
                     </span>
@@ -168,8 +168,7 @@
         $("body").click(function(e){
             var temp = "";
             var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善");
-            var $i = $("<p/>").text(a[a_index]);
-            
+            var $i = $("<span/>").text(a[a_index]);
             a_index = (a_index + 1) % a.length;
             var x = e.pageX,y = e.pageY;
             var color=randomHexColor();
