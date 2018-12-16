@@ -1326,6 +1326,10 @@ mark,
 .text-muted {
   color: #777;
 }
+.text-margin {
+  margin-block-start: 50px;
+  color: #777;
+}
 .text-primary {
   color: #337ab7;
 }
