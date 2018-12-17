@@ -38,8 +38,7 @@ anchorjs: true                          # if you want to customize anchor. check
 
 gems:
   - jemoji
-plugins:
-  - jemoji
+
 
 # Gems
 # from PR#40, to support local preview for Jekyll 3.0
@@ -97,11 +96,8 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "Doris",
-        href: "https://github.com/DorisYeung"
-    },{
         title: "WYF",
-        href: "https://github.com/wwyf"
+        href: "https://i.wwyf.top"
     },{
         title: "BensonYan",
         href: "https://github.com/YanB25"
@@ -110,7 +106,7 @@ friends: [
         href: "https://github.com/zhongwq"
     },{
         title: "CookiesChen",
-        href: "https://github.com/cookieschen"
+        href: "http://cookieschen.cn"
     },{
         title: "Limsanity",
         href: "https://github.com/Limsanity"
