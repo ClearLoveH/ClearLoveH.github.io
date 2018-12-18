@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "LeetCode problems 10"
-subtitle:   "Substring with Concatenation of All Wordsp"
+subtitle:   "Substring with Concatenation of All Words"
 date:       2018-11-11 11:11
 author:     "Heng"
 header-img: "img/艾欧尼亚.jpg"
