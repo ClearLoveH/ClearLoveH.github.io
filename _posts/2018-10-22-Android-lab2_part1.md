@@ -1,7 +1,7 @@
 ---
 layot:     post
 title:      "中山大学智慧健康服务平台应用开发"
-subtitle:   "Broadcast 使用"
+subtitle:   "Broadcast 与 EventBus 使用"
 date:       2018-10-22 14:15
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
@@ -37,7 +37,7 @@ tags:
 - 实验目的
     - 掌握 Broadcast 编程基础。
     - 掌握动态注册 Broadcast 和静态注册 Broadcast。
-    - 掌握Notification 编程基础。
+    - 掌握 Notification 编程基础。
     - 掌握 EventBus 编程基础。
 
 
