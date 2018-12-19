@@ -1,7 +1,7 @@
 ---
 layot:     post
 title:      "网络与web服务"
-subtitle:   "WEB API"
+subtitle:   "HttpURLConnection网络请求、json解析与CardView的使用"
 date:       2018-12-9 11:05
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
@@ -21,7 +21,7 @@ tags:
 
 ## 一、实验题目 
 
-### WEB API
+### WEB API——Bilibili
 
 ---
 
