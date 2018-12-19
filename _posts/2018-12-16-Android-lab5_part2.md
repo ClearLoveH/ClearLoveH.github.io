@@ -21,7 +21,7 @@ tags:
 
 ## 一、实验题目 
 
-## WEB API——Github
+### WEB API——Github
 
 ---
 
@@ -286,7 +286,7 @@ tags:
     - 在这里添加token，请求才能正确接收，我查看了这种情况下postman发出去的请求：
         ![](/img/in-post/post-Android/lab5/截图/week15_26.png)
     - 发现他在token前加了`Bearer `，这个请求才正确被接收，所以我在后端也为token加上了这个前缀，最终实现正常功能。
-    
+
 ----
 
 ## 四、实验思考及感想
