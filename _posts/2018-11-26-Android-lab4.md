@@ -1,9 +1,7 @@
 ---
 layot:     post
 title:      "简单音乐播放器"
-subtitle:   "MediaPlayer 与 MediaMetadataRetriever 的使用"
-subtitle2:   "Service后台与Activity通信"
-subtitle3:   "使用rxJava与Handler更新UI"
+subtitle:   "MediaPlayer 与 MediaMetadataRetriever 的使用<br/>Service后台与Activity通信<br/>使用rxJava与Handler更新UI"
 date:       2018-11-26 10:50
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
