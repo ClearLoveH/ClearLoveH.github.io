@@ -6,6 +6,7 @@ Hi, I am *@Heng* , a software engineer.
 
 ##### Talks
 
+- [人工智能学习：α-β剪枝算法实现象棋人机博弈](http://www.cnblogs.com/royhoo/p/6425761.html)
 - [Upgrading to Progressive Web Apps][9] · [JSConf China Shanghai 2017](http://2017.jsconf.cn/)
 - Building Progressive Web Apps · [CSDI Guangzhou 2017](http://www.csdisummit.com/)
 - The State of Progressive Web App · GDG IO Redux Beijing 2017
