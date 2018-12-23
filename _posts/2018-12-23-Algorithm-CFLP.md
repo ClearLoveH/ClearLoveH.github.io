@@ -103,9 +103,9 @@ tags:
     ```
 
 #### 2. 贪心算法：
-- 从第一个消费者开始，遍历所有的设备，选择其中的开销最低且所剩容量满足本消费者的需求的仓库。
+- 从第一个消费者开始，遍历所有的设备，选择其中的分配开销最低且所剩容量满足本消费者的需求的仓库。
 - 总共只需要两个循环，由于本次实验所使用的数据量最多的案例也不过6000多个，所以这样贪心的解决方式所消耗的时间是非常少的，在1ms左右便可以遍历出贪心的结果。
-- 计算开销的方式：若设备未打开过，本次开销为：消费者分配给该设备的开销加上打开设备的开销；若仓库已打开，本次开销为：消费者分配给该设备的开销。
+- 计算开销的方式：不论设备是否打开过，都优先选择分配开销最低的设备，总的开销最后再看设备是否已经打开再来添上打开的开销。
     ```java
     //贪心算法，优先选择当前满足要求的facility中cost最小的。
     public GreedyResult Greedy(int[][] facilities, int[][] customers){
@@ -118,7 +118,6 @@ tags:
         int[] customersToFacilities = new int[customers.length];
         long startTime=System.currentTimeMillis();
         int costSum = 0;
-
         for(int i = 0;i<customers.length;i++){
             int minCost = 99999;
             int selectIndex = -1;
@@ -128,16 +127,17 @@ tags:
                 if(tempFacilities[j][0]<customers[i][0]){
                     continue;
                 }
-                if(facilitiesStatus[j]==0){
-                    currentCost += tempFacilities[j][1];
-                }
+
                 currentCost += customers[i][j+1];
                 if(currentCost <= minCost){
                     minCost = currentCost;
                     selectIndex = j;
                 }
             }
-            facilitiesStatus[selectIndex] = 1;
+            if(facilitiesStatus[selectIndex] == 0){
+                facilitiesStatus[selectIndex] = 1;
+                costSum += tempFacilities[selectIndex][1];
+            }
             customersToFacilities[i] = selectIndex;
             tempFacilities[selectIndex][0] -= customers[i][0];
             costSum += minCost;
@@ -150,8 +150,8 @@ tags:
     }
     ```
 #### 3.模拟退火
-- `初温`——我的初温设为100。初温设置的高低影响的是对差解的接受率，因为模拟退火算法是以概率`exp(-ΔT/T)`接受差的新解的，若初温太高容易把好的解也给跳出了；由于我初始解产生是随机生成的，所以初温设为100，如果我使用的是另外一种方案即用贪心来生成初始解，初温则可以调低一些。
-- `初始解状态S(算法迭代的起点)`——初始解我是随机生成，生成一个随机的合理的解。（不合理即 `某一工厂的capacity小于所有选择该工厂的消费者的demand之和`）
+- `初温`——我的初温设为100。初温设置的高低影响的是对差解的接受率，因为模拟退火算法是以概率`exp(-ΔT/T)`接受差的新解的，若初温太高容易把好的解也给跳出了，太低又容易导致卡在局部最优；由于我初始解产生是通过贪心生成的，所以初温设为100，如果我使用的是另外一种方案即用随机来生成初始解，初温则可以调高一些。
+- `初始解状态S(算法迭代的起点)`——初始解我试过两种生成方式，一是生成一个随机的合理的解。（不合理即 `某一工厂的capacity小于所有选择该工厂的消费者的demand之和`）
     ```java
      for(int i=1;i<customersCount;i++){
             int[][] tempFacilities1 = copyFacility();
@@ -176,6 +176,7 @@ tags:
             initList.add(greedyResult.customersToFacilities[i]);
         }
         ```
+    - 最后对比选择贪心生成初始解。
 
 - `每个T值的迭代次数L`——设为100
 - `产生新解S′`——我产生新解的方式有两种：
