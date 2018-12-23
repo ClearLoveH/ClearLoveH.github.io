@@ -241,7 +241,7 @@ tags:
             int toWhichFacility = individualSpecies.get(i);
             //如果出了坏种(facility的capacity超出了)，给其添上惩罚值
             if(tempFacilities[toWhichFacility][0] < 0){
-                return 888888;
+                return INVALID;
             }
             if(facilitiesStatus[toWhichFacility] == 0){
                 facilitiesStatus[toWhichFacility] = 1;
@@ -309,7 +309,7 @@ tags:
             calAllFitness();//重新计算所有的适应值
         }
         ```
-    - `交叉`：选择出来交配池之后，自然要进行交配产生新的后代，交配的方法很简单，选择交配池中两个个体，然后在随机的位置 i 上，把两个父个体 i 位置后的编码进行交换即产生两个后代个体，同样的，为了加快算法的收敛，我在生成的两个个体加入到下一代种群之前，先判断其编码是否合理（即对应选择的设备中有没有demand已经超出了capacity的情况），不合理的直接淘汰，不加入到下一代种群中，留下他的父个体；合理便将其加入到下一代的种群里。
+    - `交叉`：选择出来交配池之后，自然要进行交配产生新的后代，交配的方法很简单，在`交叉率`（crossProbability）的前提下，概率地选择交配池中两个个体，然后在随机的位置 i 上，把两个父个体 i 位置后的编码进行交换即产生两个后代个体，同样的，为了加快算法的收敛，我在生成的两个个体加入到下一代种群之前，先判断其编码是否合理（即对应选择的设备中有没有demand已经超出了capacity的情况），不合理的直接淘汰，不加入到下一代种群中，留下他的父个体；合理便将其加入到下一代的种群里。
         - 生成的个体是否合理，在计算该个体开销的calCost函数中便可以判断，如果个体不合理，便为其添加一个惩罚值，让其无法在种群中生存下去。
             ```java
             //交叉
@@ -319,35 +319,47 @@ tags:
                 List<Integer> nextGenerationCost = new ArrayList<>();
                 while (q<species.size() && q+1<species.size()){
                     Random rand=new Random();
-                    //在序列上随机取一个位置交叉
-                    int crossIndex=rand.nextInt(customersCount-1);
-                    List<Integer> offspring1 = new ArrayList<>();
-                    List<Integer> offspring2 = new ArrayList<>();
-                    List<Integer>  parent1 = species.get(q);
-                    List<Integer>  parent2 = species.get(q+1);
-                    for(int i=0;i<crossIndex;i++){
-                        offspring1.add(parent1.get(i));
-                        offspring2.add(parent2.get(i));
-                    }
-                    for(int i=crossIndex;i<customersCount;i++){
-                        offspring1.add(parent2.get(i));
-                        offspring2.add(parent1.get(i));
-                    }
-                    if(calCost(offspring1)!=888888){
-                        nextGeneration.add(offspring1);
-                        nextGenerationCost.add(calCost(offspring1));
+
+                    float rFloat = rand.nextFloat();
+                    //交叉率
+                    if(rFloat < crossProbability){
+                        //在序列上随机取一个位置交叉
+                        int crossIndex=rand.nextInt(customersCount-1);
+                        List<Integer> offspring1 = new ArrayList<>();
+                        List<Integer> offspring2 = new ArrayList<>();
+                        List<Integer>  parent1 = species.get(q);
+                        List<Integer>  parent2 = species.get(q+1);
+                        for(int i=0;i<crossIndex;i++){
+                            offspring1.add(parent1.get(i));
+                            offspring2.add(parent2.get(i));
+                        }
+                        for(int i=crossIndex;i<customersCount;i++){
+                            offspring1.add(parent2.get(i));
+                            offspring2.add(parent1.get(i));
+                        }
+                        if(calCost(offspring1)!=INVALID){
+                            nextGeneration.add(offspring1);
+                            nextGenerationCost.add(calCost(offspring1));
+                        }
+                        else {
+                            nextGeneration.add(parent1);
+                            nextGenerationCost.add(calCost(parent1));
+                        }
+                        if(calCost(offspring2)!=INVALID){
+                            nextGeneration.add(offspring2);
+                            nextGenerationCost.add(calCost(offspring2));
+                        }
+                        else {
+                            nextGeneration.add(parent2);
+                            nextGenerationCost.add(calCost(parent2));
+                        }
+
                     }
                     else {
-                        nextGeneration.add(parent1);
-                        nextGenerationCost.add(calCost(parent1));
-                    }
-                    if(calCost(offspring2)!=888888){
-                        nextGeneration.add(offspring2);
-                        nextGenerationCost.add(calCost(offspring2));
-                    }
-                    else {
-                        nextGeneration.add(parent2);
-                        nextGenerationCost.add(calCost(parent2));
+                        nextGeneration.add(species.get(q));
+                        nextGenerationCost.add(AllCost.get(q));
+                        nextGeneration.add(species.get(q+1));
+                        nextGenerationCost.add(AllCost.get(q+1));
                     }
                     q+=2;
                 }
@@ -445,7 +457,8 @@ tags:
     - 编码的长度——即消费者个数
     - 种群规模——200
     - 交叉概率——设为1，即每一代每个个体都有其交配的对象来产生下一代种群
-    - 变异概率——设为0.3，变异概率大，可以让算法收敛更快，但是过大容易让局部最优个体变异为适应值更低的个体，即容易把好的个体也变异掉，最终求出的最好的个体反而适应值低。
+    - 变异概率——设为0.1，变异概率大，可以让算法收敛更快，但是过大容易让局部最优个体变异为适应值更低的个体，即容易把好的个体也变异掉，最终求出的最好的个体反而适应值低。
+    - 交叉概率——设为0.9，按90%的概率对繁衍池的每一对进行概率交叉。
     - 繁衍代数——1000，代数高，更容易找到更优解，但是对应耗时增加。
     - 惩罚值——设为888888，针对产生的不合理的个体，即不能在种群存活下去的个体。
 
