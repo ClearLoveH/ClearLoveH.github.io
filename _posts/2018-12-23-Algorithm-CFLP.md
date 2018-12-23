@@ -32,15 +32,19 @@ tags:
 
 ### 解决此题的算法
 
-#### 贪心算法
+#### 贪心算法 （Greedy Algorithm）
 
 - 对每一个消费者，都选择他当前可以选择的设备中（即该设备的capacity要大于该消费者的demand）开销最小的设备，是一种基本的贪心策略。
 
-#### 领域搜索
+#### 模拟退火算法 （SA）
+- 模拟退火算法的出发点是基于物理中固体物质的退火过程与一般组合优化问题之间的相似性。模拟退火算法从某一较高初温出发，伴随温度参数的不断下降,结合概率突跳特性在解空间中随机寻找目标函数的全局最优解，即在局部最优解能概率性地跳出并最终趋于全局最优。
+- 是迭代求解策略的一种随机寻优算法，模拟退火算法是一种通用的优化算法，理论上算法具有概率的全局优化性能。
+- 是一种牺牲时间来换取精度的随机搜索算法。
 
-#### 遗传算法
+#### 遗传算法 （GA）
 
 - 通过模拟自然进化的过程来搜索最优解。
+- 同SA，也是一种牺牲时间来换取精度的随机搜索算法，他俩的差异在<a href="#think">实验感想</a>中我有总结。
 
 ---
 
@@ -145,7 +149,71 @@ tags:
         return greedyResult;
     }
     ```
-#### 3.邻域搜索
+#### 3.模拟退火
+- `初温`——我的初温设为100，因为温度下降是呈指数下降的，所以初温设置太高其实迭代次数的添加的也不算太多，简而言之没必要初温太高，要想加深迭代次数，直接从迭代的循环次数下手即可。
+- `初始解状态S(算法迭代的起点)`——初始解我是随机生成，生成一个随机的合理的解。（不合理即 `某一工厂的capacity小于所有选择该工厂的消费者的demand之和`）
+    ```java
+     for(int i=1;i<customersCount;i++){
+            int[][] tempFacilities1 = copyFacility();
+            for(int j=0;j<customersCount;j++){
+                Random r = new Random();
+                int s = r.nextInt(facilitiesCount);
+                while (tempFacilities1[s][0] < customers[j][0]){
+                    s = (s+1)%facilitiesCount;
+                }
+                tempFacilities1[s][0] -= customers[j][0];
+                initList.add(s);
+            }
+        }
+    ```
+    - 也可以使用贪心算法产生的解来作为初始解。
+
+- `每个T值的迭代次数L`——设为100
+- `产生新解S′`——我产生新解的方式有两种：
+    - 随机交换解中某两个位置的值；
+    - 随机改变解中某一位置的值；
+    - 当然，这两种方法产生的新解肯定是`合理`的。通过比较可以发现，第一种产生新解的方式，不论迭代次数增加多少，都是很容易卡在局部最优解，这样出来的结果比GA还差，是不好的；而第二种产生新解的方式，让新解的“扰动作用”大大增加，即可以选择其他消费者都没有选择过的设备，更容易跳出局部最优解。且没有第一种方式的交换操作，耗时更短。
+- `评价函数 calCost`——计算该解的总开销，来评判解的优劣，若新解的cost < 旧解的cost，则把新解接受为新的当前解；若新解的cost > 旧解的cost，则以概率`exp(-ΔT/T)`接受S′作为新的当前解，这个概率就是SA算法跳出局部最优解的关键所在。
+- `降温系数`——每次退火时降温的系数，T *= (降温系数)，指数下降至温度下界`EPS`
+- `温度下界EPS`——温度退到下界时，算法终止。
+    ```java
+    while (Temperature > EPS){
+            int count = 0;// 迭代次数
+            while (count < 100){
+                List<Integer> tempList = new ArrayList<>();
+                tempList.addAll(initList);
+                qwer++;
+                count++;
+                Random r = new Random();
+
+                int newResult = INVALID;
+                int oldResult = costCurrent;
+                while (newResult == INVALID){
+                    //随机产生新解
+                    int n = r.nextInt(customersCount);
+                    int m = r.nextInt(facilitiesCount);
+
+                    //领域操作——随机变换一个新的设备选择
+                    tempList.set(n,m);
+                    newResult = calCost(tempList);
+                }
+                //以1的概率接受新解
+                if(newResult < oldResult){
+                    initList.clear();
+                    initList.addAll(tempList);
+                    costCurrent = newResult;
+                }
+                //以exp(-ΔT/T)接受新解，用以跳出局部最优
+                else if(accessProbability < Math.exp((oldResult - newResult) / Temperature)){
+                    initList.clear();
+                    initList.addAll(tempList);
+                    costCurrent = newResult;
+                }
+            }
+            Temperature *= coolingCoefficient;
+        }
+    ```
+
 
 #### 4.遗传算法
 - `编码`——编码我的思路是把每一个消费者选择的设备序号所组成的List，作为遗传编码来使用。
@@ -402,8 +470,14 @@ tags:
 
     - 剩余的未展示的detail Solution已附在github仓库中。
 
-2. 领域搜索
+2. 模拟退火算法
+- Result Table:
+    ![](/img/in-post/post-aigorithm/SAResult.png)
 
+- Detail solution:
+    ![](/img/in-post/post-aigorithm/SAResultDetail.png)
+    - 剩余的未展示的detail Solution已附在github仓库中。
+    
 3. 遗传算法
 - Result Table:
     ![](/img/in-post/post-aigorithm/GAResult.png)
@@ -413,7 +487,8 @@ tags:
     - 剩余的未展示的detail Solution已附在github仓库中。
 ---
 
-### 实验感想
+### <p id="think">实验感想</p>
 
-- 本次实验最大的感想便是，在解决此类开放性的问题时，思路真的很重要，有一个好的思路，好的算法，便可以依此为基础把题目结构清晰地分解开，然后再单独实现每一部分的代码，最后合并，整个算法就实现出来。由此也可知，基础是真的非常关键，基础不牢地动山摇，想象力再丰富也无法创造出一个自己的算法出来。
+- 本次实验最大的感想便是对遗传算法与模拟退火算法的理解加深了许多。这次实验，我分别使用GA与SA来解决此题，也帮助我更好的理解二者的异同，虽然GA与SA都是牺牲时间来换取精度的随机搜索算法，但是SA有更好的全局搜索最优解的能力，GA虽然有变异的扰动作用，但是GA通过变异实现的扰动作用与SA的领域操作（Metropolis准则——以概率接受新状态）相比，跳出局部最优解的能力还是要差一些，所以在资源充足的情况下，SA搜寻到局部最优解的能力要更好一些
+- 在解决此类开放性的问题时，思路真的很重要，有一个好的思路，好的算法，便可以依此为基础把题目结构清晰地分解开，然后再单独实现每一部分的代码，最后合并，整个算法就实现出来。由此也可知，基础是真的非常关键，基础不牢地动山摇，想象力再丰富也无法创造出一个自己的算法出来。
 - 查阅资料和与同学交流也非常重要，集思广益，可以交流一下大家的思路，这样也可以开拓一下自己的思维，然后再各自沉浸在各自的解题方法中，最后大家再比对一下各自算法的优劣，乐在其中。
