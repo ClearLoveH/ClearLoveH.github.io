@@ -477,7 +477,7 @@ tags:
 - Detail solution:
     ![](/img/in-post/post-aigorithm/SAResultDetail.png)
     - 剩余的未展示的detail Solution已附在github仓库中。
-    
+
 3. 遗传算法
 - Result Table:
     ![](/img/in-post/post-aigorithm/GAResult.png)
@@ -485,6 +485,7 @@ tags:
 - Detail solution:
     ![](/img/in-post/post-aigorithm/GAResultDetail.png)
     - 剩余的未展示的detail Solution已附在github仓库中。
+    
 ---
 
 ### <p id="think">实验感想</p>
