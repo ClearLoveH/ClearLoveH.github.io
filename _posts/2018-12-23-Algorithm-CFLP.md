@@ -472,7 +472,7 @@ tags:
 
 ### 实验结果
 
-1. 贪心算法
+#### 1. 贪心算法
 - Result Table:
 
     ![](/img/in-post/post-aigorithm/GreedyResult.png)
@@ -483,7 +483,7 @@ tags:
 
     - 剩余的未展示的detail Solution已附在github仓库中。
 
-2. 模拟退火算法
+#### 2. 模拟退火算法
 - Result Table:
 
     ![](/img/in-post/post-aigorithm/SAResult.png)
@@ -493,7 +493,7 @@ tags:
     ![](/img/in-post/post-aigorithm/SAResultDetail.png)
     - 剩余的未展示的detail Solution已附在github仓库中。
 
-3. 遗传算法
+#### 3. 遗传算法
 - Result Table:
 
     ![](/img/in-post/post-aigorithm/GAResult.png)
