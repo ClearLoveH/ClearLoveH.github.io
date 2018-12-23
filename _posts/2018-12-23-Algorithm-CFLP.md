@@ -167,6 +167,15 @@ tags:
         }
     ```
     - 也可以使用贪心算法产生的解来作为初始解。
+        ```java
+        //使用贪心算法来求初值
+        GreedyAlgorithm greedy = new GreedyAlgorithm();
+        GreedyResult greedyResult = greedy.Greedy(facilities,customers);
+        List<Integer> initList = new ArrayList<>();
+        for(int i=0;i<greedyResult.customersToFacilities.length;i++){
+            initList.add(greedyResult.customersToFacilities[i]);
+        }
+        ```
 
 - `每个T值的迭代次数L`——设为100
 - `产生新解S′`——我产生新解的方式有两种：
