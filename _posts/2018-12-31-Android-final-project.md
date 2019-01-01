@@ -124,4 +124,38 @@ tags:
     - 后来发现，私有成员变量的方式其实并没有问题，是我`setAdapter(commentAdapter);`的时机不对，在点击事件发生之后，才把适配器set上去，这样的适配器肯定无法与其绑定的数据保证实时更新。
 
 - [Android 布局平铺展开效果的属性动画](https://blog.csdn.net/debbytang/article/details/68496728)
-    - 修改成我们需要的从左至右平铺的一个动画之后，有个bug，平铺之前会闪烁一下，用户体验不是很好。
+    - 修改成我们需要的从左至右平铺的一个动画之后，有个bug，平铺之前会闪烁一下，用户体验不是很好。经过排查找到罪魁祸首，就是setVisibility为Visible的时候，会先让要显示的两个按钮完整的显示出来，然后才开始执行动画。
+
+    - 琢磨了一下，终于找出问题所在：`v.setLayoutParams(layoutParams);`，原来的实现方式如下
+        ```java
+        ValueAnimator animator = createDropAnimator(view, 0,origHeight);
+
+        private ValueAnimator createDropAnimator(final View v, int start, int end) {
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator arg0) {
+                    int value = (int) arg0.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+                    layoutParams.width = value;
+                    v.setLayoutParams(layoutParams);
+                }
+            });
+            return animator;
+        }
+        ```
+    - setLayoutParams只是一种临时修改layout的长款的方法，其实对于要被显示的内容，只是一种临时的修改，是没有被存下来的。所以我思考之后，把布局伸展的动画改用padding来实现，这样就不会有突然闪烁的糟糕体验了。
+        ```java
+        ValueAnimator animator = createDropAnimator(view, 0,origHeight);
+        private ValueAnimator createDropAnimator(final View v, int start, int end) {
+            ValueAnimator animator = ValueAnimator.ofInt(start, end);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator arg0) {
+                    int value = (int) arg0.getAnimatedValue();
+                    v.setPadding(value,0,0,0);
+                }
+            });
+            return animator;
+        }
+        ```
