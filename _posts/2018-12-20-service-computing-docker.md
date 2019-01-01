@@ -78,7 +78,7 @@ tags:
         docker version
 - 输入上述命令，返回docker的版本相关信息，证明docker安装成功。
 
-### Docker简单使用
+#### Docker简单使用
 - Docker部署`极简博客-MinimalBlog`的服务端
 
         FROM golang:1.8
