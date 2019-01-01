@@ -4,7 +4,7 @@ title:      "Yue Ba 项目设计"
 subtitle:   "Android期末项目"
 date:       2018-12-31 23:59
 author:     "Heng"
-header-img: "img/比尔吉沃特.jpg"
+header-img: "img/恕瑞玛.jpg"
 catalog: true
 tags:
     - Android

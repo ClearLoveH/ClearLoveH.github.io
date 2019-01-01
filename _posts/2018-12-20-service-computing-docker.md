@@ -4,7 +4,7 @@ title:      "Docker 开发初体验"
 subtitle:   "极简博客使用Docker部署"
 date:       2018-12-20 11:35
 author:     "Heng"
-header-img: "img/比尔吉沃特.jpg"
+header-img: "img/比尔吉沃特1.jpg"
 catalog: true
 tags:
     - 服务计算
