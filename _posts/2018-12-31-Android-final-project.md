@@ -159,3 +159,12 @@ tags:
             return animator;
         }
         ```
+- 获取时区，我们应用内的时间是根据用户所在时区显示的，而java中获取当前时区的方法是在麻烦，查资料的结果试了很多次都不行，最后终于找到有效的方法：
+    ```java
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static int getTimeZone(){
+        TimeZone tz = TimeZone.getTimeZone(ZoneId.systemDefault());
+        System.out.println(tz.getRawOffset()/(60*60*1000));
+        return tz.getRawOffset()/(60*60*1000);
+    }
+    ```
