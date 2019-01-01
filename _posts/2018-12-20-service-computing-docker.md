@@ -9,7 +9,7 @@ catalog: true
 tags:
     - 服务计算
 ---
->上周我们小组一起完成了极简博客的开发，搭建好了简单的 web 服务与客户端，这周我们便通过使用 Docker 将我们的应用来实现容器化。
+>上周我们小组一起完成了[极简博客-MinimalBlog](https://clearloveh.github.io/2018/12/14/service-computing-MinamalBlog/)的开发，搭建好了简单的 web 服务与客户端，这周我们便通过使用 Docker 将我们的应用来实现容器化。
 
 ---
 ### 关于Docker
