@@ -279,8 +279,10 @@ tags:
 
         ![](/img/in-post/post-Android/final_project/success_2.png)
 
-### - 一个非常好的问题，fragment切换时不断的调用`onCreateView`函数导致`重复刷新fragment`的问题：这是fragment的机制——每次切换fragment的时候，Fragment都会重新实例化、重新执行onCreateView()方法、重新加载一边数据、这样非常消耗性能和用户的数据流量。所以我就在想，如何让多个Fragment彼此切换时不重新实例化？
-    - 解决方法，`将第一次创建的view缓存下来`：当第一次创建fragment的时候在onCreateView里面初始化view，下一次创建时不需要重新创建view时，希望使用已经创建的，所以要把view设为全局变量。view为空，表示是第一次，则初始化view。如果view不为空，则返回该view，需要注意的是：如果直接返回会报错（java.lang.IllegalStateException: The specified child already has a parent），大体意思就是有一个parent了，所以在返回该view前要找到该view的parent，然后remove掉该view，再返回就ok了。
+### 一个非常好的问题，fragment切换时不断的调用`onCreateView`函数导致`重复刷新fragment`的问题：
+- 这是fragment的机制——每次切换fragment的时候，Fragment都会重新实例化、重新执行onCreateView()方法、重新加载一边数据，这样非常消耗性能和用户的数据流量。所以我就在想，如何让多个Fragment彼此切换时不重新实例化？
+- 解决方法：
+    - `将第一次创建的view缓存下来`：当第一次创建fragment的时候在onCreateView里面初始化view，下一次创建时不需要重新创建view时，希望使用已经创建的，所以要把view设为全局变量。view为空，表示是第一次，则初始化view。如果view不为空，则返回该view，需要注意的是：如果直接返回会报错（java.lang.IllegalStateException: The specified child already has a parent），大体意思就是有一个parent了，所以在返回该view前要找到该view的parent，然后remove掉该view，再返回就ok了。
         ```java
         private View rootView;//缓存Fragment view
         @Override
@@ -297,4 +299,7 @@ tags:
         }
         ```
     - Fragment 有onCreate()和onCreateView()方法，onCreate方法是在类创建时调用，而onCreateView方法是在Fragment布局显示的时候才会调用，Fragment布局中的控件在onCreateView中可以通过view.findViewById方法获取，但不能在绑定的Activity中获取，因为Activity中通过findViewById方法获取到的控件必须是在setContentView()布局中，其他布局中的控件无法获取。
-    
+    - 注意：
+        - Fragment中onCreate类似于Activity.onCreate，在其中可初始化除了view之外的一切； 
+        - onCreateView是创建该fragment对应的视图，其中需要创建自己的视图并返回给调用者；
+    - [Fragment生命周期问题](https://blog.csdn.net/linfeng24/article/details/26491407)
