@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Yue Ba 项目设计"
+title:      "Yue Ba 项目设计——心得体会与总结（干货）"
 subtitle:   "Android期末项目"
 date:       2018-12-31 23:59
 author:     "Heng"
