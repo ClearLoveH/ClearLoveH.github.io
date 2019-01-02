@@ -189,3 +189,7 @@ tags:
         ![](/img/in-post/post-Android/final_project/timeZone_1.png)
         ![](/img/in-post/post-Android/final_project/timeZone_2.png)
         ![](/img/in-post/post-Android/final_project/timeZone_3.png)
+    
+    - 成功效果如下：
+
+        ![](/img/in-post/post-Android/final_project/success_1.png)
