@@ -161,10 +161,31 @@ tags:
         ```
 - 获取时区，我们应用内的时间是根据用户所在时区显示的，而java中获取当前时区的方法是在麻烦，查资料的结果试了很多次都不行，最后终于找到有效的方法：
     ```java
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static int getTimeZone(){
-        TimeZone tz = TimeZone.getTimeZone(ZoneId.systemDefault());
-        System.out.println(tz.getRawOffset()/(60*60*1000));
-        return tz.getRawOffset()/(60*60*1000);
+    public static String toLocalTime(String utcTime) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        int offset = 8;
+        Date utcDate = null;
+        try {
+            utcDate = simpleDateFormat.parse(utcTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        TimeZone tz = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) { // 如果SDK版本大于26, 判断用户的时区进行转换, 否则默认为8
+            tz = TimeZone.getTimeZone(ZoneId.systemDefault());
+            offset = tz.getRawOffset()/(60*60*1000);
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(utcDate);
+        calendar.add(Calendar.HOUR, offset);
+        utcDate.after(new Date(offset));
+        String localTime = simpleDateFormat.format(calendar.getTime());
+        return localTime;
     }
     ```
+    - 一个比较坑的地方就是，我们的虚拟机默认时区是GMT，格林尼治时间，所以导致我们一直以为是获取时区的方法有问题，设置好我们对应的时区之后，就可以成功显示GMT-8的时间了，设置步骤：
+
+        ![](/img/in-post/post-Android/final_project/timeZone_1.png)
+        ![](/img/in-post/post-Android/final_project/timeZone_2.png)
+        ![](/img/in-post/post-Android/final_project/timeZone_3.png)
