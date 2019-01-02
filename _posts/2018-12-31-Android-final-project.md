@@ -193,3 +193,88 @@ tags:
     - 成功效果如下：
 
         ![](/img/in-post/post-Android/final_project/success_1.png)
+    - `在此基础上，修改时间显示的方式`，如果社区的post发表时间在当前时间的两天以前之内，就显示时间为`多久之前`：
+        ```java
+        public static String toLocalTime(String utcTime) {
+            String localTime = utcTime;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            int offset = 8;
+            Date utcDate = null;
+            try {
+                utcDate = simpleDateFormat.parse(utcTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            TimeZone tz = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) { // 如果SDK版本大于26, 判断用户的时区进行转换, 否则默认为8
+                tz = TimeZone.getTimeZone(ZoneId.systemDefault());
+                offset = tz.getRawOffset()/(60*60*1000);
+            }
+            //当前时间
+            Calendar cal = Calendar.getInstance();
+            Date currentDate = cal.getTime();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH ) + 1;//获取到0-11，与我们正常的月份差1
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+            int minute = cal.get(Calendar.MINUTE);
+
+            //计算传入时间与当前时间的差
+            cal.setTime(utcDate);
+            cal.add(Calendar.HOUR, offset);
+            utcDate.after(new Date(offset));
+            Date pre_date = cal.getTime();
+            int pre_Year = cal.get(Calendar.YEAR);
+            int pre_month = cal.get(Calendar.MONTH ) + 1;//获取到0-11，与我们正常的月份差1
+            int pre_day = cal.get(Calendar.DAY_OF_MONTH);
+            int pre_hour = cal.get(Calendar.HOUR_OF_DAY);
+            int pre_minute = cal.get(Calendar.MINUTE);
+
+            //若传入时间在当前时间的两天之内，则显示多久以前
+            cal.add(Calendar.DAY_OF_MONTH,2);
+            Date temp = cal.getTime();
+            if(temp.after(currentDate)){
+                if(day == pre_day){
+                    if(hour == pre_hour){
+                        if(minute == pre_minute)
+                            localTime = "1分钟前";
+                        else localTime = (minute - pre_minute) + "分钟前";
+                    }
+                    else {
+                        if(pre_hour>=12){
+                            localTime = "下午"+ pre_hour + ":" ;
+                        }
+                        else localTime = "上午" + pre_hour + ":" ;
+                        if(pre_minute < 10)
+                            localTime += "0" + pre_minute;
+                        else localTime += pre_minute;
+                    }
+                }
+                else{
+                    if(pre_hour>=12){
+                        localTime = "昨天 下午"+ pre_hour + ":" ;
+                    }
+                    else localTime = "昨天 上午" + pre_hour + ":" ;
+                    if(pre_minute < 10)
+                        localTime += "0" + pre_minute;
+                    else localTime += pre_minute;
+                }
+                return localTime;
+            }
+
+            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            localTime = simpleDateFormat.format(pre_date);
+            if(pre_hour >= 12){
+                localTime += " 下午"+ pre_hour + ":" ;
+            }
+            else localTime += " 上午"+ pre_hour + ":" ;
+            if(pre_minute < 10)
+                localTime += "0" + pre_minute;
+            else localTime += pre_minute;
+            return localTime;
+        }
+        ```
+    - 最终实现效果如下：
+
+        ![](/img/in-post/post-Android/final_project/success_2.png)
