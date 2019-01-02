@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<!-- saved from url=(0072)file:///C:/Users/1/AppData/Local/Temp/mume11902-23956-16xdelh.no9ml.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>PL0</title>
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="./PL0_files/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      <style> 
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+ 
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview   ">
+      <h3 class="mume-header" id="%E5%A7%93%E5%90%8D%E7%AB%A0%E6%81%92">姓名：章恒</h3>
+
+<h3 class="mume-header" id="%E5%AD%A6%E5%8F%B716340298">学号：16340298</h3>
+
+<h3 class="mume-header" id="%E6%96%B9%E5%90%91%E8%AE%A1%E5%BA%94">方向：计应</h3>
+
+<hr>
+<h2 class="mume-header" id="part-i">Part I</h2>
+
+<h4 class="mume-header" id="pl0-%E7%BC%96%E8%AF%91%E7%A8%8B%E5%BA%8F">PL0 编译程序：</h4>
+
+<pre data-role="codeBlock" data-info="" class="language-"><code>program  PL0 (filein, output);
+{带有代码生成的PL0编译程序}
+const
+  norw = 11; {保留字的个数}
+  txmax = 100; {标识符表长度}
+  nmax = 14; {数字的最大位数}
+  al = 10; {标识符的长度}
+  amax = 2047; {最大地址}
+  levmax = 3; {程序体嵌套的最大深度}
+  cxmax = 200; {代码数组的大小}
+Type 
+symbol = (nul, ident, number, plus, minus, times, slash, oddsym,
+  eql, neq, lss, leq, gtr, geq, lparen, rparen, comma, semicolon,
+  period, becomes, beginsym, endsym, ifsym, thensym,
+  whilesym, dosym, callsym, constsym, varsym, procsym );
+  alfa = packed array [1..al] of char;
+  objecttyp = (constant, variable, prosedure);
+  symset = set of symbol;
+  fct = (lit, opr, lod, sto, cal, int, jmp, jpc); {functions}
+  instruction = packed record
+		f : fct;  {功能码}
+		l : 0..levmax; {相对层数}
+		a : 0..amax; {相对地址}
+  End;
+{
+  LIT 0,a : 取常数a
+  OPR 0,a : 执行运算a
+  LOD l,a : 取层差为l的层﹑相对地址为a的变量
+  STO l,a : 存到层差为l的层﹑相对地址为a的变量
+  CAL l,a : 调用层差为l的过程
+  INT 0,a : t寄存器增加a
+  JMP 0,a : 转移到指令地址a处
+  JPC 0,a : 条件转移到指令地址a处 
+}
+Var   
+  filein, fileout: text;{文件输入流及输出流}
+  pl0SourceCode, savefile: string;{输入文件及输出文件的文件名}
+  ch : char; {最近读到的字符}
+  sym : symbol; {最近读到的符号}
+  id : alfa; {最近读到的标识符}
+  num : integer; {最近读到的数}
+  cc : integer; {当前行的字符计数}
+  ll : integer; {当前行的长度}
+  kk, err : integer;
+  cx : integer; {代码数组的当前下标}
+  line : array [1..81] of char;
+  a : alfa;
+  code : array[0..cxmax] Of instruction;
+  word : array[1..norw] Of alfa;
+  wsym : array[1..norw] Of symbol;
+  ssym : array[char] Of symbol;
+  mnemonic : array[fct] Of 
+             packed array[1..5] Of char;
+  declbegsys, statbegsys, facbegsys : symset;
+  table : array[0..txmax] Of 
+          Record
+            name : alfa;
+            Case kind: objecttyp Of 
+              constant : (val:integer );
+              variable,prosedure: (level,adr: integer )
+          End;
+Procedure error( n : integer );
+Begin
+  writeln( '****', ' ':cc-1, '^', n:2 );
+  writeln(fileout,'****', ' ':cc-1, '^', n:2);
+  err := err+1
+End;
+Procedure getsym;
+Var i,j,k : integer;
+Procedure getch;
+Begin
+  If cc = ll Then
+    Begin
+      If eof(filein) Then
+        Begin
+          writeln('program incomplete');
+          writeln('program incomplete');
+          close(filein);
+          exit;
+        End;
+      ll := 0;
+      cc := 0;
+      write(cx:4,' ');
+      write(fileout,cx:4,' ');
+      While Not eoln(filein) Do
+        Begin
+          ll := ll+1;
+          read(filein,ch);
+          write(ch);
+          write(fileout,ch);
+          line[ll] := ch
+        End;
+      writeln;
+      writeln(fileout);
+      readln(filein);
+      ll := ll+1;
+      line[ll] := ' '
+    End;
+  cc := cc+1;
+  ch := line[cc]
+End {getch};
+Begin {getsym}
+  While ch = ' ' Do getch;
+  If ch In ['a'..'z'] Then
+    Begin {标识符或保留字}
+      k := 0;
+      Repeat
+        If k &lt; al Then
+          Begin
+            k := k+1;
+            a[k] := ch
+          End;
+        getch
+      Until Not( ch In ['a'..'z','0'..'9']);
+      If k &gt;= kk Then 
+        kk := k
+      Else Repeat
+        a[kk] := ' ';
+        kk := kk-1
+        Until kk = k;
+      id := a;
+      i := 1;
+      j := norw;
+      Repeat
+        k := (i+j) Div 2;
+        If id &lt;= word[k]
+          Then j := k-1;
+        If id &gt;= word[k]
+          Then i := k+1
+      Until i &gt; j;
+      If i-1 &gt; j Then sym := wsym[k]
+      Else sym := ident
+    End
+  Else If ch In ['0'..'9'] Then
+     Begin {数字} 
+       k := 0;
+       num := 0;
+       sym := number;
+       Repeat
+         num := 10*num+(ord(ch)-ord('0'));
+         k := k+1;
+         getch
+       Until Not( ch In ['0'..'9']);
+        If k &gt; nmax Then 
+          error(30)
+        End
+  Else If ch = ':' Then
+    Begin
+      getch;
+      If ch = '=' Then
+        Begin
+          sym := becomes;
+          getch
+        End
+      Else sym := nul
+        End
+  Else If ch = '&lt;' Then
+    Begin
+      getch;
+      If ch = '=' Then
+        Begin
+          sym := leq;
+          getch
+        End
+      Else If ch = '&gt;' Then
+          Begin
+            sym := neq;
+            getch
+          End
+      Else sym := lss
+        End
+  Else If ch = '&gt;' Then
+    Begin
+      getch;
+      If ch = '=' Then
+        Begin
+          sym := geq;
+          getch
+        End
+      Else sym := gtr
+        End
+  Else
+    Begin
+      sym := ssym[ch];
+      getch
+    End
+End {getsym};
+Procedure gen( x: fct; y,z : integer );
+Begin
+  If cx &gt; cxmax Then
+    Begin
+      writeln('program too long');
+      writeln(fileout,'program too long');
+      close(filein);
+      exit
+    End;
+  With code[cx] Do
+    Begin
+      f := x;
+      l := y;
+      a := z
+    End;
+  cx := cx+1
+End {gen};
+Procedure test( s1,s2 :symset; n: integer );
+Begin
+  If Not ( sym In s1 ) Then
+    Begin
+      error(n);
+      s1 := s1+s2;
+      While Not(sym In s1) Do
+        getsym
+    End
+End {test};
+Procedure block( lev,tx : integer; fsys : symset );
+Var  dx : integer; {本过程数据空间分配下标}
+  tx0: integer;    {本过程标识表起始下标}
+  cx0: integer;    {本过程代码起始下标}
+Procedure enter( k : objecttyp );
+Begin {把object填入符号表中}
+  tx := tx+1;
+  With table[tx] Do
+    Begin
+      name := id;
+      kind := k;
+      Case k Of 
+        constant :
+            Begin
+              If num &gt; amax Then
+                Begin
+                  error(30);
+                  num := 0
+                End;
+              val := num
+            End;
+        variable :
+            Begin
+              level := lev;
+              adr := dx;
+              dx := dx+1
+            End;
+        prosedure: level := lev;
+      End
+    End
+End {enter};
+Function position (id : alfa): integer;
+Var i : integer;
+Begin {在标识符表中查标识符id}
+  table[0].name := id;
+  i := tx;
+  While table[i].name &lt;&gt; id Do
+    i := i-1;
+  position := i
+End {position};
+Procedure constdeclaration;
+Begin
+  If sym = ident Then
+    Begin
+      getsym;
+      If sym In [eql,becomes] Then
+        Begin
+          If sym = becomes Then
+            error(1);
+          getsym;
+          If sym = number Then
+            Begin
+              enter(constant);
+              getsym
+            End
+          Else error(2)
+        End
+      Else error(3)
+    End
+  Else error(4)
+End {constdeclaration};
+Procedure vardeclaration;
+Begin
+  If sym = ident Then
+    Begin
+      enter(variable);
+      getsym
+    End
+  Else error(4)
+End {vardeclaration};
+Procedure listcode;
+Var i : integer;
+Begin {列出本程序体生成的代码}
+  For i := cx0 To cx-1 Do
+    With code[i] Do
+      Begin
+        writeln( i:4, mnemonic[f]:7,l:3, a:5);
+        writeln(fileout,i:4,mnemonic[f]:7,l:3,a:5);
+      End;
+End {listcode};
+Procedure statement( fsys : symset );
+Var i,cx1,cx2: integer;
+Procedure expression( fsys: symset);
+Var addop : symbol;
+Procedure term( fsys : symset);
+Var mulop: symbol ;
+Procedure factor( fsys : symset );
+Var i : integer;
+Begin
+  test( facbegsys, fsys, 24 );
+  While sym In facbegsys Do
+    Begin
+      If sym = ident Then
+        Begin
+          i := position(id);
+          If i= 0 Then 
+            error(11)
+          Else
+            With table[i] Do
+              Case kind Of 
+                constant : gen(lit,0,val);
+                variable : gen(lod,lev-level,adr);
+                prosedure: error(21)
+              End;
+          getsym
+        End
+      Else If sym = number Then
+        Begin
+          If num &gt; amax Then
+            Begin
+              error(30);
+              num := 0
+            End;
+          gen(lit,0,num);
+          getsym
+        End
+      Else If sym = lparen Then
+        Begin
+          getsym;
+          expression([rparen]+fsys);
+          If sym = rparen Then 
+            getsym
+          Else error(22)
+        End;
+      test(fsys,[lparen],23)
+    End
+End {factor};
+Begin {term}
+  factor(fsys+[times,slash]);
+  While sym In [times,slash] Do
+    Begin
+      mulop := sym;
+      getsym;
+      factor( fsys+[times,slash] );
+      If mulop = times Then 
+        gen( opr,0,4 )
+      Else gen( opr,0,5)
+    End
+End {term};
+Begin {expression}
+  If sym In [plus, minus] Then
+    Begin
+      addop := sym;
+      getsym;
+      term( fsys+[plus,minus]);
+      If addop = minus Then 
+        gen(opr,0,1)
+    End
+  Else term( fsys+[plus,minus]);
+  While sym In [plus,minus] Do
+    Begin
+      addop := sym;
+      getsym;
+      term( fsys+[plus,minus] );
+      If addop = plus Then 
+        gen( opr,0,2)
+      Else gen( opr,0,3)
+    End
+End {expression};
+Procedure condition( fsys : symset );
+Var relop : symbol;
+Begin
+  If sym = oddsym Then
+    Begin
+      getsym;
+      expression(fsys);
+      gen(opr,0,6)
+    End
+  Else
+    Begin
+      expression( [eql,neq,lss,gtr,leq,geq]+fsys);
+      If Not( sym In [eql,neq,lss,leq,gtr,geq]) Then 
+        error(20)
+      Else
+        Begin
+          relop := sym;
+          getsym;
+          expression(fsys);
+          Case relop Of 
+            eql : gen(opr,0,8);
+            neq : gen(opr,0,9);
+            lss : gen(opr,0,10);
+            geq : gen(opr,0,11);
+            gtr : gen(opr,0,12);
+            leq : gen(opr,0,13);
+          End
+        End
+    End
+End {condition};
+Begin {statement}
+  If sym = ident Then
+    Begin
+      i := position(id);
+      If i= 0 Then 
+        error(11)
+      Else If table[i].kind &lt;&gt; variable Then
+             Begin {对非变量赋值}
+               error(12);
+               i := 0
+             End;
+      getsym;
+      If sym = becomes Then 
+        getsym
+      Else error(13);
+      expression(fsys);
+      If i &lt;&gt; 0 Then
+        With table[i] Do
+          gen(sto,lev-level,adr)
+    End
+  Else If sym = callsym Then
+         Begin
+           getsym;
+           If sym &lt;&gt; ident Then 
+            error(14)
+           Else
+             Begin
+               i := position(id);
+               If i = 0 Then 
+                error(11)
+               Else
+                 With table[i] Do
+                   If kind = prosedure Then 
+                    gen(cal,lev-level,adr)
+                   Else error(15);
+               getsym
+             End
+         End
+  Else If sym = ifsym Then
+         Begin
+           getsym;
+           condition([thensym,dosym]+fsys);
+           If sym = thensym Then 
+            getsym
+           Else error(16);
+           cx1 := cx;
+           gen(jpc,0,0);
+           statement(fsys);
+           code[cx1].a := cx
+         End
+  Else If sym = beginsym Then
+         Begin
+           getsym;
+           statement([semicolon,endsym]+fsys);
+           While sym In ([semicolon]+statbegsys) Do
+             Begin
+               If sym = semicolon Then 
+                getsym
+               Else error(10);
+               statement([semicolon,endsym]+fsys)
+             End;
+           If sym = endsym Then 
+            getsym
+           Else error(17)
+         End
+  Else If sym = whilesym Then
+         Begin
+           cx1 := cx;
+           getsym;
+           condition([dosym]+fsys);
+           cx2 := cx;
+           gen(jpc,0,0);
+           If sym = dosym Then 
+            getsym
+           Else error(18);
+           statement(fsys);
+           gen(jmp,0,cx1);
+           code[cx2].a := cx;
+         End;
+  test(fsys,[],19);
+End {statement};
+Begin {block}
+  dx := 3;
+  tx0 := tx;
+  table[tx].adr := cx;
+  gen(jmp,0,0);
+  If lev &gt; levmax Then 
+    error(32);
+  Repeat
+    If sym = constsym Then
+      Begin
+        getsym;
+        Repeat
+          constdeclaration;
+          While sym = comma Do
+            Begin
+              getsym;
+              constdeclaration
+            End;
+          If sym = semicolon Then 
+            getsym
+          Else error(5)
+        Until sym &lt;&gt; ident
+      End;
+    If sym = varsym Then
+      Begin
+        getsym;
+        Repeat
+          vardeclaration;
+          While sym = comma Do
+            Begin
+              getsym;
+              vardeclaration
+            End;
+          If sym = semicolon Then 
+            getsym
+          Else error(5)
+        Until sym &lt;&gt; ident;
+      End;
+    While sym = procsym Do
+      Begin
+        getsym;
+        If sym = ident Then
+          Begin
+            enter(prosedure);
+            getsym
+          End
+        Else error(4);
+        If sym = semicolon Then 
+          getsym
+        Else error(5);
+        block(lev+1,tx,[semicolon]+fsys);
+        If sym = semicolon Then
+          Begin
+            getsym;
+            test( statbegsys+[ident,procsym],fsys,6)
+          End
+        Else error(5)
+      End;
+    test( statbegsys+[ident],declbegsys,7)
+  Until Not ( sym In declbegsys );
+  code[table[tx0].adr].a := cx;
+  With table[tx0] Do
+    Begin
+      adr := cx; {代码开始地址}
+    End;
+  cx0 := cx;
+  gen(int,0,dx);
+  statement( [semicolon,endsym]+fsys);
+  gen(opr,0,0); {生成返回指令}
+  test( fsys, [],8 );
+  listcode;
+End {block};
+Procedure interpret;
+Const stacksize = 500;
+Var p,b,t: integer; {程序地址寄存器, 基地址寄存器,栈顶地址寄存器}
+  i : instruction; {指令寄存器}
+  s : array[1..stacksize] Of integer;  {数据存储栈}
+Function base( l : integer ): integer;
+Var b1 : integer;
+Begin
+  b1 := b; {顺静态链求层差为l的层的基地址}
+  While l &gt; 0 Do
+    Begin
+      b1 := s[b1];
+      l := l-1
+    End;
+  base := b1
+End {base};
+Begin
+  writeln( 'START PL/0' );
+  writeln(fileout,'START PL/0');
+  t := 0;
+  b := 1;
+  p := 0;
+  s[1] := 0;
+  s[2] := 0;
+  s[3] := 0;
+  Repeat
+    i := code[p];
+    p := p+1;
+    With i Do
+      Case f Of 
+        lit :
+          Begin
+            t := t+1;
+            s[t] := a;
+          End;
+        opr : Case a Of {运算}
+            0:
+              Begin {返回}
+                t := b-1;
+                p := s[t+3];
+                b := s[t+2];
+              End;
+            1: s[t] := -s[t];
+            2:
+              Begin
+                t := t-1;
+                s[t] := s[t]+s[t+1]
+              End;
+            3:
+              Begin
+                t := t-1;
+                s[t] := s[t]-s[t+1]
+              End;
+            4:
+              Begin
+                t := t-1;
+                s[t] := s[t]*s[t+1]
+              End;
+            5:
+              Begin
+                t := t-1;
+                s[t] := s[t]Div s[t+1]
+              End;
+            6: s[t] := ord(odd(s[t]));
+            8:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t]=s[t+1])
+              End;
+            9:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t]&lt;&gt;s[t+1])
+              End;
+            10:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t]&lt; s[t+1])
+              End;
+            11:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t] &gt;= s[t+1])
+              End;
+            12:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t] &gt; s[t+1])
+              End;
+            13:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t] &lt;= s[t+1]);
+              End;
+          End;
+        lod :
+          Begin
+            t := t+1;
+            s[t] := s[base(l)+a]
+          End;
+        sto :
+          Begin
+            s[base(l)+a] := s[t];
+            writeln(s[t]);
+            writeln(fileout,s[t]);
+            t := t-1
+          End;
+        cal :
+          Begin {generate new block mark}
+            s[t+1] := base(l);
+            s[t+2] := b;
+            s[t+3] := p;
+            b := t+1;
+            p := a;
+          End;
+        int : t := t+a;
+        jmp : p := a;
+        jpc :
+          Begin
+            If s[t] = 0 Then 
+              p := a;
+              t := t-1;
+          End;
+      End {with, case}
+  Until p = 0;
+  writeln('END PL/0');
+  writeln(fileout,'END PL/0');
+End {interpret};
+Begin {主程序}
+
+  writeln('Input the file name of the PL0 source program :');
+  readln(pl0SourceCode);
+  assign(filein,pl0SourceCode);
+  reset(filein);
+  writeln('Input the file name to save the compile result :');
+  readln(savefile);
+  assign(fileout,savefile);
+  rewrite(fileout);
+
+  For ch := 'A' To ';' Do
+    ssym[ch] := nul;
+  word[1] := 'begin        ';
+  word[2] := 'call         ';
+  word[3] := 'const        ';
+  word[4] := 'do           ';
+  word[5] := 'end          ';
+  word[6] := 'if           ';
+  word[7] := 'odd          ';
+  word[8] := 'procedure    ';
+  word[9] := 'then         ';
+  word[10] := 'var          ';
+  word[11] := 'while        ';
+  wsym[1] := beginsym;
+  wsym[2] := callsym;
+  wsym[3] := constsym;
+  wsym[4] := dosym;
+  wsym[5] := endsym;
+  wsym[6] := ifsym;
+  wsym[7] := oddsym;
+  wsym[8] := procsym;
+  wsym[9] := thensym;
+  wsym[10] := varsym;
+  wsym[11] := whilesym;
+  ssym['+'] := plus;
+  ssym['-'] := minus;
+  ssym['*'] := times;
+  ssym['/'] := slash;
+  ssym['('] := lparen;
+  ssym[')'] := rparen;
+  ssym['='] := eql;
+  ssym[','] := comma;
+  ssym['.'] := period;
+  ssym['&lt;'] := lss;
+  ssym['&gt;'] := gtr;
+  ssym[';'] := semicolon;
+  mnemonic[lit] := 'LIT  ';
+  mnemonic[opr] := 'OPR  ';
+  mnemonic[lod] := 'LOD  ';
+  mnemonic[sto] := 'STO  ';
+  mnemonic[cal] := 'CAL  ';
+  mnemonic[int] := 'INT  ';
+  mnemonic[jmp] := 'JMP  ';
+  mnemonic[jpc] := 'JPC  ';
+  declbegsys := [ constsym, varsym, procsym ];
+  statbegsys := [ beginsym, callsym, ifsym, whilesym];
+  facbegsys := [ ident, number, lparen ];
+  err := 0;
+  cc := 0;
+  cx := 0;
+  ll := 0;
+  ch := ' ';
+  kk := al;
+  getsym;
+  block( 0,0,[period]+declbegsys+statbegsys );
+  If sym &lt;&gt; period
+    Then error(9);
+  If err = 0 Then 
+    interpret
+  Else write('ERRORS IN PL/0 PROGRAM');
+  writeln;
+  close(filein); 
+  close(fileout);
+  readln(pl0SourceCode);
+End.
+</code></pre><h4 class="mume-header" id="pl0-%E6%BA%90%E7%A8%8B%E5%BA%8F">PL0 源程序：</h4>
+
+<pre data-role="codeBlock" data-info="" class="language-"><code>const  m = 7, n = 85;
+var  x, y, z, q, r;
+
+procedure  multiply;
+  var  a, b;
+  begin  a := x;  b := y;  z := 0;
+  while b &gt; 0 do
+  begin  
+    if odd b then z := z + a;
+      a := 2*a ;  b := b/2 ;
+    end;
+  end;
+
+procedure  divide;
+  var  w;
+  begin  r := x;  q := 0;  w := y;
+  while w &lt;= r do w := 2*w ;
+  while w &gt; y do
+    begin  q := 2*q;  w := w/2;
+      if w &lt;= r then
+        begin  r := r-w;  q := q+1 end
+      end;
+    end;
+
+procedure  gcd;
+  var  f, g ;
+  begin  f := x;  g := y;
+  while f &lt;&gt; g do
+    begin
+      if f &lt; g then g := g-f;
+      if g &lt; f then f := f-g;
+    end;
+    z := f;
+  end;
+
+begin
+  x := m;  y := n;  call multiply;
+  x := 25;  y:= 3;  call divide;
+  x := 84;  y := 36;  call gcd;
+end.
+
+</code></pre><h4 class="mume-header" id="pl0-%E6%BA%90%E7%A8%8B%E5%BA%8F%E8%A2%AB%E7%BC%96%E8%AF%91%E5%90%8E%E4%BA%A7%E7%94%9F%E7%9A%84%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%A0%81">PL0 源程序被编译后产生的中间代码：</h4>
+
+<pre data-role="codeBlock" data-info="" class="language-"><code>   0 const  m = 7, n = 85;
+   1 var  x, y, z, q, r;
+   1
+   1 procedure  multiply;
+   1   var  a, b;
+   2   begin  a := x;  b := y;  z := 0;
+   9   while b &gt; 0 do
+  13   begin
+  13     if odd b then z := z + a;
+  20       a := 2*a ;  b := b/2 ;
+  28     end;
+  29   end;
+   2  INT    0    5
+   3  LOD    1    3
+   4  STO    0    3
+   5  LOD    1    4
+   6  STO    0    4
+   7  LIT    0    0
+   8  STO    1    5
+   9  LOD    0    4
+  10  LIT    0    0
+  11  OPR    0   12
+  12  JPC    0   29
+  13  LOD    0    4
+  14  OPR    0    6
+  15  JPC    0   20
+  16  LOD    1    5
+  17  LOD    0    3
+  18  OPR    0    2
+  19  STO    1    5
+  20  LIT    0    2
+  21  LOD    0    3
+  22  OPR    0    4
+  23  STO    0    3
+  24  LOD    0    4
+  25  LIT    0    2
+  26  OPR    0    5
+  27  STO    0    4
+  28  JMP    0    9
+  29  OPR    0    0
+  30
+  30 procedure  divide;
+  30   var  w;
+  31   begin  r := x;  q := 0;  w := y;
+  38   while w &lt;= r do w := 2*w ;
+  47   while w &gt; y do
+  51     begin  q := 2*q;  w := w/2;
+  59       if w &lt;= r then
+  62         begin  r := r-w;  q := q+1 end
+  71       end;
+  72     end;
+  31  INT    0    4
+  32  LOD    1    3
+  33  STO    1    7
+  34  LIT    0    0
+  35  STO    1    6
+  36  LOD    1    4
+  37  STO    0    3
+  38  LOD    0    3
+  39  LOD    1    7
+  40  OPR    0   13
+  41  JPC    0   47
+  42  LIT    0    2
+  43  LOD    0    3
+  44  OPR    0    4
+  45  STO    0    3
+  46  JMP    0   38
+  47  LOD    0    3
+  48  LOD    1    4
+  49  OPR    0   12
+  50  JPC    0   72
+  51  LIT    0    2
+  52  LOD    1    6
+  53  OPR    0    4
+  54  STO    1    6
+  55  LOD    0    3
+  56  LIT    0    2
+  57  OPR    0    5
+  58  STO    0    3
+  59  LOD    0    3
+  60  LOD    1    7
+  61  OPR    0   13
+  62  JPC    0   71
+  63  LOD    1    7
+  64  LOD    0    3
+  65  OPR    0    3
+  66  STO    1    7
+  67  LOD    1    6
+  68  LIT    0    1
+  69  OPR    0    2
+  70  STO    1    6
+  71  JMP    0   47
+  72  OPR    0    0
+  73
+  73 procedure  gcd;
+  73   var  f, g ;
+  74   begin  f := x;  g := y;
+  79   while f &lt;&gt; g do
+  83     begin
+  83       if f &lt; g then g := g-f;
+  91       if g &lt; f then f := f-g;
+  99     end;
+ 100     z := f;
+ 102   end;
+  74  INT    0    5
+  75  LOD    1    3
+  76  STO    0    3
+  77  LOD    1    4
+  78  STO    0    4
+  79  LOD    0    3
+  80  LOD    0    4
+  81  OPR    0    9
+  82  JPC    0  100
+  83  LOD    0    3
+  84  LOD    0    4
+  85  OPR    0   10
+  86  JPC    0   91
+  87  LOD    0    4
+  88  LOD    0    3
+  89  OPR    0    3
+  90  STO    0    4
+  91  LOD    0    4
+  92  LOD    0    3
+  93  OPR    0   10
+  94  JPC    0   99
+  95  LOD    0    3
+  96  LOD    0    4
+  97  OPR    0    3
+  98  STO    0    3
+  99  JMP    0   79
+ 100  LOD    0    3
+ 101  STO    1    5
+ 102  OPR    0    0
+ 103
+ 103 begin
+ 104   x := m;  y := n;  call multiply;
+ 109   x := 25;  y:= 3;  call divide;
+ 114   x := 84;  y := 36;  call gcd;
+ 119 end.
+ 103  INT    0    8
+ 104  LIT    0    7
+ 105  STO    0    3
+ 106  LIT    0   85
+ 107  STO    0    4
+ 108  CAL    0    2
+ 109  LIT    0   25
+ 110  STO    0    3
+ 111  LIT    0    3
+ 112  STO    0    4
+ 113  CAL    0   31
+ 114  LIT    0   84
+ 115  STO    0    3
+ 116  LIT    0   36
+ 117  STO    0    4
+ 118  CAL    0   74
+ 119  OPR    0    0
+</code></pre><h4 class="mume-header" id="%E8%BF%90%E8%A1%8C%E6%95%B0%E6%8D%AE">运行数据：</h4>
+
+<pre class="language-text">START PL/0
+7
+85
+7
+85
+0
+7
+14
+42
+28
+21
+35
+56
+10
+112
+5
+147
+224
+2
+448
+1
+595
+896
+0
+25
+3
+25
+0
+3
+6
+12
+24
+48
+0
+24
+1
+1
+2
+12
+4
+6
+8
+3
+84
+36
+84
+36
+48
+12
+24
+12
+12
+END PL/0
+</pre>
+<h2 class="mume-header" id="part-ii">PART II</h2>
+
+<h4 class="mume-header" id="pl0-%E7%BC%96%E8%AF%91%E7%A8%8B%E5%BA%8F-1">PL0 编译程序</h4>
+
+<pre data-role="codeBlock" data-info="" class="language-"><code>program  PL0 (filein, output);
+{带有代码生成的PL0编译程序}
+const
+  norw = 13; {保留字的个数，新加两个保留字}
+  txmax = 100; {标识符表长度}
+  nmax = 14; {数字的最大位数}
+  al = 10; {标识符的长度}
+  amax = 2047; {最大地址}
+  levmax = 3; {程序体嵌套的最大深度}
+  cxmax = 200; {代码数组的大小}
+Type 
+symbol = (nul, ident, number, plus, minus, times, slash, oddsym,
+  eql, neq, lss, leq, gtr, geq, lparen, rparen, comma, semicolon,
+  period, becomes, beginsym, endsym, ifsym, thensym,
+  whilesym, dosym, callsym, constsym, varsym, procsym, readsym, writesym);
+  alfa = packed array [1..al] of char;
+  objecttyp = (constant, variable, prosedure);
+  symset = set of symbol;
+  fct = (lit, opr, lod, sto, cal, int, jmp, jpc, red, wrt); {functions}
+  instruction = packed record
+    f : fct;  {功能码}
+    l : 0..levmax; {相对层数}
+    a : 0..amax; {相对地址}
+  End;
+{
+  LIT 0,a : 取常数a
+  OPR 0,a : 执行运算a
+  LOD l,a : 取层差为l的层﹑相对地址为a的变量
+  STO l,a : 存到层差为l的层﹑相对地址为a的变量
+  CAL l,a : 调用层差为l的过程
+  INT 0,a : t寄存器增加a
+  JMP 0,a : 转移到指令地址a处
+  JPC 0,a : 条件转移到指令地址a处 
+  RED 1,a : 读取数据然后存入变量 
+  WRT 0,0 : 输出栈顶内容
+}
+Var   
+  filein, fileout: text;{文件输入流及输出流}
+  pl0SourceCode, savefile: string;{输入文件及输出文件的文件名}
+  ch : char; {最近读到的字符}
+  sym : symbol; {最近读到的符号}
+  id : alfa; {最近读到的标识符}
+  num : integer; {最近读到的数}
+  cc : integer; {当前行的字符计数}
+  ll : integer; {当前行的长度}
+  kk, err : integer;
+  cx : integer; {代码数组的当前下标}
+  line : array [1..81] of char;
+  a : alfa;
+  code : array[0..cxmax] Of instruction;
+  word : array[1..norw] Of alfa;
+  wsym : array[1..norw] Of symbol;
+  ssym : array[char] Of symbol;
+  mnemonic : array[fct] Of 
+             packed array[1..5] Of char;
+  declbegsys, statbegsys, facbegsys : symset;
+  table : array[0..txmax] Of 
+          Record
+            name : alfa;
+            Case kind: objecttyp Of 
+              constant : (val:integer );
+              variable,prosedure: (level,adr: integer )
+          End;
+Procedure error( n : integer );
+Begin
+  writeln( '****', ' ':cc-1, '^', n:2 );
+  writeln(fileout,'****', ' ':cc-1, '^', n:2);
+  err := err+1
+End;
+Procedure getsym;
+Var i,j,k : integer;
+Procedure getch;
+Begin
+  If cc = ll Then
+    Begin
+      If eof(filein) Then
+        Begin
+          writeln('program incomplete');
+          writeln('program incomplete');
+          close(filein);
+          exit;
+        End;
+      ll := 0;
+      cc := 0;
+      write(cx:4,' ');
+      write(fileout,cx:4,' ');
+      While Not eoln(filein) Do
+        Begin
+          ll := ll+1;
+          read(filein,ch);
+          write(ch);
+          write(fileout,ch);
+          line[ll] := ch
+        End;
+      writeln;
+      writeln(fileout);
+      readln(filein);
+      ll := ll+1;
+      line[ll] := ' '
+    End;
+  cc := cc+1;
+  ch := line[cc]
+End {getch};
+Begin {getsym}
+  While ch = ' ' Do getch;
+  If ch In ['a'..'z'] Then
+    Begin {标识符或保留字}
+      k := 0;
+      Repeat
+        If k &lt; al Then
+          Begin
+            k := k+1;
+            a[k] := ch
+          End;
+        getch
+      Until Not( ch In ['a'..'z','0'..'9']);
+      If k &gt;= kk Then 
+        kk := k
+      Else Repeat
+        a[kk] := ' ';
+        kk := kk-1
+        Until kk = k;
+      id := a;
+      i := 1;
+      j := norw;
+      Repeat
+        k := (i+j) Div 2;
+        If id &lt;= word[k]
+          Then j := k-1;
+        If id &gt;= word[k]
+          Then i := k+1
+      Until i &gt; j;
+      If i-1 &gt; j Then sym := wsym[k]
+      Else sym := ident
+    End
+  Else If ch In ['0'..'9'] Then
+     Begin {数字} 
+       k := 0;
+       num := 0;
+       sym := number;
+       Repeat
+         num := 10*num+(ord(ch)-ord('0'));
+         k := k+1;
+         getch
+       Until Not( ch In ['0'..'9']);
+        If k &gt; nmax Then 
+          error(30)
+        End
+  Else If ch = ':' Then
+    Begin
+      getch;
+      If ch = '=' Then
+        Begin
+          sym := becomes;
+          getch
+        End
+      Else sym := nul
+        End
+  Else If ch = '&lt;' Then
+    Begin
+      getch;
+      If ch = '=' Then
+        Begin
+          sym := leq;
+          getch
+        End
+      Else If ch = '&gt;' Then
+          Begin
+            sym := neq;
+            getch
+          End
+      Else sym := lss
+        End
+  Else If ch = '&gt;' Then
+    Begin
+      getch;
+      If ch = '=' Then
+        Begin
+          sym := geq;
+          getch
+        End
+      Else sym := gtr
+        End
+  Else
+    Begin
+      sym := ssym[ch];
+      getch
+    End
+End {getsym};
+Procedure gen( x: fct; y,z : integer );
+Begin
+  If cx &gt; cxmax Then
+    Begin
+      writeln('program too long');
+      writeln(fileout,'program too long');
+      close(filein);
+      exit
+    End;
+  With code[cx] Do
+    Begin
+      f := x;
+      l := y;
+      a := z
+    End;
+  cx := cx+1
+End {gen};
+Procedure test( s1,s2 :symset; n: integer );
+Begin
+  If Not ( sym In s1 ) Then
+    Begin
+      error(n);
+      s1 := s1+s2;
+      While Not(sym In s1) Do
+        getsym
+    End
+End {test};
+Procedure block( lev,tx : integer; fsys : symset );
+Var  dx : integer; {本过程数据空间分配下标}
+  tx0: integer;    {本过程标识表起始下标}
+  cx0: integer;    {本过程代码起始下标}
+Procedure enter( k : objecttyp );
+Begin {把object填入符号表中}
+  tx := tx+1;
+  With table[tx] Do
+    Begin
+      name := id;
+      kind := k;
+      Case k Of 
+        constant :
+            Begin
+              If num &gt; amax Then
+                Begin
+                  error(30);
+                  num := 0
+                End;
+              val := num
+            End;
+        variable :
+            Begin
+              level := lev;
+              adr := dx;
+              dx := dx+1
+            End;
+        prosedure: level := lev;
+      End
+    End
+End {enter};
+Function position (id : alfa): integer;
+Var i : integer;
+Begin {在标识符表中查标识符id}
+  table[0].name := id;
+  i := tx;
+  While table[i].name &lt;&gt; id Do
+    i := i-1;
+  position := i
+End {position};
+Procedure constdeclaration;
+Begin
+  If sym = ident Then
+    Begin
+      getsym;
+      If sym In [eql,becomes] Then
+        Begin
+          If sym = becomes Then
+            error(1);
+          getsym;
+          If sym = number Then
+            Begin
+              enter(constant);
+              getsym
+            End
+          Else error(2)
+        End
+      Else error(3)
+    End
+  Else error(4)
+End {constdeclaration};
+Procedure vardeclaration;
+Begin
+  If sym = ident Then
+    Begin
+      enter(variable);
+      getsym
+    End
+  Else error(4)
+End {vardeclaration};
+Procedure listcode;
+Var i : integer;
+Begin {列出本程序体生成的代码}
+  For i := cx0 To cx-1 Do
+    With code[i] Do
+      Begin
+        writeln( i:4, mnemonic[f]:7,l:3, a:5);
+        writeln(fileout,i:4,mnemonic[f]:7,l:3,a:5);
+      End;
+End {listcode};
+Procedure statement( fsys : symset );
+Var i,cx1,cx2: integer;
+Procedure expression( fsys: symset);
+Var addop : symbol;
+Procedure term( fsys : symset);
+Var mulop: symbol ;
+Procedure factor( fsys : symset );
+Var i : integer;
+Begin
+  test( facbegsys, fsys, 24 );
+  While sym In facbegsys Do
+    Begin
+      If sym = ident Then
+        Begin
+          i := position(id);
+          If i= 0 Then 
+            error(11)
+          Else
+            With table[i] Do
+              Case kind Of 
+                constant : gen(lit,0,val);
+                variable : gen(lod,lev-level,adr);
+                prosedure: error(21)
+              End;
+          getsym
+        End
+      Else If sym = number Then
+        Begin
+          If num &gt; amax Then
+            Begin
+              error(30);
+              num := 0
+            End;
+          gen(lit,0,num);
+          getsym
+        End
+      Else If sym = lparen Then
+        Begin
+          getsym;
+          expression([rparen]+fsys);
+          If sym = rparen Then 
+            getsym
+          Else error(22)
+        End;
+      test(fsys,[lparen],23)
+    End
+End {factor};
+Begin {term}
+  factor(fsys+[times,slash]);
+  While sym In [times,slash] Do
+    Begin
+      mulop := sym;
+      getsym;
+      factor( fsys+[times,slash] );
+      If mulop = times Then 
+        gen( opr,0,4 )
+      Else gen( opr,0,5)
+    End
+End {term};
+Begin {expression}
+  If sym In [plus, minus] Then
+    Begin
+      addop := sym;
+      getsym;
+      term( fsys+[plus,minus]);
+      If addop = minus Then 
+        gen(opr,0,1)
+    End
+  Else term( fsys+[plus,minus]);
+  While sym In [plus,minus] Do
+    Begin
+      addop := sym;
+      getsym;
+      term( fsys+[plus,minus] );
+      If addop = plus Then 
+        gen( opr,0,2)
+      Else gen( opr,0,3)
+    End
+End {expression};
+Procedure condition( fsys : symset );
+Var relop : symbol;
+Begin
+  If sym = oddsym Then
+    Begin
+      getsym;
+      expression(fsys);
+      gen(opr,0,6)
+    End
+  Else
+    Begin
+      expression( [eql,neq,lss,gtr,leq,geq]+fsys);
+      If Not( sym In [eql,neq,lss,leq,gtr,geq]) Then 
+        error(20)
+      Else
+        Begin
+          relop := sym;
+          getsym;
+          expression(fsys);
+          Case relop Of 
+            eql : gen(opr,0,8);
+            neq : gen(opr,0,9);
+            lss : gen(opr,0,10);
+            geq : gen(opr,0,11);
+            gtr : gen(opr,0,12);
+            leq : gen(opr,0,13);
+          End
+        End
+    End
+End {condition};
+Begin {statement}
+  If sym = ident Then
+    Begin
+      i := position(id);
+      If i= 0 Then 
+        error(11)
+      Else If table[i].kind &lt;&gt; variable Then
+             Begin {对非变量赋值}
+               error(12);
+               i := 0
+             End;
+      getsym;
+      If sym = becomes Then 
+        getsym
+      Else error(13);
+      expression(fsys);
+      If i &lt;&gt; 0 Then
+        With table[i] Do
+          gen(sto,lev-level,adr)
+    End
+  Else If sym = callsym Then
+         Begin
+           getsym;
+           If sym &lt;&gt; ident Then 
+            error(14)
+           Else
+             Begin
+               i := position(id);
+               If i = 0 Then 
+                error(11)
+               Else
+                 With table[i] Do
+                   If kind = prosedure Then 
+                    gen(cal,lev-level,adr)
+                   Else error(15);
+               getsym
+             End
+         End
+  Else If sym = ifsym Then
+         Begin
+           getsym;
+           condition([thensym,dosym]+fsys);
+           If sym = thensym Then 
+            getsym
+           Else error(16);
+           cx1 := cx;
+           gen(jpc,0,0);
+           statement(fsys);
+           code[cx1].a := cx
+         End
+  Else If sym = beginsym Then
+         Begin
+           getsym;
+           statement([semicolon,endsym]+fsys);
+           While sym In ([semicolon]+statbegsys) Do
+             Begin
+               If sym = semicolon Then 
+                getsym
+               Else error(10);
+               statement([semicolon,endsym]+fsys)
+             End;
+           If sym = endsym Then 
+            getsym
+           Else error(17)
+         End
+  Else If sym = whilesym Then
+         Begin
+           cx1 := cx;
+           getsym;
+           condition([dosym]+fsys);
+           cx2 := cx;
+           gen(jpc,0,0);
+           If sym = dosym Then 
+            getsym
+           Else error(18);
+           statement(fsys);
+           gen(jmp,0,cx1);
+           code[cx2].a := cx;
+         End
+    Else If sym = readsym Then
+        Begin
+           getsym;
+           If sym = lparen Then
+             Repeat
+               getsym;
+               If sym = ident Then
+                 Begin
+                   i := position(id);
+                   If i = 0 Then 
+                      error(11)
+                   Else If table[i].kind &lt;&gt; variable Then
+                      Begin
+                        error(12);
+                        i := 0
+                      End
+                   Else With table[i] Do
+                      gen(red,lev-level,adr)
+                 End
+               Else error(4);
+               getsym;
+             Until sym &lt;&gt; comma
+           Else error(40);
+           If sym &lt;&gt; rparen Then 
+              error(22);
+           getsym
+        End
+  Else If sym = writesym Then
+        Begin
+           getsym;
+           If sym = lparen Then
+             Begin
+               Repeat
+                  getsym;
+                  expression([rparen,comma]+fsys);
+                  gen(wrt,0,0);
+               Until sym &lt;&gt; comma;
+               If sym &lt;&gt; rparen Then 
+                  error(22);
+               getsym
+             End
+           Else error(40)
+        End;
+  test(fsys,[],19);
+End {statement};
+Begin {block}
+  dx := 3;
+  tx0 := tx;
+  table[tx].adr := cx;
+  gen(jmp,0,0);
+  If lev &gt; levmax Then 
+    error(32);
+  Repeat
+    If sym = constsym Then
+      Begin
+        getsym;
+        Repeat
+          constdeclaration;
+          While sym = comma Do
+            Begin
+              getsym;
+              constdeclaration
+            End;
+          If sym = semicolon Then 
+            getsym
+          Else error(5)
+        Until sym &lt;&gt; ident
+      End;
+    If sym = varsym Then
+      Begin
+        getsym;
+        Repeat
+          vardeclaration;
+          While sym = comma Do
+            Begin
+              getsym;
+              vardeclaration
+            End;
+          If sym = semicolon Then 
+            getsym
+          Else error(5)
+        Until sym &lt;&gt; ident;
+      End;
+    While sym = procsym Do
+      Begin
+        getsym;
+        If sym = ident Then
+          Begin
+            enter(prosedure);
+            getsym
+          End
+        Else error(4);
+        If sym = semicolon Then 
+          getsym
+        Else error(5);
+        block(lev+1,tx,[semicolon]+fsys);
+        If sym = semicolon Then
+          Begin
+            getsym;
+            test( statbegsys+[ident,procsym],fsys,6)
+          End
+        Else error(5)
+      End;
+    test( statbegsys+[ident],declbegsys,7)
+  Until Not ( sym In declbegsys );
+  code[table[tx0].adr].a := cx;
+  With table[tx0] Do
+    Begin
+      adr := cx; {代码开始地址}
+    End;
+  cx0 := cx;
+  gen(int,0,dx);
+  statement( [semicolon,endsym]+fsys);
+  gen(opr,0,0); {生成返回指令}
+  test( fsys, [],8 );
+  listcode;
+End {block};
+Procedure interpret;
+Const stacksize = 500;
+Var p,b,t: integer; {程序地址寄存器, 基地址寄存器,栈顶地址寄存器}
+  i : instruction; {指令寄存器}
+  s : array[1..stacksize] Of integer;  {数据存储栈}
+Function base( l : integer ): integer;
+Var b1 : integer;
+Begin
+  b1 := b; {顺静态链求层差为l的层的基地址}
+  While l &gt; 0 Do
+    Begin
+      b1 := s[b1];
+      l := l-1
+    End;
+  base := b1
+End {base};
+Begin
+  writeln( 'START PL/0' );
+  writeln(fileout,'START PL/0');
+  t := 0;
+  b := 1;
+  p := 0;
+  s[1] := 0;
+  s[2] := 0;
+  s[3] := 0;
+  Repeat
+    i := code[p];
+    p := p+1;
+    With i Do
+      Case f Of 
+        lit :
+          Begin
+            t := t+1;
+            s[t] := a;
+          End;
+        opr : Case a Of {运算}
+            0:
+              Begin {返回}
+                t := b-1;
+                p := s[t+3];
+                b := s[t+2];
+              End;
+            1: s[t] := -s[t];
+            2:
+              Begin
+                t := t-1;
+                s[t] := s[t]+s[t+1]
+              End;
+            3:
+              Begin
+                t := t-1;
+                s[t] := s[t]-s[t+1]
+              End;
+            4:
+              Begin
+                t := t-1;
+                s[t] := s[t]*s[t+1]
+              End;
+            5:
+              Begin
+                t := t-1;
+                s[t] := s[t]Div s[t+1]
+              End;
+            6: s[t] := ord(odd(s[t]));
+            8:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t]=s[t+1])
+              End;
+            9:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t]&lt;&gt;s[t+1])
+              End;
+            10:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t]&lt; s[t+1])
+              End;
+            11:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t] &gt;= s[t+1])
+              End;
+            12:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t] &gt; s[t+1])
+              End;
+            13:
+              Begin
+                t := t-1;
+                s[t] := ord(s[t] &lt;= s[t+1]);
+              End;
+          End;
+        lod :
+          Begin
+            t := t+1;
+            s[t] := s[base(l)+a]
+          End;
+        sto :
+          Begin
+            s[base(l)+a] := s[t];
+            writeln(s[t]);
+            writeln(fileout,s[t]);
+            t := t-1
+          End;
+        cal :
+          Begin {generate new block mark}
+            s[t+1] := base(l);
+            s[t+2] := b;
+            s[t+3] := p;
+            b := t+1;
+            p := a;
+          End;
+        int : t := t+a;
+        jmp : p := a;
+        jpc :
+          Begin
+            If s[t] = 0 Then 
+              p := a;
+              t := t-1;
+          End;
+
+        red :
+          Begin
+            writeln('Input any integer you like:');
+            writeln(fileout,'Your input is:');
+            readln(s[base(l)+a]);
+            writeln(fileout,s[base(l)+a]);
+          End;
+        wrt :
+          Begin
+            writeln('And I write:');
+            writeln(s[t]);
+            writeln(fileout,'And this is What I write:');
+            writeln(fileout,s[t]);
+            t := t+1
+          End
+
+      End {with, case}
+  Until p = 0;
+  writeln('END PL/0');
+  writeln(fileout,'END PL/0');
+End {interpret};
+Begin {主程序}
+
+  writeln('Input the file name of the PL0 source program :');
+  readln(pl0SourceCode);
+  assign(filein,pl0SourceCode);
+  reset(filein);
+  writeln('Input the file name to save the compile result :');
+  readln(savefile);
+  assign(fileout,savefile);
+  rewrite(fileout);
+
+  For ch := 'A' To ';' Do
+    ssym[ch] := nul;
+  word[1] := 'begin        ';
+  word[2] := 'call         ';
+  word[3] := 'const        ';
+  word[4] := 'do           ';
+  word[5] := 'end          ';
+  word[6] := 'if           ';
+  word[7] := 'odd          ';
+  word[8] := 'procedure    ';
+  word[9] := 'read         ';
+  word[10] := 'then         ';
+  word[11] := 'var          ';
+  word[12] := 'while        ';
+  word[13] := 'write        ';
+  wsym[1] := beginsym;
+  wsym[2] := callsym;
+  wsym[3] := constsym;
+  wsym[4] := dosym;
+  wsym[5] := endsym;
+  wsym[6] := ifsym;
+  wsym[7] := oddsym;
+  wsym[8] := procsym;
+  wsym[9] := readsym;
+  wsym[10] := thensym;
+  wsym[11] := varsym;
+  wsym[12] := whilesym;
+  wsym[13] := writesym;
+  ssym['+'] := plus;
+  ssym['-'] := minus;
+  ssym['*'] := times;
+  ssym['/'] := slash;
+  ssym['('] := lparen;
+  ssym[')'] := rparen;
+  ssym['='] := eql;
+  ssym[','] := comma;
+  ssym['.'] := period;
+  ssym['&lt;'] := lss;
+  ssym['&gt;'] := gtr;
+  ssym[';'] := semicolon;
+  mnemonic[lit] := 'LIT  ';
+  mnemonic[opr] := 'OPR  ';
+  mnemonic[lod] := 'LOD  ';
+  mnemonic[sto] := 'STO  ';
+  mnemonic[cal] := 'CAL  ';
+  mnemonic[int] := 'INT  ';
+  mnemonic[jmp] := 'JMP  ';
+  mnemonic[jpc] := 'JPC  ';
+  mnemonic[red] := 'RED  ';
+  mnemonic[wrt] := 'WRT  ';
+  declbegsys := [ constsym, varsym, procsym ];
+  statbegsys := [ beginsym, callsym, ifsym, whilesym];
+  facbegsys := [ ident, number, lparen ];
+  err := 0;
+  cc := 0;
+  cx := 0;
+  ll := 0;
+  ch := ' ';
+  kk := al;
+  getsym;
+  block( 0,0,[period]+declbegsys+statbegsys );
+  If sym &lt;&gt; period
+    Then error(9);
+  If err = 0 Then 
+    interpret
+  Else write('ERRORS IN PL/0 PROGRAM');
+  writeln;
+  close(filein);
+  close(fileout);
+  readln(pl0SourceCode);
+End.
+</code></pre><h4 class="mume-header" id="pl0-%E6%BA%90%E7%A8%8B%E5%BA%8F-1">PL0 源程序</h4>
+
+<pre class="language-text">procedure heng;
+    var input;
+    begin
+        read(input);
+        write(input);
+    end;
+begin
+    call heng;
+end.
+</pre>
+<h4 class="mume-header" id="pl0-%E6%BA%90%E7%A8%8B%E5%BA%8F%E8%A2%AB%E7%BC%96%E8%AF%91%E5%90%8E%E4%BA%A7%E7%94%9F%E7%9A%84%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%A0%81-1">PL0 源程序被编译后产生的中间代码：</h4>
+
+<pre class="language-text">0 procedure heng;
+1   var input;
+2   begin
+3     read(input);
+4     write(input);
+6   end;
+2  INT    0    4
+3  RED    0    3
+4  LOD    0    3
+5  WRT    0    0
+6  OPR    0    0
+7 begin
+8   call heng;
+9 end.
+7  INT    0    3
+8  CAL    0    2
+9  OPR    0    0
+</pre>
+<h4 class="mume-header" id="%E8%BF%90%E8%A1%8C%E6%95%B0%E6%8D%AE-1">运行数据：</h4>
+
+<pre class="language-text">START PL/0
+Input any integer you like:
+520
+And I write:
+520
+END PL/0
+</pre>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  </body></html>
