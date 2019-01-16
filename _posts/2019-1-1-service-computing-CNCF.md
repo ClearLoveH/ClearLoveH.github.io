@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "初识TUF"
-subtitle:   "CoreDNS初尝试"
+title:      "CoreDNS初尝试"
+subtitle:   "CNCF简单实践"
 date:       2019-1-1 0:28
 author:     "Heng"
 header-img: "img/比尔吉沃特1.jpg"
