@@ -196,7 +196,7 @@ WantedBy=multi-user.target
     </html>
     ```
 
-- 发现可以刚才创建的nginx，说明CoreDNS起作用了，部署成功。
+- 发现可以成功访问刚才创建的nginx，说明CoreDNS起作用了，部署成功。
 
 ---
 
