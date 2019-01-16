@@ -40,7 +40,7 @@ tags:
     - *coredns*本身就是*skydns*的继任者，支持*skydns*的所有特性，而且性能更好，更易于扩展。其插件式特性无论是*bind*还是*skydns*都无法比拟。
 
 ---
-### 相关文档
+### CoreDNS官方文档
 
 - [CoreDNS官方网站](https://coredns.io/)
 - [CoreDNS安装](https://my.oschina.net/u/2306127/blog/1618543)
