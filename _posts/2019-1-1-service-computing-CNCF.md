@@ -36,16 +36,16 @@ tags:
 --- 
 ### CoreDNS的优势
 - 对比下CoreDNS相对于[bind](https://blog.csdn.net/weixin_42125267/article/details/82117558)和[skydns](https://blog.csdn.net/zouyee/article/details/50755582)的优势：
-    - bind可以将解析存储到mysql或者文件中，coredns也可以将解析存储到etcd或者文件中，也支持将kubernetes作为其后端，直接调用kubernetes的api获取解析数据，然后缓存到本地内存。coredns支持插件扩展，目前在第三方插件中还同时支持将powerdns及amazondns作为其后端，后续还会支持越来越来的后端。bind在kubernetes的应用场景下，基本无用武之地。
-    - coredns本身就是skydns的继任者，支持skydns的所有特性，而且性能更好，更易于扩展。其插件式特性无论是bind还是skydns都无法比拟。
+    - *bind* 可以将解析存储到mysql或者文件中，*coredns* 也可以将解析存储到etcd或者文件中，也支持将 kubernetes 作为其后端，直接调用kubernetes的api获取解析数据，然后缓存到本地内存。*coredns*支持插件扩展，目前在第三方插件中还同时支持将powerdns及amazondns作为其后端，后续还会支持越来越来的后端。*bind*在kubernetes的应用场景下，基本无用武之地。
+    - *coredns*本身就是*skydns*的继任者，支持*skydns*的所有特性，而且性能更好，更易于扩展。其插件式特性无论是*bind*还是*skydns*都无法比拟。
 
 ---
 ### 相关文档
 
-- CoreDNS官方网站，https://coredns.io/
-- CoreDNS安装，https://my.oschina.net/u/2306127/blog/1618543
-- CoreDNS使用手册，https://coredns.io/manual/toc/
-- CoreDNS源码，https://github.com/coredns
+- [CoreDNS官方网站](https://coredns.io/)
+- [CoreDNS安装](https://my.oschina.net/u/2306127/blog/1618543)
+- [CoreDNS使用手册](https://coredns.io/manual/toc/)
+- [CoreDNS源码](https://github.com/coredns)
 
 ---
 ### 在Kubernetes中部署CoreDNS
@@ -201,11 +201,11 @@ WantedBy=multi-user.target
 ---
 
 ### 参考文档
-- k8s集群基本概念： https://www.cnblogs.com/chris-cp/p/5766153.html
-- kubernetes 简介：kube-dns 和服务发现：http://www.cnblogs.com/allcloud/p/7614123.html
-- 十分钟带你理解Kubernetes核心概念：http://www.dockone.io/article/932
-- kubernetes之kubedns部署：http://blog.51cto.com/newfly/2059972
-- 浅谈|WEB 服务器 -- Caddy：https://blog.csdn.net/yori_chen/article/details/79725845
-- nginx概述：https://www.cnblogs.com/fengff/p/8892590.html
-- BIND：https://blog.csdn.net/weixin_42125267/article/details/82117558
-- DCOS之skydns：https://blog.csdn.net/zouyee/article/details/50755582
+- [k8s集群基本概念](https://www.cnblogs.com/chris-cp/p/5766153.html)
+- [kubernetes 简介：kube-dns 和服务发现](http://www.cnblogs.com/allcloud/p/7614123.html)
+- [十分钟带你理解Kubernetes核心概念](http://www.dockone.io/article/932)
+- [kubernetes之kubedns部署](http://blog.51cto.com/newfly/2059972)
+- [浅谈|WEB 服务器 -- Caddy](https://blog.csdn.net/yori_chen/article/details/79725845)
+- [nginx概述](https://www.cnblogs.com/fengff/p/8892590.html)
+- [BIND](https://blog.csdn.net/weixin_42125267/article/details/82117558)
+- [DCOS之skydns](https://blog.csdn.net/zouyee/article/details/50755582)
