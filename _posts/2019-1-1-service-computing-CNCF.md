@@ -205,7 +205,7 @@ WantedBy=multi-user.target
 - [kubernetes 简介：kube-dns 和服务发现](http://www.cnblogs.com/allcloud/p/7614123.html)
 - [十分钟带你理解Kubernetes核心概念](http://www.dockone.io/article/932)
 - [kubernetes之kubedns部署](http://blog.51cto.com/newfly/2059972)
-- [浅谈|WEB 服务器 -- Caddy](https://blog.csdn.net/yori_chen/article/details/79725845)
+- [浅谈：WEB 服务器 -- Caddy](https://blog.csdn.net/yori_chen/article/details/79725845)
 - [nginx概述](https://www.cnblogs.com/fengff/p/8892590.html)
 - [BIND](https://blog.csdn.net/weixin_42125267/article/details/82117558)
 - [DCOS之skydns](https://blog.csdn.net/zouyee/article/details/50755582)
