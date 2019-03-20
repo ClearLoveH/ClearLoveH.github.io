@@ -13,7 +13,7 @@ tags:
 ### 软件工程的定义
 > Software engineering is “(1) the application of a systematic, disciplined, quantifiable approach to the development, operation, and maintenance of software, that is, the application of engineering to software,” and “(2) the study of approaches as in (1).” –– IEEE Standard 610.12
 
-软件工程的定义：
+软件工程的定义：软件工程就是对软件的开发、操作和维护应用系统的、有纪律的、可量化的方法，即工程对软件的应用和对方法的研究。
 
 ### 解释导致 software crisis 本质原因、表现，述说克服软件危机的方法
 - 软件危机的本质原因：
