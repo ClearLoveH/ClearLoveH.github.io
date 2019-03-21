@@ -15,8 +15,7 @@ tags:
 ---
 
 ### 项目视频展示 
-[展示视频](https://pan.baidu.com/s/1pfH3c5oOWlcDZs_VZURGsw)
-提取码：g7zj 
+[展示视频](https://v.youku.com/v_show/id_XNDEwNDkxNTkyMA==.html?spm=a2h3j.8428770.3416059.1)
 
 
 [APK下载](https://pan.baidu.com/s/1evAsqzRHnH_QkXdov8NzGA)
