@@ -14,7 +14,14 @@ tags:
 
 ---
 
-坑：
+### 项目视频展示 
+[展示地址](https://pan.baidu.com/s/1pfH3c5oOWlcDZs_VZURGsw)
+
+提取码：g7zj 
+
+---
+
+开发 约吧 遇到的坑即解决方法：
 - `listview的item回收问题`，这也是我去面试被提问到的问题，现在做到这部分豁然开朗。
     - listview为了保证item的条目不至于太多导致OOM（OutOfMemory），会自动回收，而这个自动回收机制`让我在滑动list的时候，已经加载过的item如果被滑上去屏幕之外，重新滑下来的时候又会重新加载，这个加载对于大图就显得有些卡顿`；而对于recyclerView，也有同样的自动回收机制，但不同于listview的是，recyclerView允许我们自己设置缓存的item数：
         recyclerView.setItemViewCacheSize(20);
