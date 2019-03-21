@@ -15,9 +15,13 @@ tags:
 ---
 
 ### 项目视频展示 
-[展示地址](https://pan.baidu.com/s/1pfH3c5oOWlcDZs_VZURGsw)
-
+[展示视频](https://pan.baidu.com/s/1pfH3c5oOWlcDZs_VZURGsw)
 提取码：g7zj 
+
+
+[APK下载](https://pan.baidu.com/s/1evAsqzRHnH_QkXdov8NzGA)
+提取码：d7u8 
+
 
 ---
 
