@@ -59,7 +59,7 @@ tags:
 
 #### 线程池——Java中的ThreadPoolExecutor类
 
-	一种线程使用模式。线程过多会带来调度开销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。线程池不仅能够保证内核的充分利用，还能防止过分调度。可用线程数量应该取决于可用的并发处理器、处理器内核、内存、网络sockets等的数量。 例如，线程数一般取cpu数量+2比较合适，线程数过多会导致额外的线程切换开销。
+线程池是一种线程使用模式。线程过多会带来调度开销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。线程池不仅能够保证内核的充分利用，还能防止过分调度。可用线程数量应该取决于可用的并发处理器、处理器内核、内存、网络sockets等的数量。 例如，线程数一般取cpu数量+2比较合适，线程数过多会导致额外的线程切换开销。
 
 **组成部分:**
 
@@ -396,17 +396,28 @@ tags:
 
 ### Fragment生命周期
 
-- onAttach(Context context)：在Fragment和Activity关联上的时候调用，且仅调用一次。在该回调中我们可以将context转化为Activity保存下来，从而避免后期频繁调用getAtivity()获取Activity的局面，避免了在某些情况下getAtivity()为空的异常（Activity和Fragment分离的情况下）。同时也可以在该回调中将传入的Arguments提取并解析，在这里强烈推荐通过setArguments给Fragment传参数，因为在应用被系统回收时Fragment不会保存相关属性，具体之后会讲解。
-- onCreate：在最初创建Fragment的时候会调用，和Activity的onCreate类似。
-- View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)：在准备绘制Fragment界面时调用，返回值为Fragment要绘制布局的根视图，当然也可以返回null。注意使用inflater构建View时一定要将attachToRoot指明false，因为Fragment会自动将视图添加到container中，attachToRoot为true会重复添加报错。onCreateView并不是一定会被调用，当添加的是没有界面的Fragment就不会调用，比如调用FragmentTransaction的 add(Fragment fragment, String tag)方法。
-- onActivityCreated ：在Activity的onCreated执行完时会调用。
-- onStart() ：Fragment对用户可见的时候调用，前提是Activity已经started。
-- onResume()：Fragment和用户之前可交互时会调用，前提是Activity已经resumed。
-- onPause()：Fragment和用户之前不可交互时会调用。
-- onStop()：Fragment不可见时会调用。
-- onDestroyView()：在移除Fragment相关视图层级时调用。
-- onDestroy()：最终清楚Fragment状态时会调用。
-- onDetach()：Fragment和Activity解除关联时调用。
+- `onAttach(Context context)`
+    - 在Fragment和Activity关联上的时候调用，且仅调用一次。在该回调中我们可以将context转化为Activity保存下来，从而避免后期频繁调用getAtivity()获取Activity的局面，避免了在某些情况下getAtivity()为空的异常（Activity和Fragment分离的情况下）。同时也可以在该回调中将传入的Arguments提取并解析，在这里强烈推荐通过setArguments给Fragment传参数，因为在应用被系统回收时Fragment不会保存相关属性，具体之后会讲解。
+- `onCreate`
+    - 在最初创建Fragment的时候会调用，和Activity的onCreate类似。
+- View `onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)`：
+    - 在准备绘制Fragment界面时调用，返回值为Fragment要绘制布局的根视图，当然也可以返回null。注意使用inflater构建View时一定要将attachToRoot指明false，因为Fragment会自动将视图添加到container中，attachToRoot为true会重复添加报错。onCreateView并不是一定会被调用，当添加的是没有界面的Fragment就不会调用，比如调用FragmentTransaction的 add(Fragment fragment, String tag)方法。
+- `onActivityCreated` 
+    - 在Activity的onCreated执行完时会调用。
+- `onStart() `
+    - Fragment对用户可见的时候调用，前提是Activity已经started。
+- `onResume()`
+    - Fragment和用户之前可交互时会调用，前提是Activity已经resumed。
+- `onPause()`
+    - Fragment和用户之前不可交互时会调用。
+- `onStop()`
+    - Fragment不可见时会调用。
+- `onDestroyView()`
+    - 在移除Fragment相关视图层级时调用。
+- `onDestroy()`
+    - 最终清楚Fragment状态时会调用。
+- `onDetach()`
+    - Fragment和Activity解除关联时调用。
 需要关注一下两者生命周期顺序问题，其中onCreate、onStart、onResume都是Activity先调用之后才是Fragment，onPause、onStop、onDestroy（在Fragment中是onDetach），是先Fragment调用之后才是Activity
 
 #### Fragment相关操作对生命周期的影响
@@ -438,11 +449,11 @@ tags:
 - "standard"(默认启动模式)
   - standard是默认的启动模式，即如果不指定launchMode属性，则自动就会使用这种启动模式。这种启动模式表示每次启动该Activity时系统都会为创建一个新的实例，并且总会把它放入到当前的任务当中。声明成这种启动模式的Activity可以被实例化多次，一个任务当中也可以包含多个这种Activity的实例。
 - "singleTop"
-  - 栈顶复用模式
+  - `栈顶复用模式`
   - 这种启动模式表示，如果要启动的这个Activity在当前任务中已经存在了，并且还处于栈顶的位置，那么系统就不会再去创建一个该Activity的实例，而是调用栈顶Activity的onNewIntent()方法。声明成这种启动模式的Activity也可以被实例化多次，一个任务当中也可以包含多个这种Activity的实例。
   - 举个例子来讲，一个任务的返回栈中有A、B、C、D四个Activity，其中A在最底端，D在最顶端。这个时候如果我们要求再启动一次D，并且D的启动模式是"standard"，那么系统就会再创建一个D的实例放入到返回栈中，此时栈内元素为：A-B-C-D-D。而如果D的启动模式是"singleTop"的话，由于D已经是在栈顶了，那么系统就不会再创建一个D的实例，而是直接调用D Activity的onNewIntent()方法，此时栈内元素仍然为：A-B-C-D。
 - "singleTask"
-  - 栈内复用模式
+  - `栈内复用模式`
   - singleTask 模式比较适合应用的主界面activity（频繁使用的主架构），可以用于主架构的activity，（如新闻，侧滑，应用主界面等）
   - 这种启动模式表示，系统会创建一个新的任务，并将启动的Activity放入这个新任务的栈底位置。但是，如果现有任务当中已经存在一个该Activity的实例了，那么系统就不会再创建一次它的实例，而是会直接调用它的onNewIntent()方法 (将该任务栈的该activity之上的所有activity全部弹栈) 。声明成这种启动模式的Activity，在同一个任务当中只会存在一个实例。注意这里我们所说的启动Activity，都指的是启动其它应用程序中的Activity，因为"singleTask"模式在默认情况下只有启动其它程序的Activity才会创建一个新的任务，启动自己程序中的Activity还是会使用相同的任务，具体原因会在下面 处理affinity 部分进行解释。如果启动的是自己程序的activity呢？ 本任务栈中还是会只有一个实例么？？？（答案：系统会去检测要启动的这个Activity的affinity和当前任务的affinity是否相同，如果相同的话就会把它放入到现有任务当中，如果不同则会去创建一个新的任务。而同一个程序中所有Activity的affinity默认都是相同的，这也是前面为什么说，同一个应用程序中即使声明成"singleTask"，也不会为这个Activity再去创建一个新的任务了。）
 - "singleInstance"
@@ -452,13 +463,13 @@ tags:
 
 ### 安卓设计模式 
 
-- 设计模式遵循的原则：
+设计模式遵循的原则：
+
+1. 功能单一明确，设计一个类的意图要明确，不能大包大揽什么功能都继承进去
     
-    	1）功能单一明确，设计一个类的意图要明确，不能大包大揽什么功能都继承进去
+2. 对于扩展要开放，修改要关闭。软件通常都有需求变化，变化过程中通过扩展的方式来实现需求变化，而不是通过修改原有的方法，因为修改原有的方法会导致原来方法的调用方会出问题，这样层层调用出问题。
     
-    	2）对于扩展要开放，修改要关闭。软件通常都有需求变化，变化过程中通过扩展的方式来实现需求变化，而不是通过修改原有的方法，因为修改原有的方法会导致原来方法的调用方会出问题，这样层层调用出问题。
-    
-    	3）变化的进行抽象，不变的进行具体。设计代码过程中会面对很对可变的东西，比如在实现一个功能的时候，能够运用不同的方式进行实现，这个时候可以将每个具体的实现方法进行抽象，真正不变的是这个方法要实现的目的
+3. 变化的进行抽象，不变的进行具体。设计代码过程中会面对很对可变的东西，比如在实现一个功能的时候，能够运用不同的方式进行实现，这个时候可以将每个具体的实现方法进行抽象，真正不变的是这个方法要实现的目的
 
 1. 适配器模式：ListView或GridView的Adapter
    - 简介：不同的数据提供者使用一个适配器来向一个相同的客户提供服务。
@@ -558,7 +569,6 @@ tags:
 #### Context是什么?
 
 1) Context是一个抽象类，其通用实现在ContextImpl类中。
-
 2) Context：是一个访问application环境全局信息的接口，通过它可以访问application的资源和相关的类
 
 其主要功能如下：
@@ -576,9 +586,7 @@ tags:
 应用程序在以下几种情况下创建Context实例：
 
 1) 创建Application 对象时， 而且整个App共一个Application对象
-
 2) 创建Service对象时
-
 3) 创建Activity对象时
 
 因此应用程序App共有的Context数目公式为：
@@ -725,9 +733,8 @@ tags:
 ---
 
 ### 安卓 final关键字的作用
-
-    - 被final修饰的方法不能被重写。
-    - 当final修饰一个基本数据类型时，表示该基本数据类型的值一旦在初始化后便不能发生变化；如果final修饰一个引用类型时，则在对其初始化之后便不能再让其指向其他对象了，但该引用所指向的对象的内容是可以发生变化的。本质上是一回事，因为引用的值是一个地址，final要求值，即地址的值不发生变化。
+- 被final修饰的方法不能被重写。
+- 当final修饰一个基本数据类型时，表示该基本数据类型的值一旦在初始化后便不能发生变化；如果final修饰一个引用类型时，则在对其初始化之后便不能再让其指向其他对象了，但该引用所指向的对象的内容是可以发生变化的。本质上是一回事，因为引用的值是一个地址，final要求值，即地址的值不发生变化。
 
 ---
 
@@ -742,10 +749,11 @@ tags:
 
 ### HTTPS HTTP
 
-    HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息，比如：信用卡号、密码等支付信息。
-    HTTPS在HTTP的基础上加入了SSL协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。
+- HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息，比如：信用卡号、密码等支付信息。
+- HTTPS在HTTP的基础上加入了SSL协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。
 
-- HTTPS工作步骤
+
+- `HTTPS工作步骤`
   - client向server发送请求https://baidu.com，然后连接到server的443端口。
         - 服务端必须要有一套数字证书，可以自己制作，也可以向组织申请。区别就是自己颁发的证书需要客户端验证通过，才可以继续访问，而使用受信任的公司申请的证书则不会弹出提示页面，这套证书其实就是一对公钥和私钥。
   - 传送证书 
