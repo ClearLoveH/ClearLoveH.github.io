@@ -96,9 +96,6 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "Doris",
-        href: "https://dorisyeung.github.io/"
-    },{
         title: "WYF",
         href: "https://github.com/wwyf"
     },{
