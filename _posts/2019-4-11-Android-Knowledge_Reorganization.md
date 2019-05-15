@@ -45,9 +45,9 @@ tags:
 
 ### Android四大组件
 
-#### Activity 略
+**Activity 略**
 
-#### Service 略
+**Service 略**
 
 #### Content Provider
 - `ContentProvider（内容提供者）`是Android中的四大组件之一。主要用于对外共享数据，也就是通过ContentProvider把应用中的数据共享给其他应用访问，其他应用可以通过ContentProvider对指定应用中的数据进行操作。ContentProvider分为系统的和自定义的，系统的也就是例如联系人，图片等数据。
@@ -61,7 +61,7 @@ tags:
     - 以下这段是Google Doc中对ContentProvider的大致概述:
         - 内容提供者将一些特定的应用程序数据供给其它应用程序使用。内容提供者继承于ContentProvider 基类，为其它应用程序取用和存储它管理的数据实现了一套标准方法。然而，应用程序并不直接调用这些方法，而是使用一个 ContentResolver对象，调用它的方法作为替代。ContentResolver可以与任意内容提供者进行会话，与其合作来对所有相关交互通讯进行管理。
 
-##### ContentProvider
+**ContentProvider**
 - Android提供了一些主要数据类型的ContentProvider，比如音频、视频、图片和私人通讯录等。可在android.provider包下面找到一些Android提供的ContentProvider。通过获得这些ContentProvider可以查询它们包含的数据，当然前提是已获得适当的读取权限。
 
 主要方法：
@@ -84,7 +84,7 @@ tags:
 - 如果要操作的数据属于非集合类型数据，那么MIME类型字符串应该以vnd.android.cursor.item/开头。
     - 例如：要得到id为10的person记录的Uri为content://contacts/person/10，那么返回的MIME类型字符串应为"vnd.android.cursor.item/person"。
 
-##### ContentResolver
+**ContentResolver**
 - 当外部应用需要对ContentProvider中的数据进行添加、删除、修改和查询操作时，可以使用ContentResolver类来完成，要获取ContentResolver对象，可以使用Context提供的getContentResolver()方法。
     ```
     　　ContentResolver cr = getContentResolver();
@@ -101,7 +101,7 @@ tags:
     ```
 
 
-##### Uri
+**Uri**
 - Uri指定了将要操作的ContentProvider，其实可以把一个Uri看作是一个网址，我们把Uri分为三部分。
     - 第一部分是"content://"。可以看作是网址中的"http://"。
     - 第二部分是主机名或authority，用于唯一标识这个ContentProvider，外部应用需要根据这个标识来找到它。可以看作是网址中的主机名，比如"blog.csdn.net"。
@@ -117,11 +117,11 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 - 要注意的是，即使是Normal broadcasts，系统在某些情况下可能会恢复到一次传播给一个receiver。 特别是receiver可能需要创建一个进程，为了避免系统超载，只能一次运行一个receiver。
 - Broadcast Receiver 并没有提供可视化的界面来显示广播信息。可以使用Notification和Notification Manager来实现可视化的信息的界面，显示广播信息的内容，图标及震动信息。
 
-##### 生命周期
+**生命周期**
 - 一个BroadcastReceiver 对象只有在被调用onReceive(Context, Intent)的才有效的，当从该函数返回后，该对象就无效的了，结束生命周期。
 - 因此从这个特征可以看出，在所调用的onReceive(Context, Intent)函数里，不能有过于耗时的操作，不能使用线程来执行。对于耗时的操作，请start service来完成。因为当得到其他异步操作所返回的结果时，BroadcastReceiver 可能已经无效了。
 
-##### 发送广播
+**发送广播**
 事件的广播比较简单，构建Intent对象，可调用sendBroadcast(Intent)方法将广播发出。另外还有sendOrderedBroadcast()，sendStickyBroadcast()等方法，请查阅API Doc。
 1. new Intent with action name
 
@@ -137,10 +137,10 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 
 
         
-#####　接收广播
+**接收广播**
 通过定义一个继承BroadcastReceiver类来实现，继承该类后覆盖其onReceiver方法，并在该方法中响应事件。
 
-##### 注册Receiver
+**注册Receiver**
 1. 静态方式，在AndroidManifest.xml的application里面定义receiver并设置要接收的action。
 2. 动态方式, 在activity里面调用函数来注册，和静态的内容差不多。一个形参是receiver，另一个是IntentFilter，其中里面是要接收的action。而且动态注册，需要特别注意的是，`在退出程序前要记得调用Context.unregisterReceiver()方法`·`。一般在activity的onStart()里面进行注册, onStop()里面进行注销。官方提醒，如果在Activity.onResume()里面注册了，就必须在Activity.onPause()注销。
 
