@@ -544,6 +544,8 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 ### Activity生命周期
 
+![](/img/in-post/post-Android/review/activity.png)
+
 - 关于activity的四个状态： running-poused-stopped-killed
   - running->当前显示在屏幕的activity(位于任务栈的顶部)，用户可见状态。
     - paused->依旧在用户可见状态，但是界面焦点已经失去，此Activity无法与用户进行交互。
