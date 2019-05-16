@@ -289,7 +289,7 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
   - 创建一个工作线程，实现 Runnable 接口，实现 run 方法，处理耗时操作
   - 创建一个 handler，通过 handler.post/postDelay，投递创建的 Runnable，在 run 方法中进行更新 UI 操作。
         
-            new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 /**
@@ -304,13 +304,77 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
                     }
                 });
             }
-            }).start();
+        }).start();
             
 - 方式二： sendMessage(Message)
-  - 创建一个工作线程，继承 Thread，重新 run 方法，处理耗时操作
-  - 创建一个 Message 对象，设置 what 标志及数据
-  - 通过 sendMessage 进行投递消息
-  - 创建一个handler，重写 handleMessage 方法，根据 msg.what 信息判断，接收对应的信息，再在这里更新 UI。
+    - 创建一个工作线程，继承 Thread，重新 run 方法，处理耗时操作
+    - 创建一个 Message 对象，设置 what 标志及数据
+    - 通过 sendMessage 进行投递消息
+    - 创建一个handler，重写 handleMessage 方法，根据 msg.what 信息判断，接收对应的信息，再在这里更新 UI。
+    1. 传递消息Message
+        ```    
+        //1.通过handler实例获取
+        Handler handler = new Handler();
+        Message message=handler.obtainMessage();
+        
+        //2.通过Message获取
+        Message message=Message.obtain();
+        
+        //源码中第一种获取方式其实也是内部调用了第二种：
+        public final Message obtainMessage(){
+            return Message.obtain(this);
+        }
+        ```
+        `不建议直接new Message，Message内部保存了一个缓存的消息池`，我们可以用obtain从缓存池获得一个消息，Message使用完后系统会调用recycle回收，如果自己new很多Message，每次使用完后系统放入缓存池，会占用很多内存的。
+        ```
+        //传递的数据
+        Bundle bundle = new Bundle();
+        bundle.putString("msg", "传递我这个消息");
+        //发送数据
+        Message message = Message.obtain();
+        message.setData(bundle);   //message.obj=bundle  传值也行
+        message.what = 0x11;
+        handler.sendMessage(message);
+        
+        
+        
+        //数据的接收
+        final Handler handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.what == 0x11) {
+                        Bundle bundle = msg.getData();
+                        String date = bundle.getString("msg");
+                    }
+                }
+        };
+        ```
+    2. 子线程通知主线程更新ui
+        ```
+        //创建handler
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 0x11) {
+                    //更新ui
+                          ......
+                }
+            }
+        };
+ 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //FIXME 这里直接更新ui是不行的
+                //还有其他更新ui方式,runOnUiThread()等          
+                message.what = 0x11;     
+                handler.sendMessage(message);  
+            }
+        }).start();
+        ```
+    
 
 #### Handler 存在的问题
 
@@ -319,15 +383,53 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
   - 静态内部类不会持有外部类的的引用，当需要引用外部类相关操作时，可以通过弱引用还获取到外部类相关操作，弱引用是不会造成对象该回收回收不掉的问题，不清楚的可以查阅JAVA的几种引用方式的详细说明。
   - 在外部类对象被销毁时，将MessageQueue中的消息清空。例如，在Activity的onDestroy时将消息清空。
 - 异常方面
-  - 当 Activity finish 时,在 onDestroy 方法中释放了一些资源。此时 Handler 执行到 handlerMessage 方法,但相关资源已经被释放,从而引起空指针的异常。
+  - 当 Activity finish 时,在 onDestroy 方法中释放了一些资源。此时 Handler 执行到 handlerMessage 方法,但相关资源已经被释放,从而引起空指针的异常。`所以在ondestory中去remove掉我们要处理的事件`，还是有必要的。不想处理就直接try catch或者判空。
+  - 有时候你会发现removeCallbacks会失效，不能从消息队列中移除。出现这情况是activity切入后台，再回到前台，此时的runnable由于被重定义，就会和原先的runnable并非同一个对象。所以这么做，加上static即可
 - 如何避免
   - 如果是使用 handlerMessage，则在方法中加try catch。
   - 如果是用 post 方法，则在Runnable方法中加try catch。
+  - 创建静态内部类 || 持有弱引用MainActivity，GC回收时会被回收掉.
+    ```
+    public class MainActivity extends AppCompatActivity {
+    
+        //创建静态内部类
+        private static class MyHandler extends Handler{
+            //持有弱引用MainActivity,GC回收时会被回收掉.
+            private final WeakReference<MainActivity> mAct;
+            public MyHandler(MainActivity mainActivity){
+                mAct =new WeakReference<MainActivity>(mainActivity);
+            }
+            @Override
+            public void handleMessage(Message msg) {
+                MainActivity mainAct=mAct.get();
+                super.handleMessage(msg);
+                if(mainAct!=null){
+                    //执行业务逻辑
+                }
+            }
+        }
+        private static final Runnable myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                //执行我们的业务逻辑
+            }
+        };
+    
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            MyHandler myHandler=new MyHandler(this);
+            //延迟5分钟后发送
+            myHandler.postDelayed(myRunnable, 1000 * 60 * 5);
+        }
+    }
+    ```
 
 #### Handler 通信机制
 
 - 创建Handler，并采用当前线程的Looper创建消息循环系统；
-- Handler通过sendMessage(Message)或Post(Runnable)发送消息，调用enqueueMessage把消息插入到消息链表中；
+- Handler通过sendMessage(Message)或Post(Runnable)发送消息，调用enqueueMessage把消息插入到消息队列中；
 - Looper循环检测消息队列中的消息，若有消息则取出该消息，并调用该消息持有的handler的dispatchMessage方法，回调到创建Handler线程中重写的handleMessage里执行。
 
 #### 为什么在主线程中创建Handler不需要要用Looper.prepare()和Looper.loop()方法呢？
