@@ -760,12 +760,14 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
     - Fragment和用户之前可交互时会调用，前提是Activity已经resumed。
 - `onPause()`
     - Fragment和用户之前不可交互时会调用。
+- `onSaveInstanceState()`
+    - 通常在onPause之后调用，保存当前Fragment的状态。该方法会自动保存Fragment的状态，比如EditText键入的文本，即使Fragment被回收又重新创建，一样能恢复EditText之前键入的文本。
 - `onStop()`
     - Fragment不可见时会调用。
 - `onDestroyView()`
-    - 在移除Fragment相关视图层级时调用。
+    - 销毁与Fragment有关的视图，但未与Activity解除绑定，依然可以通过onCreateView方法重新创建视图。通常在ViewPager+Fragment的方式下会调用此方法。
 - `onDestroy()`
-    - 最终清楚Fragment状态时会调用。
+    - 销毁Fragment。通常按Back键退出或者Fragment被回收时调用此方法。
 - `onDetach()`
     - Fragment和Activity解除关联时调用。
 需要关注一下两者生命周期顺序问题，其中onCreate、onStart、onResume都是Activity先调用之后才是Fragment，onPause、onStop、onDestroy（在Fragment中是onDetach），是先Fragment调用之后才是Activity
@@ -800,7 +802,7 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
   - standard是默认的启动模式，即如果不指定launchMode属性，则自动就会使用这种启动模式。这种启动模式表示每次启动该Activity时系统都会为创建一个新的实例，并且总会把它放入到当前的任务当中。声明成这种启动模式的Activity可以被实例化多次，一个任务当中也可以包含多个这种Activity的实例。
 - "singleTop"
   - `栈顶复用模式`
-  - 这种启动模式表示，如果要启动的这个Activity在当前任务中已经存在了，并且还处于栈顶的位置，那么系统就不会再去创建一个该Activity的实例，而是调用栈顶Activity的onNewIntent()方法。声明成这种启动模式的Activity也可以被实例化多次，一个任务当中也可以包含多个这种Activity的实例。
+  - 这种启动模式表示，如果要启动的这个Activity在当前任务中已经存在了，并且还处于栈顶的位置，那么系统就不会再去创建一个该Activity的实例，而是调用栈顶Activity的onNewIntent()方法。声明成这种启动模式的Activity`也可以被实例化多次`，一个任务当中也可以包含多个这种Activity的实例。
   - 举个例子来讲，一个任务的返回栈中有A、B、C、D四个Activity，其中A在最底端，D在最顶端。这个时候如果我们要求再启动一次D，并且D的启动模式是"standard"，那么系统就会再创建一个D的实例放入到返回栈中，此时栈内元素为：A-B-C-D-D。而如果D的启动模式是"singleTop"的话，由于D已经是在栈顶了，那么系统就不会再创建一个D的实例，而是直接调用D Activity的onNewIntent()方法，此时栈内元素仍然为：A-B-C-D。
 - "singleTask"
   - `栈内复用模式`
@@ -815,11 +817,11 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 设计模式遵循的原则：
 
-1. 功能单一明确，设计一个类的意图要明确，不能大包大揽什么功能都继承进去
+- 功能单一明确，设计一个类的意图要明确，不能大包大揽什么功能都继承进去
     
-2. 对于扩展要开放，修改要关闭。软件通常都有需求变化，变化过程中通过扩展的方式来实现需求变化，而不是通过修改原有的方法，因为修改原有的方法会导致原来方法的调用方会出问题，这样层层调用出问题。
+- 对于扩展要开放，修改要关闭。软件通常都有需求变化，变化过程中通过扩展的方式来实现需求变化，而不是通过修改原有的方法，因为修改原有的方法会导致原来方法的调用方会出问题，这样层层调用出问题。
     
-3. 变化的进行抽象，不变的进行具体。设计代码过程中会面对很对可变的东西，比如在实现一个功能的时候，能够运用不同的方式进行实现，这个时候可以将每个具体的实现方法进行抽象，真正不变的是这个方法要实现的目的
+- 变化的进行抽象，不变的进行具体。设计代码过程中会面对很对可变的东西，比如在实现一个功能的时候，能够运用不同的方式进行实现，这个时候可以将每个具体的实现方法进行抽象，真正不变的是这个方法要实现的目的
 
 1. 适配器模式：ListView或GridView的Adapter
    - 简介：不同的数据提供者使用一个适配器来向一个相同的客户提供服务。
@@ -850,6 +852,7 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
       - 举例：如Resource.getDrawable方法的实现逻辑是这样的：创建一个缓存来存放所有已经加载过的，如果getDrawable中传入的id所对应的Drawable以前没有被加载过，那么它就会根据id所对应的资源类型，分别调用XML解析器生成，或者通过读取包中的图片资源文件来创建Drawable。
     - 而Resource.getDrawable把涉及到多个对象、多个逻辑的操作封装成一个方法，就实现了一个调解者的角色。
 13. 抽象工厂模式
+    - `使用场景是任何需要生成复杂对象的地方，都可以使用工厂方法模式。复杂对象使用工厂模式，用new就可以完成创建的对象无需使用工厂模式。`
     - 工厂模式：生产固定的一些东西，如抽象类，缺点是产品修改麻烦；如喜欢动作片和爱情片的人分别向服务器发出同一个请求，就可以得到他们想看的影片集，相当于不同对象进行同一请求，需求均得到满足。
       - DAO与Service的使用
 
@@ -871,7 +874,7 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
    - 和路由器一样，Binder驱动虽然默默无闻，却是通信的核心。尽管名叫‘驱动’，实际上和硬件设备没有任何关系，只是实现方式和设备驱动程序是一样的。它工作于内核态，驱动负责进程之间Binder通信的建立，Binder在进程之间的传递，Binder引用计数管理，数据包在进程之间的传递和交互等一系列底层支持。
 2. ServiceManager 与实名Binder
    - 和DNS类似，SMgr的作用是将字符形式的Binder名字转化成Client中对该Binder的引用，使得Client能够通过Binder名字获得对Server中Binder实体的引用。注册了名字的Binder叫实名Binder，就象每个网站除了有IP地址外还有自己的网址。Server创建了Binder实体，为其取一个字符形式，可读易记的名字，将这个Binder连同名字以数据包的形式通过Binder驱动发送给SMgr，通知SMgr注册一个名叫张三的Binder，它位于某个Server中。驱动为这个穿过进程边界的Binder创建位于内核中的实体节点以及SMgr对实体的引用，将名字及新建的引用打包传递给SMgr。SMgr收数据包后，从中取出名字和引用填入一张查找表中。
-   - 细心的读者可能会发现其中的蹊跷：SMgr是一个进程，Server是另一个进程，Server向SMgr注册Binder必然会涉及进程间通信。当前实现的是进程间通信却又要用到进程间通信，这就好象蛋可以孵出鸡前提却是要找只鸡来孵蛋。Binder的实现比较巧妙：预先创造一只鸡来孵蛋：SMgr和其它进程同样采用Binder通信，SMgr是Server端，有自己的Binder对象（实体），其它进程都是Client，需要通过这个Binder的引用来实现Binder的注册，查询和获取。SMgr提供的Binder比较特殊，它没有名字也不需要注册，当一个进程使用BINDER_SET_CONTEXT_MGR命令将自己注册成SMgr时Binder驱动会自动为它创建Binder实体（这就是那只预先造好的鸡）。其次这个Binder的引用在所有Client中都固定为0而无须通过其它手段获得。也就是说，一个Server若要向SMgr注册自己Binder就必需通过0这个引用号和SMgr的Binder通信。类比网络通信，0号引用就好比域名服务器的地址，你必须预先手工或动态配置好。要注意这里说的Client是相对SMgr而言的，一个应用程序可能是个提供服务的Server，但对SMgr来说它仍然是个Client。
+   - 细心的读者可能会发现其中的蹊跷：SMgr是一个进程，Server是另一个进程，Server向SMgr注册Binder必然会涉及进程间通信。当前实现的是进程间通信却又要用到进程间通信，这就好象蛋可以孵出鸡前提却是要找只鸡来孵蛋。Binder的实现比较巧妙：预先创造一只鸡来孵蛋：SMgr和其它进程同样采用Binder通信，SMgr是Server端，有自己的Binder对象（实体），其它进程都是Client，需要通过这个Binder的引用来实现Binder的注册，查询和获取。`SMgr提供的Binder比较特殊，它没有名字也不需要注册，当一个进程使用BINDER_SET_CONTEXT_MGR命令将自己注册成SMgr时Binder驱动会自动为它创建Binder实体（这就是那只预先造好的鸡）。其次这个Binder的引用在所有Client中都固定为0而无须通过其它手段获得。也就是说，一个Server若要向SMgr注册自己Binder就必需通过0这个引用号和SMgr的Binder通信`。类比网络通信，`0号引用就好比域名服务器的地址`，你必须预先手工或动态配置好。要注意这里说的Client是相对SMgr而言的，一个应用程序可能是个提供服务的Server，但对SMgr来说它仍然是个Client。
 3. Client 获得实名Binder的引用
    - Server向SMgr注册了Binder实体及其名字后，Client就可以通过名字获得该Binder的引用了。Client也利用保留的0号引用向SMgr请求访问某个Binder：我申请获得名字叫张三的Binder的引用。SMgr收到这个连接请求，从请求数据包里获得Binder的名字，在查找表里找到该名字对应的条目，从条目中取出Binder的引用，将该引用作为回复发送给发起请求的Client。从面向对象的角度，这个Binder对象现在有了两个引用：一个位于SMgr中，一个位于发起请求的Client中。如果接下来有更多的Client请求该Binder，系统中就会有更多的引用指向该Binder，就象java里一个对象存在多个引用一样。而且类似的这些指向Binder的引用是强类型，从而确保只要有引用Binder实体就不会被释放掉。通过以上过程可以看出，SMgr象个火车票代售点，收集了所有火车的车票，可以通过它购买到乘坐各趟火车的票-得到某个Binder的引用。
 4. 匿名 Binder
@@ -918,8 +921,8 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 #### Context是什么?
 
-1) Context是一个抽象类，其通用实现在ContextImpl类中。
-2) Context：是一个访问application环境全局信息的接口，通过它可以访问application的资源和相关的类
+1. Context是一个抽象类，其通用实现在ContextImpl类中。
+2. Context：是一个访问application环境全局信息的接口，通过它可以访问application的资源和相关的类
 
 其主要功能如下：
 
@@ -935,17 +938,19 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 应用程序在以下几种情况下创建Context实例：
 
-1) 创建Application 对象时， 而且整个App共一个Application对象
-2) 创建Service对象时
-3) 创建Activity对象时
+1. 创建Application 对象时， 而且整个App共一个Application对象
+2. 创建Service对象时
+3. 创建Activity对象时
 
 因此应用程序App共有的Context数目公式为：
 
 **总Context实例个数 = Service个数 + Activity个数 + 1（Application对应的Context实例）**
 
-![è¿éåå¾çæè¿°](https://img-blog.csdn.net/20171208210926579?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdGluZ3p1aHVpdG91/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
-![img](https://img-blog.csdn.net/20150104163328895?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbG1qNjIzNTY1Nzkx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+![](/img/in-post/post-Android/review/context.png)
+
+
+![](/img/in-post/post-Android/review/context2.png)
 
 - Context是一个场景，代表与操作系统的交互的一种过程。从程序的角度上来理解：Context是个抽象类，而Activity、Service、Application等都是该类的一个实现。
 - Context是应用程序环境中全局信息的接口，它整合了许多系统级的服务，可以用来获取应用中的类、资源，以及可以进行应用程序级的调起操作，比如启动Activity、Service等等，而且Context这个类是abstract的，不包含具体的函数实现。
@@ -953,7 +958,7 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 #### Context的应用场景
 
-![img](https://img-blog.csdn.net/20150104183450879)
+![](/img/in-post/post-Android/review/context3.png)
 
 - 大家注意看到有一些NO上添加了一些数字，其实这些从能力上来说是YES，但是为什么说是NO呢？下面一个一个解释：
   - 数字1：启动Activity在这些类中是可以的，但是需要创建一个新的task。一般情况不推荐。
