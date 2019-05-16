@@ -581,6 +581,51 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 ---
 
+### 保持进程不被杀死——类似微信QQ
+1. Service设置成START_STICKY，kill 后会被重启（等待5秒左右），重传Intent，保持与重启前一样
+    ```
+    @Override  
+    public int onStartCommand(Intent intent, int flags, int startId) {  
+        flags = START_STICKY;  
+        return super.onStartCommand(intent, flags, startId);  
+    }  
+    ```
+    手动返回START_STICKY，亲测当service因内存不足被kill，当内存又有的时候，service又被重新创建，比较不错，但是不能保证任何情况下都被重建，比如进程被干掉了。
+2. 通过 startForeground将进程设置为前台进程，做前台服务，优先级和前台应用一个级别​，除非在系统内存非常缺，否则此进程不会被 kill. 
+    ```
+    public void MyService.onCreate() {
+        super.onCreate();
+        Notification notification = new Notification(android.R.drawable.my_service_icon,
+               "my_service_name",
+                System.currentTimeMillis());
+        PendingIntent p_intent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MyMainActivity.class), 0);
+        notification.setLatestEventInfo(this, "MyServiceNotification, "MyServiceNotification is Running!",   p_intent);
+        Log.d(TAG, String.format("notification = %s", notification));
+        startForeground(0x1982, notification);   // notification ID: 0x1982, you can name it as you will.
+    }
+    ```
+经本人测试，有些设备上，会在通知栏一直显示，这让用户有点糟心= = 
+3. 相较于/data/app下的应用，放在/system/app下的应用享受更多的特权，比如若在其Manifest.xml文件中设置persistent属性为true，则可使其免受out-of-memory killer的影响。如应用程序'Phone'的AndroidManifest.xml文件：
+    ```
+     <application android:name="PhoneApp"
+                 android:persistent="true"
+                 android:label="@string/dialerIconLabel"
+                 android:icon="@drawable/ic_launcher_phone">
+         ...
+    </application>
+    ```
+4. 双进程Service：让2个进程互相保护，其中一个Service被清理后，另外没被清理的进程可以立即重启进程 
+5. QQ黑科技:在应用退到后台后，另起一个只有 1 像素的页面停留在桌面上，让自己保持前台状态，保护自己不被后台清理工具杀死 
+6. 在已经root的设备下，修改相应的权限文件，将App伪装成系统级的应用（Android4.0系列的一个漏洞，已经确认可行） 
+7. Android系统中当前进程(Process)fork出来的子进程，被系统认为是两个不同的进程。当父进程被杀死的时候，子进程仍然可以存活，并不受影响。鉴于目前提到的在Android-Service层做双守护都会失败，我们可以fork出c进程，多进程守护。死循环在那检查是否还存在，具体的思路如下（Android5.0以下可行） 
+    - 用C编写守护进程(即子进程)，守护进程做的事情就是循环检查目标进程是否存在，不存在则启动它。 
+    - 在NDK环境中将1中编写的C代码编译打包成可执行文件(BUILD_EXECUTABLE)。 
+    - 主进程启动时将守护进程放入私有目录下，赋予可执行权限，启动它即可。 
+8. 联系厂商，加入白名单
+
+---
+
 ### 安卓 service
 
 - 与service无交互
@@ -627,6 +672,7 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 这样的话，`当Activity退出的时候，Service的onUnbind()方法就会被调用，但Sercvice并不会停止`，然后我们可以再进入Activity重新绑定该Service，这个时候 Service就会调用onRebind()方法。
 
 但是onRebind()方法被调用还有个前提是先前的**onUnbind()方法返回值为true**，但是如果使用默认的 super.onUnbind(intent)是不行的，这时候我们要手动的使其返回true，再次绑定时onRebind()就会执行了。
+
 
 
 
