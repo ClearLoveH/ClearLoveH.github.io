@@ -720,9 +720,12 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 ### 自定义View需要重写哪些函数？——测量、布局、绘制
 
+![](/img/in-post/post-Android/review/view.png)
+
 - onMeasure 
   - 测量本质就是测量本身有多大，也就是给mMeasuredWidth和mMeasuredHeight这两个属性赋值，也就是调用setMeasuredDimension这个方法。另外父view测量子view的时候调用的measure方法，还有一些衍生方法如measureChildWithMargins。
 - onLayout 
+  - 大多数情况是在自定义ViewGroup中才会重写
   - 作用是子view应该怎样放置，也就是设置子view的mLeft、mTop、mRight、mBottom属性。该方法在View中是空实现，很显然主要用于ViewGroup。父view放置子view的时候调用layout方法。
 - onDraw 
   - 具体长什么样。
@@ -730,9 +733,18 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 - 如果要改变View 的大小，需要重写onMeasure()方法。
 - 如果要改变View在父控件中的位置，需要重写onLayout()方法
 
+注：
+- onMeasure()会在初始化之后调用一到多次来测量控件或其中的子控件的宽高；
+- onLayout()会在onMeasure()方法之后被调用一次，将控件或其子控件进行布局；
+- onDraw()会在onLayout()方法之后调用一次，也会在用户手指触摸屏幕时被调用多次，来绘制控件。
+
+
+
 ---
 
 ### Fragment生命周期
+
+![](/img/in-post/post-Android/review/fragment.png)
 
 - `onAttach(Context context)`
     - 在Fragment和Activity关联上的时候调用，且仅调用一次。在该回调中我们可以将context转化为Activity保存下来，从而避免后期频繁调用getAtivity()获取Activity的局面，避免了在某些情况下getAtivity()为空的异常（Activity和Fragment分离的情况下）。同时也可以在该回调中将传入的Arguments提取并解析，在这里强烈推荐通过setArguments给Fragment传参数，因为在应用被系统回收时Fragment不会保存相关属性，具体之后会讲解。
