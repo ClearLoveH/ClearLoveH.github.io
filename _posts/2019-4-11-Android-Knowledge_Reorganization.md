@@ -1247,3 +1247,25 @@ Active Routes              Default Route              Persistent Route.
 下一个目的地接受到数据后，从物理层得到数据然后经过逐层的解包 到 链路层 到 网络层，然后开始上述的处理，在经网络层 链路层 物理层将数据封装好继续传往下一个地址。
 
 在上面的过程中，可以看到有一个路由表查询过程，而这个路由表的建立则依赖于路由算法。也就是说路由算法实际上只是用来路由器之间更新维护路由表， 真正的数据传输过程并不执行这个算法，只查看路由表。这个概念也很重要，需要理解常用的路由算法。而整个tcp协议比较复杂，跟链路层的协议有些相似，其 中有很重要的一些机制或者概念需要认真理解，比如编号与确认，流量控制，重发机制，发送接受窗口。
+
+---
+
+### ![Activity 与 Window 与 View 之间的关系](https://blog.csdn.net/zane402075316/article/details/69822438)
+
+![](/img/in-post/post-Android/review/activityWindowView.png)
+
+1. 为什么要设计Activity、View、Window？
+    - 答：Activity就像工匠，Window就像是窗户，View就像是窗花，LayoutInflater像剪刀，Xml配置像窗花图纸。 
+    - Android根据他们不同的职能让他们各斯其活，同时也相互配合展示给我们灵活、精致的界面。为啥这样设计？因为这样的结构更好管理。就像为啥需要使用MVP、MVVM、各种设计模式一样。
+
+2. Activity工作过程是什么样的？ 
+    - 答：以Activity启动过程为例，Activity启动时是通过Binder向AMS(ActivityManagerService)发请求，通过PIC启动Activity的。
+
+3. Window是什么？它的职能是什么？ 
+    - 答：Activity要管理View需要通过Window来间接管理的。Window通过addView()、removeView()、updateViewLayout()这三个方法来管理View的。
+
+4. View跟Window有什么联系？ 
+    - 答：View需要通过Window来展示在Activity上。
+
+5. Activity、View、Window三者如何关联？ 
+    - 答：Activity包含了一个PhoneWindow，而PhoneWindow就是继承于Window的，Activity通过setContentView将View设置到了PhoneWindow上。Window的添加过程以及Activity的启动流程都是一次IPC的过程。Activity的启动需要通过AMS完成；Window的添加过程需要通过WindowSession完成。
