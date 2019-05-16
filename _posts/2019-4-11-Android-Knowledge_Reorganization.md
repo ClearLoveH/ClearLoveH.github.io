@@ -288,22 +288,24 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 - 方式一： post(Runnable)
   - 创建一个工作线程，实现 Runnable 接口，实现 run 方法，处理耗时操作
   - 创建一个 handler，通过 handler.post/postDelay，投递创建的 Runnable，在 run 方法中进行更新 UI 操作。
-        new Thread(new Runnable() {
-           @Override
-           public void run() {
-               /**
-                  耗时操作
-                */
-              handler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                      /**
-                        更新UI
-                       */
-                  }
-              });
-           }
-         }).start();
+        
+            new Thread(new Runnable() {
+            @Override
+            public void run() {
+                /**
+                    耗时操作
+                    */
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        /**
+                            更新UI
+                        */
+                    }
+                });
+            }
+            }).start();
+            
 - 方式二： sendMessage(Message)
   - 创建一个工作线程，继承 Thread，重新 run 方法，处理耗时操作
   - 创建一个 Message 对象，设置 what 标志及数据
