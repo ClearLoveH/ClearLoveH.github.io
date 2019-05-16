@@ -461,6 +461,7 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 - 底层数组+链表实现，无论key还是value都不能为null，线程安全，实现线程安全的方式是在修改数据时锁住整个HashTable，效率低，ConcurrentHashMap做了相关优化
 - 初始size为11，扩容：newsize = olesize*2+1
 - 计算index的方法：index = (hash & 0x7FFFFFFF) % tab.length
+
 #### HashMap
 - 底层数组+链表实现，可以存储null键和null值，线程不安全
 - 初始size为16，扩容：newsize = oldsize*2，size一定为2的n次幂
@@ -481,9 +482,54 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 - 所以在hashmap进行get操作时，因为得到的hashcdoe值不同（注意，上述代码也许在某些情况下会得到相同的hashcode值，不过这种概率比较小，因为虽然两个对象的存储地址不同也有可能得到相同的hashcode值），所以导致在get方法中for循环不会执行，直接返回null
 - 所以如果你的hashCode方法依赖于对象中易变的数据，用户就要当心了，因为此数据发生变化时，hashCode()方法就会生成一个不同的散列码
 
+
+HashMap的初始值还要考虑加载因子:
+- **哈希冲突**：若干Key的哈希值按数组大小取模后，如果落在同一个数组下标上，将组成一条Entry链，对Key的查找需要遍历Entry链上的每个元素执行equals()比较。
+- **加载因子**：为了降低哈希冲突的概率，默认当HashMap中的键值对达到数组大小的75%时，即会触发扩容。因此，如果预估容量是100，即需要设定100/0.75＝134的数组大小。
+- **空间换时间**：如果希望加快Key查找的时间，还可以进一步降低加载因子，加大初始大小，以降低哈希冲突的概率。
+
+HashMap和Hashtable都是用hash算法来决定其元素的存储，因此HashMap和Hashtable的hash表包含如下属性：
+- 容量（capacity）：hash表中桶的数量
+- 初始化容量（initial capacity）：创建hash表时桶的数量，HashMap允许在构造器中指定初始化容量
+- 尺寸（size）：当前hash表中记录的数量
+- 负载因子（load factor）：负载因子等于“size/capacity”。负载因子为0，表示空的hash表，0.5表示半满的散列表，依此类推。轻负载的散列表具有冲突少、适宜插入与查询的特点（但是使用Iterator迭代元素时比较慢）
+
+除此之外，hash表里还有一个“负载极限”，“负载极限”是一个0～1的数值，“负载极限”决定了hash表的最大填满程度。当hash表中的负载因子达到指定的“负载极限”时，hash表会自动成倍地增加容量（桶的数量），并将原有的对象重新分配，放入新的桶内，这称为rehashing。
+
+HashMap和Hashtable的构造器允许指定一个负载极限，HashMap和Hashtable默认的“负载极限”为0.75，这表明当该hash表的3/4已经被填满时，hash表会发生rehashing。
+
+“负载极限”的默认值（0.75）是时间和空间成本上的一种折中：
+- 较高的“负载极限”可以降低hash表所占用的内存空间，但会增加查询数据的时间开销，而查询是最频繁的操作（HashMap的get()与put()方法都要用到查询）
+- 较低的“负载极限”会提高查询数据的性能，但会增加hash表所占用的内存开销
+- 程序猿可以根据实际情况来调整“负载极限”值。
+
+#### ConcurrentHashMap
+- 底层采用分段的数组+链表实现，线程安全
+- 通过把整个Map分为N个Segment，可以提供相同的线程安全，但是效率提升N倍，默认提升16倍。(读操作不加锁，由于HashEntry的value变量是 volatile的，也能保证读取到最新的值。)
+- Hashtable的synchronized是针对整张Hash表的，即每次锁住整张表让线程独占，ConcurrentHashMap允许多个修改操作并发进行，其关键在于使用了锁分离技术
+- 有些方法需要跨段，比如size()和containsValue()，它们可能需要锁定整个表而而不仅仅是某个段，这需要按顺序锁定所有段，操作完毕后，又按顺序释放所有段的锁
+- 扩容：段内扩容（段内元素超过该段对应Entry数组长度的75%触发扩容，不会对整个Map进行扩容），插入前检测需不需要扩容，有效避免无效扩容
+
+在HashMap中，null可以作为键，这样的键只有一个，但可以有一个或多个键所对应的值为null。当get()方法返回null值时，即可以表示HashMap中没有该key，也可以表示该key所对应的value为null。因此，在HashMap中不能由get()方法来判断HashMap中是否存在某个key，应该用containsKey()方法来判断。而在Hashtable中，无论是key还是value都不能为null。
+
+Hashtable是线程安全的，它的方法是同步的，可以直接用在多线程环境中。而HashMap则不是线程安全的，在多线程环境中，需要手动实现同步机制。
+
+Hashtable与HashMap另一个区别是HashMap的迭代器（Iterator）是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。
+
+ConcurrentHashMap是使用了**锁分段技术**来保证线程安全的。
+
+**锁分段技术**：首先将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，其他段的数据也能被其他线程访问。 
+
+ConcurrentHashMap提供了与Hashtable和SynchronizedMap不同的锁机制。Hashtable中采用的锁机制是一次锁住整个hash表，从而在同一时刻只能由一个线程对其进行操作；而ConcurrentHashMap中则是一次锁住一个桶。
+
+ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等常用操作只锁住当前需要用到的桶。这样，原来只能一个线程进入，现在却能同时有16个写线程执行，`并发性能的提升是显而易见的`。
+
 ---
 
 ### TCP 三次握手与四次挥手
+
+![](/img/in-post/post-Android/review/TCP3woshou.png)
+![](/img/in-post/post-Android/review/TCP4huishou.png)
 
 - 若两次握手会怎么样？
   - 当A和B通信完成后，A之前发送的发起请求的SYN此时到达了B，那么B又会以为建立新的连接，以为这是一个新的请求连接消息，就向A发了一次确认，而对于A而言，他认为他没有给B再次的发消息（因为上次的通话已经结束了），所以A不会理睬这条确认，但是B则会一直在傻傻的等待着A的消息
@@ -491,6 +537,7 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
     1. 为什么建立连接协议是三次握手，而关闭连接却是四次握手呢？
         - 这是因为服务端的LISTEN状态下的SOCKET当收到SYN报文的建连请求后，它可以把ACK和SYN（ACK起应答作用，而SYN起同步作用）放在一个报文里来发送。但关闭连接时，当收到对方的FIN报文通知时，它仅仅表示对方没有数据发送给你了；但未必你所有的数据都全部发送给对方了，所以你不可以马上关闭SOCKET,也即你可能还需要发送一些数据给对方之后，再发送FIN报文给对方来表示你同意现在可以关闭连接了，所以它这里的ACK报文和FIN报文多数情况下都是分开发送的。
     2. 为什么TIME_WAIT状态还需要等2MSL后才能返回到CLOSED状态？
+        - MSL即Maximum Segment Lifetime，也就是报文最大生存时间，引用《TCP/IP详解》中的话：“它(MSL)是任何报文段被丢弃前在网络内的最长时间。”
         - 这是因为虽然双方都同意关闭连接了，而且握手的4个报文也都协调和发送完毕，按理可以直接回到CLOSED状态（就好比从SYN_SEND状态到ESTABLISH状态那样）；但是因为我们必须要假想网络是不可靠的，你无法保证你最后发送的ACK报文会一定被对方收到，因此对方处于LAST_ACK状态下的SOCKET可能会因为超时未收到ACK报文，而重发FIN报文，所以这个TIME_WAIT状态的作用就是用来重发可能丢失的ACK报文。
 
 ---
