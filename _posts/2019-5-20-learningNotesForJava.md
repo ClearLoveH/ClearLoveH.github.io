@@ -89,6 +89,10 @@ LinkedHashMap是否允许重复数据 |	Key重复会覆盖、Value允许重复
 LinkedHashMap是否有序 |	有序
 LinkedHashMap是否线程安全 |	非线程安全
 
+![](/img/in-post/post-Android/Java/linkedhashmap.png)
+
+![](/img/in-post/post-Android/Java/linkedhashmap2.png)
+
 
 
 ---
