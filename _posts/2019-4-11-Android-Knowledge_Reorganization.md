@@ -581,7 +581,7 @@ ConcurrentHashMap`默认将hash表分为16个桶`，诸如get、put、remove等�
 
 ---
 
-### 保持进程不被杀死——类似微信QQ
+### 保持进程不被杀死——service保活，类似微信QQ
 1. Service设置成START_STICKY，kill 后会被重启（等待5秒左右），重传Intent，保持与重启前一样
     ```
     @Override  
