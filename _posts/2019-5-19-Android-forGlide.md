@@ -236,6 +236,7 @@ public void into(ImageView target, Callback callback) {
 
 #### 4.提交、分发、执行请求。
 会经过下面这一系列的操作，最终将Action 交给BitmapHunter 执行。
+
 `enqueueAndSubmit －> submit －> dispatchSubmit －> performSubmit：`
 ```java
 //将action 保存到了一个Map 中，目标View作为key
@@ -759,7 +760,757 @@ private void clearDiskCache(){
 ```
 
 ---
-### 
+### Glide
+以Glide3.8.0版本来分析，我们先看下最常见使用方法：
+```java
+Glide.with(fragment)
+     .load(myUrl)
+     .into(imageView);
+```
+- with(context)
+- load(url)
+- into(target)
+
+#### with(context)方法
+
+看一下with(context)d的源码：
+
+```java
+public static RequestManager with(Context context) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(context);
+    }
+
+    public static RequestManager with(Activity activity) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(activity);
+    }
+    
+    public static RequestManager with(FragmentActivity activity) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(activity);
+    }
+    
+    public static RequestManager with(android.app.Fragment fragment) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(fragment);
+    }
+    
+    public static RequestManager with(Fragment fragment) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(fragment);
+    }
+```
+
+可以看到，with方法有很多，但内容基本一致，都是通过 `RequestManagerRetriever.get()`; 获取一个 `RequestManagerRetriever 对象 retriever` ，然后通过 `retriever.get(context)`; 获取一个 RequestManager 对象并返回。这些with方法关键的不同在于传入的参数不一致，可以是`Context、Activity、Fragment`等等。那么为什么要分这么多种呢？其实我们应该都知道：Glide在加载图片的时候会绑定 with(context) 方法中传入的 context 的生命周期，如果传入的是 Activity ，那么在这个 **Activity 销毁的时候Glide会停止图片的加载。这样做的好处是显而易见的：避免了消耗多余的资源，也避免了在Activity销毁之后加载图片从而导致的空指针问题**。
+
+为了更好的分析 with(context) 中的这两步，我们来看一下 `RequestManagerRetriever` ：
+```java
+public class RequestManagerRetriever implements Handler.Callback {
+    //饿汉式创建单例
+    private static final RequestManagerRetriever INSTANCE = new RequestManagerRetriever();
+    
+    //返回单例对象
+    public static RequestManagerRetriever get() {
+        return INSTANCE;
+    }
+
+    //根据传入的参数，获取不同的RequestManager
+    public RequestManager get(Context context) {
+        if (context == null) {
+            throw new IllegalArgumentException("You cannot start a load on a null Context");
+        } else if (Util.isOnMainThread() && !(context instanceof Application)) {
+            if (context instanceof FragmentActivity) {
+                return get((FragmentActivity) context);
+            } else if (context instanceof Activity) {
+                return get((Activity) context);
+            } else if (context instanceof ContextWrapper) {
+                return get(((ContextWrapper) context).getBaseContext());
+            }
+        }
+
+        return getApplicationManager(context);
+    }
+    
+    //省略无关代码......
+}
+```
+
+上面这个方法主要是通过传入context的不同类型来做不同的操作。context可以是Application、FragmentActivity、Activity或者是ContextWrapper。我们先看一下当context是Application时的操作：
+```java
+private RequestManager getApplicationManager(Context context) {
+        // 返回一个单例
+        if (applicationManager == null) {
+            synchronized (this) {
+                if (applicationManager == null) {
+                    applicationManager = new RequestManager(context.getApplicationContext(),
+                            new ApplicationLifecycle(), new EmptyRequestManagerTreeNode());
+                }
+            }
+        }
+
+        return applicationManager;
+    }
+```
+
+`getApplicationManager(Context context)` 通过单例模式创建并返回了 applicationManager 。我们再来看一下如果传入的context是Activity时的操作：
+```java
+public RequestManager get(Activity activity) {
+        //如果不在主线程或者Android SDK的版本低于HONEYCOMB，传入的还是Application类型的context
+        if (Util.isOnBackgroundThread() || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return get(activity.getApplicationContext());
+        } else {
+            //判断当前activity是否被销毁
+            assertNotDestroyed(activity);
+            android.app.FragmentManager fm = activity.getFragmentManager();
+           //通过fragmentGet(activity, fm)获取RequestManager
+            return fragmentGet(activity, fm);
+        }
+    }
+```
+
+如果不在主线程或者Android SDK版本过低，走的还是传入Application的方法，这个方法在上面提到过；反之，首先判断当前activity是否被销毁，如果没有被销毁，则通过fragmentGet(activity, fm)获取RequestManager。关键是这个 fragmentGet(activity, fm) ，我们来看一下：
+
+```java
+RequestManager fragmentGet(Context context, android.app.FragmentManager fm) {
+        //在当前activity中创建一个没有界面的的fragment并add到当前activity中
+        RequestManagerFragment current = getRequestManagerFragment(fm);
+        RequestManager requestManager = current.getRequestManager();
+        if (requestManager == null) {
+            //创建一个requestManager
+            requestManager = new RequestManager(context, current.getLifecycle(), current.getRequestManagerTreeNode());
+            //将requestManager与fragment绑定        
+            current.setRequestManager(requestManager);
+        }
+        return requestManager;
+    }
+```
+`fragmentGet 这个方法主要是在当前activity中创建一个没有界面的的fragment并add到当前activity中，以此来实现对activity生命周期的监听。`
+#### 总结：
+- 通过RequestManagerRetriever的get获取RequestManagerRetriever单例对象
+- 通过retriever.get(context)获取RequestManager，在get(context)方法中通过对context类型的判断做不同的处理：
+    - context是Application，通过getApplicationManager(Context context) 创建并返回一个RequestManager对象
+    - context是Activity，通过fragmentGet(activity, fm)在当前activity创建并添加一个没有界面的fragment，从而实现图片加载与activity的生命周期相绑定，之后创建并返回一个RequestManager对象
+- 我们先来看传入`Application参数`的情况。如果在Glide.with()方法中传入的是一个Application对象，那么这里就会调用带有Context参数的get()方法重载，然后会在调用getApplicationManager()方法来获取一个RequestManager对象。其实这是最简单的一种情况，因为`Application对象的生命周期即应用程序的生命周期，因此Glide并不需要做什么特殊的处理`，它自动就是和应用程序的生命周期是同步的，如果应用程序关闭的话，Glide的加载也会同时终止。
+- 接下来我们看传入`非Application参数`的情况。不管你在Glide.with()方法中传入的是Activity、FragmentActivity、v4包下的Fragment、还是app包下的Fragment，最终的流程都是一样的，那就是会向当前的Activity当中`添加一个隐藏的Fragment`。那么这里为什么要添加一个隐藏的Fragment呢？因为Glide需要知道加载的生命周期。很简单的一个道理，如果你在某个Activity上正在加载着一张图片，结果图片还没加载出来，Activity就被用户关掉了，那么图片还应该继续加载吗？当然不应该。可是`Glide并没有办法知道Activity的生命周期，于是Glide就使用了添加隐藏Fragment的这种小技巧`，因为`Fragment的生命周期和Activity是同步的`，如果Activity被销毁了，Fragment是可以监听到的，这样Glide就可以捕获这个事件并停止图片加载了。
+- 这里额外再提一句，如果我们是在`非主线程当中使用的Glide`，那么不管你是传入的Activity还是Fragment，都会被强制当成Application来处理。
+- 总体来说，with()方法其实就是为了得到一个RequestManager对象而已，然后Glide会根据我们传入with()方法的参数来确定图片加载的生命周期
+
+
+#### load(url)方法
+with(context)返回一个RequestManager，接下来我们看一下RequestManger中的load(url)方法：
+```java
+public DrawableTypeRequest<String> load(String string) {
+        return (DrawableTypeRequest<String>) fromString().load(string);
+    }
+```
+这个方法分两步：`fromString()`、`load(string)`，先看第一个方法：
+
+```java
+public DrawableTypeRequest<String> fromString() {
+        return loadGeneric(String.class);
+    }
+```
+这个方法返回的是 loadGeneric(String.class) ，我们跟进去：
+
+```java
+private <T> DrawableTypeRequest<T> loadGeneric(Class<T> modelClass) {
+        ModelLoader<T, InputStream> streamModelLoader = Glide.buildStreamModelLoader(modelClass, context);
+        ModelLoader<T, ParcelFileDescriptor> fileDescriptorModelLoader =
+                Glide.buildFileDescriptorModelLoader(modelClass, context);
+        if (modelClass != null && streamModelLoader == null && fileDescriptorModelLoader == null) {
+            throw new IllegalArgumentException("Unknown type " + modelClass + ". You must provide a Model of a type for"
+                    + " which there is a registered ModelLoader, if you are using a custom model, you must first call"
+                    + " Glide#register with a ModelLoaderFactory for your custom model class");
+        }
+
+        //这句是核心，本质是创建并返回了一个DrawableTypeRequest
+        return optionsApplier.apply(
+                new DrawableTypeRequest<T>(modelClass, streamModelLoader, fileDescriptorModelLoader, context,
+                        glide, requestTracker, lifecycle, optionsApplier));
+    }
+```
+在 `loadGeneric(Class<T> modelClass)` 方法中，我们只需要关注核心即可。它的核心是最后一句，方法调用看着很复杂，其实本质是创建并返回了一个DrawableTypeRequest，Drawable类型的请求。再来看 `load(string)` 方法：
+
+```java
+@Override
+    public DrawableRequestBuilder<ModelType> load(ModelType model) {
+        super.load(model);
+        return this;
+    }
+```
+需要注意的是这个方法存在于DrawableTypeRequest的父类DrawableRequestBuilder中，这个方法首先调用DrawableRequestBuilder的父类的load方法，然后返回自身。再看一下DrawableRequestBuilder父类中的load方法：
+
+```java
+public GenericRequestBuilder<ModelType, DataType, ResourceType, TranscodeType> load(ModelType model) {
+        this.model = model;
+        isModelSet = true;
+        return this;
+    }
+```
+DrawableRequestBuilder的父类是GenericRequestBuilder，从名字中我们也可以看出来，前者是Drawable请求的构建者，后者是通用的请求构建者，他们是子父关系。这个load方法其实是把我们传入的String类型的URL存入了内部的model成员变量中，再将数据来源是否已经设置的标志位 isModelSet 设置为true，意味着我们在调用 `Glide.with(context).load(url)` 之后数据来源已经设置成功了。
+
+使用的是Builder模式
+
+#### into(imageView)方法
+简单的说，Glide中的前两步是创建了一个Request，这个Request可以理解为对图片加载的配置请求，需要注意的是仅仅是创建了一个 请求 ，而并没有去执行。在Glide的最后一步into方法中，这个请求才会真实的执行。
+
+我们来DrawableTypeRequest中找一下into方法，发现没找到，那肯定是在他的父类DrawableRequestBuilder中，我们来看一下`DrawableRequestBuilder中的into方法`：
+```java
+public Target<GlideDrawable> into(ImageView view) {
+        return super.into(view);
+    }
+```
+它调用的是父类GenericRequestBuilder的方法，那我们继续看`GenericRequestBuilder的into方法`：
+
+```java
+public Target<TranscodeType> into(ImageView view) {
+        //确保在主线程
+        Util.assertMainThread();
+        //确保view不为空
+        if (view == null) {
+            throw new IllegalArgumentException("You must pass in a non null View");
+        }
+        //对ScaleType进行配置
+        if (!isTransformationSet && view.getScaleType() != null) {
+            switch (view.getScaleType()) {
+                case CENTER_CROP:
+                    applyCenterCrop();
+                    break;
+                case FIT_CENTER:
+                case FIT_START:
+                case FIT_END:
+                    applyFitCenter();
+                    break;
+                //$CASES-OMITTED$
+                default:
+                    // Do nothing.
+            }
+        }
+
+        //核心
+        return into(glide.buildImageViewTarget(view, transcodeClass));
+    }
+```
+可以看到，上面的方法就是into的核心代码了，它定义在`GenericRequestBuilder`这个通用的请求构建者中。方法的核心是最后一行：` into(glide.buildImageViewTarget(view, transcodeClass))` ，首先是通过 `glide.buildImageViewTarget(view, transcodeClass) `创建出一个
+Target 类型的对象，然后把这个target传`入GenericRequestBuilder中的into方法中`。我们先来看一下Glide中的
+buildImageViewTarget(view, transcodeClass) 方法：
+
+```java
+ <R> Target<R> buildImageViewTarget(ImageView imageView, Class<R> transcodedClass) {
+        return imageViewTargetFactory.buildTarget(imageView, transcodedClass);
+    }
+```
+这个方法的目的是`把我们传入的imageView包装成一个Target`。内部调用了 imageViewTargetFactory.buildTarget(imageView, transcodedClass) 继续跟进去看一下：
+
+```java
+public <Z> Target<Z> buildTarget(ImageView view, Class<Z> clazz) {
+        //图片来源是GlideDrawable
+        if (GlideDrawable.class.isAssignableFrom(clazz)) {
+            //创建GlideDrawable对应的target
+            return (Target<Z>) new GlideDrawableImageViewTarget(view);
+        } else if (Bitmap.class.equals(clazz)) {
+            //如果图片来源是Bitmap，创建Bitmap对应的target
+            return (Target<Z>) new BitmapImageViewTarget(view);
+        } else if (Drawable.class.isAssignableFrom(clazz)) {
+            //如果图片来源是Drawable，创建Drawable对应的target
+            return (Target<Z>) new DrawableImageViewTarget(view);
+        } else {
+            throw new IllegalArgumentException("Unhandled class: " + clazz
+                    + ", try .as*(Class).transcode(ResourceTranscoder)");
+        }
+    }
+```
+这个方法的的本质是：通过对图片来源类型的判断，创建并返回与图片来源对应的imageViewTarget。获取到相应的target之后，我们来看GenericRequestBuilder中的into方法：
+
+```java
+public <Y extends Target<TranscodeType>> Y into(Y target) {
+        //确保在主线程
+        Util.assertMainThread();
+        //确保target不为空
+        if (target == null) {
+            throw new IllegalArgumentException("You must pass in a non null Target");
+        }
+        //确保数据来源已经确定，即已经调用了load(url)方法
+        if (!isModelSet) {
+            throw new IllegalArgumentException("You must first set a model (try #load())");
+        }
+
+        //获取当前target已经绑定的Request对象
+        Request previous = target.getRequest();
+
+        //如果当前target已经绑定了Request对象，则清空这个Request对象
+        if (previous != null) {
+            previous.clear();
+            //停止绑定到当前target的上一个Request的图片请求处理
+            requestTracker.removeRequest(previous);
+            previous.recycle();
+        }
+        
+        //创建Request对象
+        Request request = buildRequest(target);
+        //与target绑定
+        target.setRequest(request);
+        lifecycle.addListener(target);
+        //执行request
+        requestTracker.runRequest(request);
+
+        return target;
+    }
+```
+
+我们梳理一下方法中的逻辑：
+- 获取当前target中的Request对象，如果存在，则清空并终止这个Request对象的执行
+- 创建新的Request对象并与当前target绑定
+- 执行新创建的图片处理请求Request
+
+逻辑还是比较清晰的，这里有一个问题需要说明一下。`为什么要终止并清除target之前绑定的请求呢`？
+- 在没有Glide之前，我们处理ListView中的图片加载其实是一件比较麻烦的事情。由于ListView中Item的复用机制，会导致网络图片加载的错位或者闪烁。那我们解决这个问题的办法也很简单，就是给当前的ImageView设置tag，这个tag可以是图片的URL等等。当从网络中获取到图片时判断这个ImageVIew中的tag是否是这个图片的URL，如果是就加载图片，如果不是则跳过。
+- 在有了Glide之后，我们处理ListView或者Recyclerview中的图片加载就很无脑了，根本不需要作任何多余的操作，直接正常使用就行了。这其中的原理是Glide给我们处理了这些判断，我们来看一下Glide内部是如何处理的：
+```java
+public Request getRequest() {
+        //本质还是getTag
+        Object tag = getTag();
+        Request request = null;
+        if (tag != null) {
+            if (tag instanceof Request) {
+                request = (Request) tag;
+            } else {
+                throw new IllegalArgumentException("You must not call setTag() on a view Glide is targeting");
+            }
+        }
+        return request;
+    }
+    
+    @Override
+    public void setRequest(Request request) {
+        //本质是setTag
+        setTag(request);
+    }
+```
+
+可以看到， target.getRequest() 和 target.setRequest(Request request) 本质上还是通过`setTag和getTag`来做的处理，这也印证了我们上面所说。
+
+继续回到into方法中，在创建并绑定了Request后，关键的就是 requestTracker.runRequest(request) 来执行我们创建的请求了。
+```java
+public void runRequest(Request request) {
+        //将请求加入请求集合
+        requests.add(request);
+        
+        if (!isPaused) {
+            如果处于非暂停状态，开始执行请求
+            request.begin();
+        } else {
+            //如果处于暂停状态，将请求添加到等待集合
+            pendingRequests.add(request);
+        }
+    }
+```
+这个方法定义在 RequestTracker 中，这个类主要负责`Request的执行，暂停，取消`等等关于图片请求的操作。我们着重看 `request.begin() `，这句代码意味着开始执行图片请求的处理。Request是个接口， request.begin() 实际调用的是Request的子类 `GenericRequest 的begin方法`，我们跟进去看一下：
+```java
+ @Override
+    public void begin() {
+        startTime = LogTime.getLogTime();
+        if (model == null) {
+            onException(null);
+            return;
+        }
+
+        status = Status.WAITING_FOR_SIZE;
+        if (Util.isValidDimensions(overrideWidth, overrideHeight)) {
+            //如果长宽尺寸已经确定
+            onSizeReady(overrideWidth, overrideHeight);
+        } else {
+            //获取长宽尺寸，获取完之后会调用onSizeReady(overrideWidth, overrideHeight)
+            target.getSize(this);
+        }
+
+        if (!isComplete() && !isFailed() && canNotifyStatusChanged()) {
+            //开始加载图片，先显示占位图
+            target.onLoadStarted(getPlaceholderDrawable());
+        }
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV("finished run method in " + LogTime.getElapsedMillis(startTime));
+        }
+    }
+```
+- 获取图片的长宽尺寸，如果长宽已经确定，走 `onSizeReady(overrideWidth, overrideHeight) `流程；如果未确定，先获取长宽，再走 onSizeReady(overrideWidth, overrideHeight)
+
+- 图片开始加载，首先显示占位图
+
+可以明白，主要的逻辑还是在`onSizeReady` 这个方法中：
+```java
+@Override
+    public void onSizeReady(int width, int height) {
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV("Got onSizeReady in " + LogTime.getElapsedMillis(startTime));
+        }
+        if (status != Status.WAITING_FOR_SIZE) {
+            return;
+        }
+        status = Status.RUNNING;
+
+        width = Math.round(sizeMultiplier * width);
+        height = Math.round(sizeMultiplier * height);
+
+        ModelLoader<A, T> modelLoader = loadProvider.getModelLoader();
+        final DataFetcher<T> dataFetcher = modelLoader.getResourceFetcher(model, width, height);
+
+        if (dataFetcher == null) {
+            onException(new Exception("Failed to load model: \'" + model + "\'"));
+            return;
+        }
+        ResourceTranscoder<Z, R> transcoder = loadProvider.getTranscoder();
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV("finished setup for calling load in " + LogTime.getElapsedMillis(startTime));
+        }
+        loadedFromMemoryCache = true;
+        
+        //核心代码，加载图片
+        loadStatus = engine.load(signature, width, height, dataFetcher, loadProvider, transformation, transcoder,
+                priority, isMemoryCacheable, diskCacheStrategy, this);
+                
+        loadedFromMemoryCache = resource != null;
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV("finished onSizeReady in " + LogTime.getElapsedMillis(startTime));
+        }
+    }
+```
+这段代码看起来很复杂，我们只需要关注核心代码：
+```java
+    engine.load(signature, width, height, dataFetcher, loadProvider, transformation, transcoder, priority, isMemoryCacheable, diskCacheStrategy, this)，
+```
+我们看一下load方法内部做了什么处理：
+```java
+public <T, Z, R> LoadStatus load(Key signature, int width, int height, DataFetcher<T> fetcher,
+            DataLoadProvider<T, Z> loadProvider, Transformation<Z> transformation, ResourceTranscoder<Z, R> transcoder,
+            Priority priority, boolean isMemoryCacheable, DiskCacheStrategy diskCacheStrategy, ResourceCallback cb) {
+        Util.assertMainThread();
+        long startTime = LogTime.getLogTime();
+
+        final String id = fetcher.getId();
+        EngineKey key = keyFactory.buildKey(id, signature, width, height, loadProvider.getCacheDecoder(),
+                loadProvider.getSourceDecoder(), transformation, loadProvider.getEncoder(),
+                transcoder, loadProvider.getSourceEncoder());
+
+        //使用LruCache获取缓存
+        EngineResource<?> cached = loadFromCache(key, isMemoryCacheable);
+        if (cached != null) {
+            //从缓存中获取资源成功
+            cb.onResourceReady(cached);
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                logWithTimeAndKey("Loaded resource from cache", startTime, key);
+            }
+            return null;
+        }
+
+        //从弱引用中获取缓存
+        EngineResource<?> active = loadFromActiveResources(key, isMemoryCacheable);
+        if (active != null) {
+            //从缓存中获取资源成功
+            cb.onResourceReady(active);
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                logWithTimeAndKey("Loaded resource from active resources", startTime, key);
+            }
+            return null;
+        }
+
+        //开启线程从网络中加载图片......
+        EngineJob current = jobs.get(key);
+        if (current != null) {
+            current.addCallback(cb);
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                logWithTimeAndKey("Added to existing load", startTime, key);
+            }
+            return new LoadStatus(cb, current);
+        }
+
+        EngineJob engineJob = engineJobFactory.build(key, isMemoryCacheable);
+        DecodeJob<T, Z, R> decodeJob = new DecodeJob<T, Z, R>(key, width, height, fetcher, loadProvider, transformation,
+                transcoder, diskCacheProvider, diskCacheStrategy, priority);
+        EngineRunnable runnable = new EngineRunnable(engineJob, decodeJob, priority);
+        jobs.put(key, engineJob);
+        engineJob.addCallback(cb);
+        engineJob.start(runnable);
+
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logWithTimeAndKey("Started new load", startTime, key);
+        }
+        return new LoadStatus(cb, engineJob);
+    }
+```
+
+load方法位于 Engine 类中。load方法内部会从三个来源获取图片数据，我们最熟悉的就是`LruCache`了。如何获取数据过于复杂，这里就不再展开分析，我们这里主要关注图片数据获取到之后的操作。获取到图片数据之后，通过  `cb.onResourceReady(cached)` 来处理，我们来看一下这个回调的具体实现：
+```java
+@Override
+    public void onResourceReady(Resource<?> resource) {
+        if (resource == null) {
+            onException(new Exception("Expected to receive a Resource<R> with an object of " + transcodeClass
+                    + " inside, but instead got null."));
+            return;
+        }
+
+        Object received = resource.get();
+        if (received == null || !transcodeClass.isAssignableFrom(received.getClass())) {
+            releaseResource(resource);
+            onException(new Exception("Expected to receive an object of " + transcodeClass
+                    + " but instead got " + (received != null ? received.getClass() : "") + "{" + received + "}"
+                    + " inside Resource{" + resource + "}."
+                    + (received != null ? "" : " "
+                        + "To indicate failure return a null Resource object, "
+                        + "rather than a Resource object containing null data.")
+            ));
+            return;
+        }
+
+        if (!canSetResource()) {
+            releaseResource(resource);
+            // We can't set the status to complete before asking canSetResource().
+            status = Status.COMPLETE;
+            return;
+        }
+        
+        //核心是这一句
+        onResourceReady(resource, (R) received);
+    }
+```
+我们继续看`onResourceReady(resource, (R) received)`这个方法：
+```java
+ private void onResourceReady(Resource<?> resource, R result) {
+        // We must call isFirstReadyResource before setting status.
+        boolean isFirstResource = isFirstReadyResource();
+        status = Status.COMPLETE;
+        this.resource = resource;
+
+        if (requestListener == null || !requestListener.onResourceReady(result, model, target, loadedFromMemoryCache,
+                isFirstResource)) {
+            GlideAnimation<R> animation = animationFactory.build(loadedFromMemoryCache, isFirstResource);
+            
+            //核心，通过调用target的onResourceReady方法加载图片
+            target.onResourceReady(result, animation);
+        }
+
+        notifyLoadSuccess();
+
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV("Resource ready in " + LogTime.getElapsedMillis(startTime) + " size: "
+                    + (resource.getSize() * TO_MEGABYTE) + " fromCache: " + loadedFromMemoryCache);
+        }
+    }
+```
+我们可以看到核心代码：`target.onResourceReady(result, animation)`，其实在这句代码的内部最终是通过：
+```java
+public class DrawableImageViewTarget extends ImageViewTarget<Drawable> {
+    public DrawableImageViewTarget(ImageView view) {
+        super(view);
+    }
+
+    @Override
+    protected void setResource(Drawable resource) {
+       view.setImageDrawable(resource);
+    }
+}
+```
+本质是通过 `setResource(Drawable resource) `来实现的，在这个方法的内部调用了Android内部最常用的加载图片的方法 view.setImageDrawable(resource) 。
+
+#### into方法总结
+- 将imageview包装成imageViewTarget
+- 清除这个imageViewTarget之前绑定的请求，绑定新的请求
+- 执行新的请求
+- 获取图片数据之后，成功则会调用ImageViewTarget中的onResourceReady()方法，失败则会调用ImageViewTarget中的onLoadFailed();二者的本质都是通过调用Android中的imageView.setImageDrawable(drawable)来实现对imageView的图片加载
+
+---
+### LruCache源码分析
+LruCache来自于 `android.support.v4.util` 中：
+```java
+public class LruCache<K, V> {
+    //存储缓存
+    private final LinkedHashMap<K, V> map;
+    //当前缓存的总大小
+    private int size;
+    //最大缓存大小
+    private int maxSize;
+    //添加到缓存的个数
+    private int putCount;
+    //创建的个数
+    private int createCount;
+    //移除的个数
+    private int evictionCount;
+    //命中个数
+    private int hitCount;
+    //未命中个数
+    private int missCount;
+
+    public LruCache(int maxSize) {
+        if (maxSize <= 0) {
+            throw new IllegalArgumentException("maxSize <= 0");
+        }
+        this.maxSize = maxSize;
+        this.map = new LinkedHashMap<K, V>(0, 0.75f, true);
+    }
+
+    //重新设置最大缓存
+    public void resize(int maxSize) {
+        //确保最大缓存大于0
+        if (maxSize <= 0) {
+            throw new IllegalArgumentException("maxSize <= 0");
+        }
+
+        synchronized (this) {
+            this.maxSize = maxSize;
+        }
+        //对当前的缓存做一些操作以适应新的最大缓存大小
+        trimToSize(maxSize);
+    }
+
+    //获取缓存
+    public final V get(K key) {
+        //确保key不为null
+        if (key == null) {
+            throw new NullPointerException("key == null");
+        }
+
+        V mapValue;
+        synchronized (this) {
+            mapValue = map.get(key);
+            //如果可以获取key对应的value
+            if (mapValue != null) {
+                //命中数加一
+                hitCount++;
+                return mapValue;
+            }
+            //如果根据key获取的value为null，未命中数加一
+            missCount++;
+        }
+        
+        //省略无关代码......
+    }
+
+    
+    public final V put(K key, V value) {
+        if (key == null || value == null) {
+            throw new NullPointerException("key == null || value == null");
+        }
+
+        V previous;
+        synchronized (this) {
+            //添加到缓存的个数加一
+            putCount++;
+            //更新当前缓存大小
+            size += safeSizeOf(key, value);
+            previous = map.put(key, value);
+            if (previous != null) {
+                //如果之前map中对应key存在value不为null，由于重复的key新添加的value会覆盖上一个value，所以当前缓存大小应该再减去之前value的大小
+                size -= safeSizeOf(key, previous);
+            }
+        }
+        //根据缓存最大值调整缓存
+        trimToSize(maxSize);
+        return previous;
+    }
+
+    //根据最大缓存大小对map中的缓存做调整
+    public void trimToSize(int maxSize) {
+        while (true) {
+            K key;
+            V value;
+            synchronized (this) {
+                if (size < 0 || (map.isEmpty() && size != 0)) {
+                    throw new IllegalStateException(getClass().getName()
+                            + ".sizeOf() is reporting inconsistent results!");
+                }
+                //当前缓存大小小于最大缓存，或LinkedHashMap为空时跳出循环
+                if (size <= maxSize || map.isEmpty()) {
+                    break;
+                }
+                
+                //遍历LinkedHashMap,删除顶部的（也就是最先添加的）元素，直到当前缓存大小小于最大缓存，或LinkedHashMap为空
+                Map.Entry<K, V> toEvict = map.entrySet().iterator().next();
+                key = toEvict.getKey();
+                value = toEvict.getValue();
+                map.remove(key);
+                size -= safeSizeOf(key, value);
+                evictionCount++;
+            }
+
+          //省略无关代码......
+        }
+    }
+
+    public final V remove(K key) {
+        if (key == null) {
+            throw new NullPointerException("key == null");
+        }
+
+        V previous;
+        synchronized (this) {
+            previous = map.remove(key);
+            if (previous != null) {
+                size -= safeSizeOf(key, previous);
+            }
+        }
+
+        return previous;
+    }
+
+    private int safeSizeOf(K key, V value) {
+        int result = sizeOf(key, value);
+        if (result < 0) {
+            throw new IllegalStateException("Negative size: " + key + "=" + value);
+        }
+        return result;
+    }
+
+     protected int sizeOf(K key, V value) {
+        return 1;
+    }
+
+
+    public final void evictAll() {
+        trimToSize(-1); // -1 will evict 0-sized elements
+    }
+
+    @Override public synchronized final String toString() {
+        int accesses = hitCount + missCount;
+        int hitPercent = accesses != 0 ? (100 * hitCount / accesses) : 0;
+        return String.format(Locale.US, "LruCache[maxSize=%d,hits=%d,misses=%d,hitRate=%d%%]",
+                maxSize, hitCount, missCount, hitPercent);
+    }
+}
+```
+
+其实从上面的代码可以看出，LruCache内部主要靠一个`LinkedHashMap`来存储缓存，这里使用LinkedHashMap而不使用普通的HashMap正是看中了它的顺序性，即`LinkedHashMap中元素的存储顺序就是我们存入的顺序`，而HashMap则无法保证这一点。
+
+我们都知道Lru算法就是最近最少使用的算法（least recently used），而LruCache是如何保证在缓存大于最大缓存大小之后移除的就是最近最少使用的元素呢？关键在于 `trimToSize(int maxSize)` 这个方法内部，在它的内部开启了一个循环，遍历LinkedHashMap，删除顶部的（也就是最先添加的）元素，直到当前缓存大小小于最大缓存，或LinkedHashMap为空。这里需要注意的是由于LinkedHashMap的特点，它的存储顺序就是存放的顺序，所以位于顶部的元素就是最近最少使用的元素，正是由于这个特点，从而实现了当缓存不足时优先删除最近最少使用的元素。
+```java
+//根据最大缓存大小对map中的缓存做调整
+    public void trimToSize(int maxSize) {
+        while (true) {
+            K key;
+            V value;
+            synchronized (this) {
+                if (size < 0 || (map.isEmpty() && size != 0)) {
+                    throw new IllegalStateException(getClass().getName()
+                            + ".sizeOf() is reporting inconsistent results!");
+                }
+                //当前缓存大小小于最大缓存，或LinkedHashMap为空时跳出循环
+                if (size <= maxSize || map.isEmpty()) {
+                    break;
+                }
+                
+                //遍历LinkedHashMap,删除顶部的（也就是最先添加的）元素，直到当前缓存大小小于最大缓存，或LinkedHashMap为空
+                Map.Entry<K, V> toEvict = map.entrySet().iterator().next();
+                key = toEvict.getKey();
+                value = toEvict.getValue();
+                map.remove(key);
+                size -= safeSizeOf(key, value);
+                evictionCount++;
+            }
+
+          //省略无关代码......
+        }
+    }
+```
 
 
 
@@ -794,3 +1545,7 @@ private void clearDiskCache(){
 
 ---
 ### Glide新版本4.0的特性
+
+[带你全面了解Glide 4的用法](https://blog.csdn.net/guolin_blog/article/details/78582548)
+
+[Glide 4.0.0 RC0 官方说明](https://juejin.im/entry/5924f28eda2f60005d7725b2)
