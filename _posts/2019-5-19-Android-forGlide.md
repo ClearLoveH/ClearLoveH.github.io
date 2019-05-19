@@ -36,7 +36,7 @@ Picasso的基本用法
 
 
 
-
+---
 ### Glide与Picasso的区别：
 
 1. 内存：
@@ -50,7 +50,7 @@ Picasso的基本用法
     - 将ImageView调整成不同大小不管大小如何设置。Picasso只缓存一个全尺寸的。Glide则不同，它会为每种大小的ImageView缓存一次
     - 让Glide既缓存全尺寸又缓存其他尺寸的方法：
 
-            Glide.with(this).load(“http://nuuneoi.com/uploads/source/playstore/cover.jpg“) .diskCacheStrategy(DiskCacheStrategy.ALL) .into(ivImgGlide);
+            Glide.with(this).load(“http://nuuneoi.com/uploads/source/playstore/cover.jpg“).diskCacheStrategy(DiskCacheStrategy.ALL).into(ivImgGlide);
     - Glide的这种方式优点是加载显示非常快。而Picasso的方式则因为需要在显示之前重新调整大小而导致一些延迟，Glide比Picasso快，虽然需要更大的空间来缓存。
 
 4. Gif动图
@@ -66,4 +66,4 @@ Picasso的基本用法
 `Picasso所能实现的功能，Glide都能做，只是所需的设置不同。但是Picasso体积比起Glide小太多如果项目中网络请求本身用的就是okhttp或者retrofit(本质还是okhttp)，那么建议用Picasso，体积会小很多。Glide的好处是大型的图片流，比如gif、Video，如果做美拍这种视频类应用，建议使用。`
 
 ---
-### 新版本4.0的特性
+### Glide新版本4.0的特性
