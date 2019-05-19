@@ -1250,7 +1250,9 @@ Active Routes              Default Route              Persistent Route.
 
 ---
 
-### ![Activity 与 Window 与 View 之间的关系](https://blog.csdn.net/zane402075316/article/details/69822438)
+### Activity 与 Window 与 View 之间的关系  
+ 
+https://blog.csdn.net/zane402075316/article/details/69822438
 
 ![](/img/in-post/post-Android/review/activityWindowView.png)
 
