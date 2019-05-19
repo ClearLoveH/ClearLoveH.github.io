@@ -1269,3 +1269,185 @@ Active Routes              Default Route              Persistent Route.
 
 5. Activity、View、Window三者如何关联？ 
     - 答：Activity包含了一个PhoneWindow，而PhoneWindow就是继承于Window的，Activity通过setContentView将View设置到了PhoneWindow上。Window的添加过程以及Activity的启动流程都是一次IPC的过程。Activity的启动需要通过AMS完成；Window的添加过程需要通过WindowSession完成。
+
+---
+### View实现等待加载的转圈动画效果
+
+```
+private void init() {
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(color);
+ 
+        mDensity = getResources().getDisplayMetrics().density;
+    }
+ 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mStartX = getWidth()/2;
+        mEndY = getHeight()/2;
+        mStartY = mEndY*5/6;
+        playAnimator();
+    }
+ 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawCircle(mStartX,mCurrentY,mDensity*radius,mPaint);
+    }
+ 
+    private void playAnimator() {
+ 
+        ValueAnimator animator = ValueAnimator.ofInt(mStartY,mEndY);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mCurrentY= (int) valueAnimator.getAnimatedValue();
+               invalidate();
+            }
+        });
+        animator.setRepeatMode(ValueAnimator.REVERSE);
+        animator.setRepeatCount(-1);
+        animator.setDuration(1000);
+        animator.start();
+    }
+```
+---
+### scaleType各属性效果
+
+scaleType的属性有`matrix（默认）、center、centerCrop、centerInside、fitCenter、fitEnd、fitStart、fitXY`。
+
+![](/img/in-post/post-Android/review/scaletype.png)
+
+- android:scaleType="`center`"
+    - 保持原图的大小，显示在ImageView的中心。当原图的size大于ImageView的size，超过部分裁剪处理。
+
+- android:scaleType="`centerCrop`"
+    - 以填满整个ImageView为目的，将原图的中心对准ImageView的中心，等比例放大原图，直到填满ImageView为止（指的是ImageView的`宽和高都要填满`），原图超过ImageView的部分作裁剪处理。
+
+- android:scaleType="`centerInside`"
+    - 以原图完全显示为目的，将图片的内容完整居中显示，通过按比例缩小原图的size宽(高)等于或小于ImageView的宽(高)。如果原图的size本身就小于ImageView的size，则原图的size不作任何处理，居中显示在ImageView。
+
+- android:scaleType="`matrix`"
+    - 不改变原图的大小，从ImageView的左上角开始绘制原图，原图超过ImageView的部分作裁剪处理。
+
+- android:scaleType="`fitCenter`"
+    - 把原图按比例扩大或缩小到ImageView的ImageView的高度/宽度，居中显示
+
+- android:scaleType="`fitEnd`"
+    - 把原图按比例扩大(缩小)到ImageView的高度/宽度，显示在ImageView的下部分位置
+
+- android:scaleType="`fitStart`"
+    - 把原图按比例扩大(缩小)到ImageView的高度/宽度，显示在ImageView的上部分位置
+
+- android:scaleType="`fitXY`"
+    - 把原图按照指定的大小在View中显示，拉伸显示图片，不保持原比例，填满ImageView
+
+注：
+`Center`: 图片大小＝原始图片大小；
+`fitCenter`： 图片大小＝View大小；
+`CenterInside`： 图片大小 <= View大小 && 图片大小 <= 原始图片大小。
+
+---
+### 实现双指放大缩小图片
+使用canvas或者简单使用Matrix + imageView 即可实现。
+为imageView添加触摸事件监听器，并监听双指触摸事件。
+
+**关于触摸事件的各个属性值：**
+- `ACTION_DOWN` is for the first finger that touches the screen. This starts the gesture. The pointer data for this finger is always at index 0 in the MotionEvent.
+- `ACTION_POINTER_DOWN` is for extra fingers that enter the screen beyond the first. The pointer data for this finger is at the index returned by getActionIndex().
+- `ACTION_POINTER_UP` is sent when a finger leaves the screen but at least one finger is still touching it. The last data sample about the finger that went up is at the index returned by getActionIndex().
+- `ACTION_UP` is sent when the last finger leaves the screen. The last data sample about the finger that went up is at index 0. This ends the gesture.
+- `ACTION_CANCEL` means the entire gesture was aborted for some reason. This ends the gesture.
+
+
+```
+imageView.setImageMatrix(matrix);
+imageView.setOnTouchListener(new View.OnTouchListener() {
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        ImageView view = (ImageView) v;
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            //单个手指触摸
+            case MotionEvent.ACTION_DOWN:
+                mode = 1;
+                break;
+            //两指触摸
+            case MotionEvent.ACTION_POINTER_DOWN:
+                preDistance = getDistance(event);
+                //当两指间距大于10时，计算两指中心点
+                if (preDistance > 10f) {
+                    mid = getMid(event);
+                    savedMatrix.set(matrix);
+                    mode = 2;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                mode = 0;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                mode = 0;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                //当两指缩放，计算缩放比例
+                if (mode == 2) {
+                    distance = getDistance(event);
+                    if (distance > 10f) {
+                        matrix.set(savedMatrix);
+                        float scale = distance / preDistance;
+                        matrix.postScale(scale, scale, mid.x, mid.y);//缩放比例和中心点坐标
+                    }
+                }
+                break;
+        }
+        view.setImageMatrix(matrix);
+```
+
+通过`event.getPointerCount()`：
+```
+mImage.setOnTouchListener(new OnTouchListener() {
+    float baseValue;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+    // TODO Auto-generated method stub
+    // return ArtFilterActivity.this.mGestureDetector.onTouchEvent(event);
+    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        baseValue = 0;
+        float x = last_x = event.getRawX();
+        float y = last_y = event.getRawY();
+    } 
+    else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+        if (event.getPointerCount() == 2) {
+            float x = event.getX(0) - event.getX(1);
+            float y = event.getY(0) - event.getY(1);
+            float value = (float) Math.sqrt(x * x + y * y);// 计算两点的距离
+            if (baseValue == 0) {
+                baseValue = value;
+            } 
+            else {
+                if (value - baseValue >= 10 || value - baseValue <= -10) {
+                    float scale = value / baseValue;// 当前两点间的距离除以手指落下时两点间的距离就是需要缩放的比例。
+                    img_scale(scale);  //缩放图片
+                }
+            }
+        } 
+        else if (event.getPointerCount() == 1) {
+            float x = event.getRawX();
+            float y = event.getRawY();
+            x -= last_x;
+            y -= last_y;
+            if (x >= 10 || y >= 10 || x <= -10 || y <= -10)
+                img_transport(x, y); //移动图片位置
+                last_x = event.getRawX();
+                last_y = event.getRawY();
+            }
+        } 
+        else if (event.getAction() == MotionEvent.ACTION_UP) {
+ 
+        }
+        return true;
+    }
+});
+```
