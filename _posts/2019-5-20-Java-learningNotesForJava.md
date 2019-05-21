@@ -553,6 +553,9 @@ public class Object {
 finalize()方法是在`GC清理它所从属的对象时被调用的`，如果执行它的过程中抛出了无法捕获的异常（uncaughtexception，GC将终止对改对象的清理，并且该异常会被忽略；直到下一次GC开始清理这个对象时，它的finalize()会被再次调用。
 
 ---
+### thread.sleep() 和 wait()
+
+---
 ### JVM 与 GC
 
 

@@ -1295,7 +1295,7 @@ scaleType的属性有`matrix（默认）、center、centerCrop、centerInside、
 - `ACTION_CANCEL` means the entire gesture was aborted for some reason. This ends the gesture.
 
 
-```
+```java
 imageView.setImageMatrix(matrix);
 imageView.setOnTouchListener(new View.OnTouchListener() {
     @Override
@@ -1383,3 +1383,6 @@ mImage.setOnTouchListener(new OnTouchListener() {
     }
 });
 ```
+
+---
+### View的事件分发机制
