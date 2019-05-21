@@ -319,7 +319,238 @@ public class MammalInt implements Animal{
 
 ---
 ### final finally finalize 关键字
+#### 1.简单区别：
+- `final`用于声明属性，方法和类，分别表示属性不可交变，方法不可覆盖，类不可继承。
+- `finally`是异常处理语句结构的一部分，表示总是执行。
+- `finalize`是Object类的一个方法，在垃圾收集器执行的时候会调用被回收对象的此方法，供垃圾收集时的其他资源回收，例如关闭文件等。
+#### 2.中等区别：
+虽然这个单词在Java中都存在，但是并没太多关联：
+`final`：java中的关键字，修饰符。
+1. 如果一个类被声明为final，就意味着它不能再派生出新的子类，不能作为父类被继承。因此，一个类不能同时被声明为abstract抽象类的和final的类。
+2. 如果将变量或者方法声明为final，可以保证它们在使用中不被改变.
+    - 被声明为final的变量必须在声明时给定初值，而在以后的引用中只能读取，不可修改。 
+    - 被声明final的方法只能使用，不能重写重载，但是并不影响它被子类继承。
+`finally`：java的一种`异常处理`机制。
+- finally是对Java异常处理模型的最佳补充。finally结构使代码`总会执行，而不管无异常发生`。使用finally可以维护对象的内部状态，并可以`清理非内存资源`。特别是在`关闭数据库连接这`方面，如果程序员把数据库连接的close()方法放到finally中，就会大大降低程序出错的几率。
+`finalize`：Java中的一个方法名。
+- Java技术使用finalize()方法在`垃圾收集器将对象从内存中清除出去前，做必要的清理工作`。这个方法是由垃圾收集器在确定这个对象没被引用时对这个对象调用的。它是在Object类中定义的，因此所的类都继承了它。子类覆盖finalize()方法以整理系统资源或者执行其他清理工作。finalize()方法是在垃圾收集器删除对象之前对这个对象调用的。
 
+#### final
+
+##### 定义变量
+如果一个`变量或方法参数`被final修饰，就表示它只能被赋值一次，但是JAVA虚拟机为变量设定的默认值不记作一次赋值。被final修饰的变量必须被初始化。初始化的方式以下几种：     
+1. 在定义的时候初始化。     
+2. final变量可以在初始化块中初始化，不可以在静态初始化块中初始化。
+3. 静态final变量可以在定义时初始化，也可以在静态初始化块中初始化，不可以在初始化块中初始化。     
+4. final变量还可以在类的构造器中初始化，但是静态final变量不可以。
+
+
+##### 定义方法
+当final用来`定义一个方法`时，它表示这个方法不可以被子类重写，`但是并不影响它被子类继承`。
+```java
+public class ParentClass{
+    public final void TestFinal(){
+        System.out.println("父类--这是一个final方法");
+    }
+}
+public class SubClass extends ParentClass{
+    //子类无法重写（override父类的final方法，否则编译时会报错
+    /* public void TestFinal(){
+           System.out.println("子类--重写final方法");
+    } */   
+    public static void main(String[]args){
+        SubClass sc = new SubClass();
+        sc.TestFinal();
+    }
+}
+```
+具有private访问权限的方法也可以增加final修饰，但是由于子类无法继承private方法，因此也无法重写它。编译器在处理private方法时，是照final方来对待的，这样可以提高该方法被调用时的效率。不过子类仍然可以定义同父类中private方法具同样结构的方法，但是这并不会产生重写的效果（`即与父类的同名方法是不同的两个方法`），而且它们之间也不存在必然联系。
+
+##### 定义类
+我们最常用的String类就是final的。由于final类不允许被继承，编译器在处理时把它的所方法都当作final的，因此final类比普通类拥更高的效率。而由关键字abstract定义的抽象类含必须由继承自它的子类重载实现的抽象方法，因此无法同时用final和abstract来修饰同一个类。同样的道理，final也不能用来修饰接口。 
+
+final的类的所方法都不能被重写，但这并不表示final的类的属性全部都是不能改变的（变量值也是不可改变的，要想做到final类的属性值不可改变，必须给它增加final修饰，请看下面的例子：
+```java
+public final class FinalTest{
+    int i =20;
+    final int j=50;
+    public static void main(String[] args){
+          FinalTest ft = new FinalTest();
+          ft.i = 99;/*final类FinalTest的属性值 i是可以改变的，因为属性值i前面没final修饰*/
+          //ft.j=49;//报错....因为j属性是final的不可以改变。
+          System.out.println(ft.i);
+    }
+}
+```
+
+#### finally
+接下来我们一起回顾一下finally的用法。finally只能用在try/catch语句中并且附带着一个语句块，表示这段语句最终总是被执行。请看下面的代码：
+```java
+public final class FinallyTest {
+    //测试return语句
+    //结果显示：编译器在编译return new ReturnClass();时，
+    //将它分成了两个步骤，new ReturnClass()和return，前一个创建对象的语句是在finally语句块之前被执行的，
+    //而后一个return语句是在finally语句块之后执行的，也就是说finally语句块是在程序退出方法之前被执行的
+    public ReturnClass testReturn() {
+        try {
+            return new ReturnClass();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            System.out.println("执行了finally语句");
+        }
+        return null;
+    }
+
+    //测试continue语句
+    public void testContinue(){
+        for(int i=0; i<3; i++){
+            try {
+                System.out.println(i);
+                if(i == 1){
+                    System.out.println("con");
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            } finally {
+                System.out.println("执行了finally语句");
+            }
+        }
+    }
+    //测试break语句
+    public void testBreak() {
+        for (int i=0; i<3; i++) {
+            try {
+                System.out.println(i);
+                if (i == 1) {
+                    break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                System.out.println("执行了finally语句");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        FinallyTest ft = new FinallyTest();
+        // 测试return语句
+        ft.testReturn();
+        System.out.println();
+        // 测试continue语句
+        ft.testContinue();
+        System.out.println();
+        // 测试break语句
+        ft.testBreak();
+    }
+}
+
+class ReturnClass {
+    public ReturnClass() {
+        System.out.println("执行了return语句");
+    }
+}
+```
+运行结果如下：
+
+```java
+    执行了return语句
+    执行了finally语句
+
+    0
+    执行了finally语句
+    1
+    con
+    执行了finally语句
+    2
+    执行了finally语句
+
+    0
+    执行了finally语句
+    1
+    执行了finally语句
+```
+可见，`return、continue和break都没能阻止finally语句块的执行`。从输出的结果来看，return语句似乎在finally语句块之前执行了，事实真的如此吗？我们来想想看，return语句的作用是什么呢？是退出当前的方法，并将值或对象返回。如果 finally语句块是在return语句之后执行的，那么return语句被执行后就已经退出当前方法了，finally语句块又如何能被执行呢？因此，正确的执行顺序应该是这样的：`编译器在编译return new ReturnClass();时，将它分成了两个步骤，new ReturnClass()和return`，前一个创建对象的语句是在finally语句块之前被执行的，而后一个return语句是在finally语句块之后执行的，也就是说`finally语句块是在程序退出方法之前被执行的`。同样，finally语句块是在循环被跳过（continue和中断（break之前被执行的
+
+
+#### finalize
+关于`Object`类：
+Object 是 Java 类库中的一个特殊类，`也是所有类的父类`。当一个类被定义后，如果没有指定继承的父类，那么默认父类就是 Object 类。
+方法|	说明
+-|-|-
+Object clone()|	创建与该对象的类相同的新对象
+boolean equals(Object)|	比较两对象是否相等
+void finalize()	|当垃圾回收器确定不存在对该对象的更多引用时，对象的圾回收器调用该方法
+Class getClass()|	返回一个对象运行时的实例类
+int hashCode()|	返回该对象的散列码值
+void notify()	|激活等待在该对象的监视器上的一个线程
+void notifyAll()	|激活等待在该对象的监视器上的全部线程
+String toString()|	返回该对象的字符串表示
+void wait()	|在其他线程调用此对象的 notify() 方法或 notifyAll() 方法前，导致当前线程等待
+
+**Object源码：**
+```java
+public class Object {
+    ···
+    ···
+    ···
+    /**
+     * Called by the garbage collector on an object when garbage collection
+     * determines that there are no more references to the object.
+     * A subclass overrides the {@code finalize} method to dispose of
+     * system resources or to perform other cleanup.
+     * <p>
+     * The general contract of {@code finalize} is that it is invoked
+     * if and when the Java&trade; virtual
+     * machine has determined that there is no longer any
+     * means by which this object can be accessed by any thread that has
+     * not yet died, except as a result of an action taken by the
+     * finalization of some other object or class which is ready to be
+     * finalized. The {@code finalize} method may take any action, including
+     * making this object available again to other threads; the usual purpose
+     * of {@code finalize}, however, is to perform cleanup actions before
+     * the object is irrevocably discarded. For example, the finalize method
+     * for an object that represents an input/output connection might perform
+     * explicit I/O transactions to break the connection before the object is
+     * permanently discarded.
+     * <p>
+     * The {@code finalize} method of class {@code Object} performs no
+     * special action; it simply returns normally. Subclasses of
+     * {@code Object} may override this definition.
+     * <p>
+     * The Java programming language does not guarantee which thread will
+     * invoke the {@code finalize} method for any given object. It is
+     * guaranteed, however, that the thread that invokes finalize will not
+     * be holding any user-visible synchronization locks when finalize is
+     * invoked. If an uncaught exception is thrown by the finalize method,
+     * the exception is ignored and finalization of that object terminates.
+     * <p>
+     * After the {@code finalize} method has been invoked for an object, no
+     * further action is taken until the Java virtual machine has again
+     * determined that there is no longer any means by which this object can
+     * be accessed by any thread that has not yet died, including possible
+     * actions by other objects or classes which are ready to be finalized,
+     * at which point the object may be discarded.
+     * <p>
+     * The {@code finalize} method is never invoked more than once by a Java
+     * virtual machine for any given object.
+     * <p>
+     * Any exception thrown by the {@code finalize} method causes
+     * the finalization of this object to be halted, but is otherwise
+     * ignored.
+     *
+     * @throws Throwable the {@code Exception} raised by this method
+     * @see java.lang.ref.WeakReference
+     * @see java.lang.ref.PhantomReference
+     * @jls 12.6 Finalization of Class Instances
+     */
+    protected void finalize() throws Throwable { }
+}
+```
+由于finalize()属于`Object类`，因此所有类都有这个方法，Object的任意子类都可以重写（override该方法，在其中释放系统资源或者做其它的清理工作，如关闭输入输出流。
+
+finalize()方法是在`GC清理它所从属的对象时被调用的`，如果执行它的过程中抛出了无法捕获的异常（uncaughtexception，GC将终止对改对象的清理，并且该异常会被忽略；直到下一次GC开始清理这个对象时，它的finalize()会被再次调用。
 
 ---
 ### JVM 与 GC
