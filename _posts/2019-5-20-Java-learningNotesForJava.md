@@ -555,6 +555,10 @@ finalize()方法是在`GC清理它所从属的对象时被调用的`，如果执
 ---
 ### thread.sleep() 和 wait()
 
+
+---
+### synchronized 与 lock
+
 ---
 ### JVM 与 GC
 
