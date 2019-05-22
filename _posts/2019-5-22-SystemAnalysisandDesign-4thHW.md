@@ -36,7 +36,7 @@ tags:
     - `系统边界`
         - 指系统与系统之间的界限，边界内表示系统的组成部分，边界外表示系统外部。用例在系统内部，参与者在系统的外部。系统边界在UML图中用矩形来表示，同时定义系统的名称。
 
-            ![actor](/img/in-post/post-SystemAnalyse/hw4_.png)
+            ![actor](/img/in-post/post-SystemAnalyse/hw4_system.png)
     - `参与者`（Actor） 
         - 参与者是系统以外的、使用系统或与系统交互的人或物。然包括开发系统用户，除此之外，与开发的系统有关联的其他系统也算是参与者。在UML图中用一个小人表示。
 
