@@ -18,7 +18,7 @@ tags:
         ![rh](/img/in-post/post-SystemAnalyse/hw5_RH.png)
     - 给出 make reservation 用例的活动图
     
-        ![makeReservation](/img/in-post/post-SystemAnalyse/hw5_makeR.png)
+![makeReservation](/img/in-post/post-SystemAnalyse/hw5_makeR.png)
 2. 根据课程练习“`投递员使用投递箱给收件人快递包裹`”的业务场景
     - 分别用多泳道图建模三个场景的业务过程
         - 场景1：
