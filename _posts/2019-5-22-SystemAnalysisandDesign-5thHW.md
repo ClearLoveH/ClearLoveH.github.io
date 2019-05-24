@@ -12,7 +12,7 @@ tags:
 
 **使用 UMLet 建模：**
 
-1. 根据订旅馆建模文档，[Asg-RH.pdf](https://sysu-swsad.github.io/swad-guide/material/Asg_RH.pdf)：
+1.根据订旅馆建模文档，[Asg-RH.pdf](https://sysu-swsad.github.io/swad-guide/material/Asg_RH.pdf)：
 
 - 绘制用例图模型（到子用例）
 
@@ -22,7 +22,9 @@ tags:
     
 ![makeReservation](/img/in-post/post-SystemAnalyse/hw5_makeR.png)
 
-2. 根据课程练习“`投递员使用投递箱给收件人快递包裹`”的业务场景
+---
+
+2.根据课程练习“`投递员使用投递箱给收件人快递包裹`”的业务场景
 - 分别用多泳道图建模三个场景的业务过程
 
 - 场景1：
