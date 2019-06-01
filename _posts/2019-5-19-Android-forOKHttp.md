@@ -10,3 +10,10 @@ tags:
 ---
 
 ### 关于HTTP
+
+![](/img/in-post/post-Android/OKHttp/HTTP1.png)
+
+![](/img/in-post/post-Android/OKHttp/HTTP2.png)
+
+---
+

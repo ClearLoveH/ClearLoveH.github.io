@@ -611,7 +611,7 @@ java允许多线程并发控制，当多个线程同时操作一个可共享的�
 - 死亡状态：线程执行结束
 
 #### Thread重要方法
-![](/img/in-post/post-Android/ForJava/Thread.png)
+![](/img/in-post/post-Android/Java/Thread.png)
 
 - start()方法，调用该方法开始执行该线程；
 - stop()方法，调用该方法强制结束该线程执行；
@@ -683,9 +683,9 @@ public interface Lock {
 #### 底层实现
 - `synchronized`：我们知道java是用字节码指令来控制程序（这里不包括热点代码编译成机器码）。在字节指令中，存在有synchronized所包含的代码块，那么会形成2段流程的执行。 
 
-![](/img/in-post/post-Android/ForJava/synchronized1.png)
+![](/img/in-post/post-Android/Java/synchronized1.png)
 
-![](/img/in-post/post-Android/ForJava/synchronized2.png)
+![](/img/in-post/post-Android/Java/synchronized2.png)
 
 synchronized映射成字节码指令就是增加来两个指令：`monitorenter和monitorexit`。当一条线程进行执行的遇到monitorenter指令的时候，它会去尝试获得锁，如果获得锁那么锁计数+1（为什么会加一呢，因为它是一个可重入锁，所以需要用这个锁计数判断锁的情况），如果没有获得锁，那么阻塞。当它遇到monitorexit的时候，锁计数器-1，当计数器为0，那么就释放锁。
 
@@ -704,7 +704,7 @@ CAS的全称是`Compare And Swap 即比较交换`，其算法核心思想如下
 
 如果V值等于E值，则将V的值设为N。若V值和E值不同，则说明已经有其他线程做了更新，则当前线程什么都不做。通俗的理解就是CAS操作需要我们提供一个期望值，当期望值与当前线程的变量值相同时，说明还没线程修改该值，当前线程可以进行修改，也就是执行CAS操作，但如果期望值与当前线程不符，则说明该值已被其他线程修改，此时不执行更新操作，但可以选择重新读取该变量再尝试再次修改该变量，也可以放弃操作，原理图如下
 
-![](/img/in-post/post-Android/ForJava/CAS.png)
+![](/img/in-post/post-Android/Java/CAS.png)
 
 
 由于CAS操作属于**乐观派**，它总认为自己可以成功完成操作，当多个线程同时使用CAS操作一个变量时，`只有一个会胜出，并成功更新，其余均会失败`，但失败的线程并不会被挂起，仅是被告知失败，并且允许再次尝试，当然也允许失败的线程放弃操作，这点从图中也可以看出来。基于这样的原理，CAS操作即使没有锁，同样知道其他线程对共享资源操作影响，并执行相应的处理措施。同时从这点也可以看出，由于无锁操作中没有锁的存在，因此不可能出现死锁的情况，也就是说无锁操作天生**免疫死锁**。
@@ -720,7 +720,7 @@ CAS的全称是`Compare And Swap 即比较交换`，其算法核心思想如下
 #### JDK1.6以后，为了减少获得锁和释放锁所带来的性能消耗，提高性能，增加了从偏向锁到轻量级锁再到重量级锁的过度。
 - 锁的升级过程如下：锁的状态总共有四种：`无锁状态、偏向锁、轻量级锁和重量级锁`。随着锁的竞争，锁可以从偏向锁升级到轻量级锁，再升级的重量级锁（但是锁的升级是单向的，也就是说只能从低到高升级，不会出现锁的降级）
 
-![](/img/in-post/post-Android/ForJava/lockOfSync.png)
+![](/img/in-post/post-Android/Java/lockOfSync.png)
 
 #### 优化
 1.`自旋锁：为了减少线程状态改变带来的消耗 不停地执行当前线程`。
