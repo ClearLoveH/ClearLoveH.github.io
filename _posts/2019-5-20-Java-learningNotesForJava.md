@@ -859,4 +859,64 @@ protected 需要从以下两个点来分析说明：
 
 protected 可以修饰数据成员，构造方法，方法成员，不能修饰类`（内部类除外）`。
 
+
+#### Java8新特性default关键字
+Java在创立之初就摒弃了C++多继承的套路，因为它实在难以学习与使用，在Java的世界中`类只能继承一个父类，但是一个接口可以继承多个接口`。
+
+**default关键字的意义**：default关键字的意义，default的意思就是`为接口方法提供默认的实现，它的最终目的就是减少子类实现接口的工作量`，如果多个子类实现的某个接口方法，方法体都是一样的，这就会导致后期维护上的困难，如果在接口中定义默认的实现，那么既减少了子类实现的接口的工作量，也为后期的维护提供了方便（只需要更改接口中的默认实现即可）。
+
+大家都知道Java中的接口都是抽象方法，也就是没有方法体，但是从Java8开始，`如果接口中的方法被default关键字修饰后就必须为其加上方法体`。某个类在实现该接口时，就不会强制实现被default修饰的方法，因为在接口中已经写好了方法体。从Java8开始，接口就开始类似于抽象类了，它们都可以含有普通方法和抽象方法了，唯一不同的就是一个类只能继承一个抽象类，而一个类却能实现多个接口。
+
+#### 因为default导致的 多继承问题的引入
+
+问题引入：现有两个接口，A和B，这两个接口都有一个方法sayHello，`并且都使用default关键字修饰后使其拥有了方法体，但是现在有接口C需要同时继承A，B`，代码如下：
+```java
+public interface A {
+	default void sayHello(){
+		System.out.print("A.Hello");
+	}
+}
+ 
+public interface B {
+	default void sayHello(){
+		System.out.print("B.Hello");
+	}
+}
+ 
+public interface C extends A,B{
+	
+}
+```
+此时多继承的问题就展现出来了，到底C接口是继承A接口的sayHello方法，还是继承B接口的sayHello方法，这也就是Java多继承的源头，允许接口有方法体，并且接口之间可以多继承。（上面代码由于有多继承问题，`编译会报错`！！）
+
+**解决**：Java给出的解决方案就是：在`出现多继承问题的时候必须手动覆写冲突方法`，这种方式可谓是简单粗暴，但很好理解。手动覆写后编译器就不纠结到底继承哪个父类的方法了，也就解决了多继承问题。
+
+子接口在手动覆写父接口方法时`可以手动调用冲突方法`，调用格式如下：
+```java
+public interface A {
+	default void sayHello(){
+		System.out.print("A.Hello");
+	}
+}
+ 
+public interface B {
+	default void sayHello(){
+		System.out.print("B.Hello");
+	}
+}
+ 
+public interface C extends A,B{
+	@Override
+	default void sayHello() {
+		A.super.sayHello();
+	}
+}
+public class Test impements A.B {//类的多实现本质上就是多继承
+    @Override
+	default void sayHello() {//因为接口A和接口B中的默认方法冲突，所以必须手动实现sayHello方法
+		A.super.sayHello();
+    }
+}
+```
+
 ---
