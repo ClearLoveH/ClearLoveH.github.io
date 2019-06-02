@@ -13,6 +13,9 @@ tags:
 - [okhttp源码解析](https://blog.csdn.net/json_it/article/details/78404010)
 - [Android DiskLruCache完全解析，硬盘缓存的最佳方案](https://blog.csdn.net/guolin_blog/article/details/28863651)
 - [HTTP版本及异同整理](https://blog.csdn.net/json_it/article/details/78312311)
+- [Okhttp3 总结研究](https://blog.csdn.net/u012881042/article/details/79759203)
+- [okhttp 流程和优化的实现](https://blog.csdn.net/jun_tong/article/details/79808634)
+
 
 ---
 ### 关于HTTP
@@ -49,6 +52,8 @@ tags:
     ![](/img/in-post/post-Android/OKHttp/DiskLruCache3.png)
 - 上面那些文件名很长的文件就是一张张缓存的图片，每个文件都对应着一张图片，而journal文件是DiskLruCache的一个日志文件，程序对每张图片的操作记录都存放在这个文件中，基本上看到`journal这个文件就标志着该程序使用DiskLruCache技术`了。
 
+---
+## PART I——大致了解
 
 ---
 ### 整体框架
@@ -62,7 +67,99 @@ tags:
 
 ![](/img/in-post/post-Android/OKHttp/framework.png)
 
+---
+### OKHttp 异步流程实现
 
+![](/img/in-post/post-Android/OKHttp/okhttp_full_process2.png)
+
+当我们请求的时候会新建一个 RealCall 的对象，创建之后会通过 dispatcher 去在线程池中分配线程，这个 dispatcher 的主要作用就是调度请求，这里面有三个队列，**作用分别是存储异步正在运行的任务**，**存储异步正在准备运行的任务**，**还有同步运行的队列**，通过这个类为我们的任务分配一个线程去运行
+
+#### 拦截器的主要功能如下：
+
+1. **RetryAndFollowUpInterceptor（负责失败重试，重定向的）**
+概述：主要的作用就是请求时候创建一个 StreamAllocation 对象，这个对象创建的时候会根据请求的协议不同创建不一样的对象
+2. **BridgeInterceptor**(负责把用户构造的请求转换为发送到服务器的请求、把服务器返回的响应转换为用户友好的响应的)
+概述：主要就是把我们的 request 请求加上一些请求头，打包成真正的网络请求的 request，在请求返回的时候，通过 gzip 把我们能的 response 进行压缩
+3. **CacheInterceptor**(负责读取缓存的，如果有缓存就拦截并返回，也负责更新缓存)
+概述：负责读取我们的缓存，如果我们设置了 cache，那么先从这个里面读取，如果读取不到的那么就把 request 和 caseResponse 构建一个 CaheStategy 对象，然后判断这个对象是否有效，如果有效则直接返回，如果无效，那么我们请求，如果请求返回304，证明资源没过期，我们可以读取本地的缓存
+4. **ConnectInterceptor**(负责和服务器建立连接的)
+概述：这个就比较复杂了，这个里面呢主要是进行 socket 的连接，在这个拦截器里首先获取了一个 streamAllocation 对象，然后通过这个对象获取了一个 RealConnection 对象，然后通过这个对象去获取一个 httpcode 对象，这个对象是一个接口，那具体实现有两种一个是 http1，一个是 http2，它会根据我们的请求创建不同的 httpCode ，通过这个对象可以进行下一个拦截器的操作，在我们获取 realconnection 的同时我们调用了 connect 这个方法，这个方法底层调用的就是 socket.connect 的方法，就是进行了 socket 的连接了
+5. 配置 OkHttpClient 时设置的 **networkInterceptors**
+6. **CallServerInterceptor**(负责向服务器发送请求数据、从服务器读取响应数据的)
+
+>注意：我们每个拦截器在 intercept 方法中都会调用 process 这个方法，这个方法的作用就是去执行下一个拦截器，那么如果我们自定义拦截器的话，需要调用 chain.proceed 方法，不然的话我们的请求就会在拦截器里面卡主。
+
+---
+### okhttp 中有哪些优化，优化是怎么实现的
+
+**1.多路复用**
+- 概述：之前我们的请求是每一次请求会建立一个链接，请求结束就关闭链接，我们都知道 TCP/IP 请求是需要握手的，那握手就会消耗相应的时间，所以在我们的 okhttp 中，我们会复用之前的链接进行请求，这样请求速度就快了很多。
+- 如果是这样的话就会出现两个问题，`第一，我们怎么判断链接是否可用`，`第二是我们不需要的链接怎么回收`。
+- 从上面我们知道我们会在 StreamAllocation.newStream 方法中获取 RealConnection，在获取的时候我们会判断有没有之前的链接可以复用，复用的条件是这样判断的：
+    1. 如果此链接的负载数目超过指定数目（表现为RealConnection的allocations集合的数量超过该链接指定的数量）或者noNewStreams为true时，此链接不可复用。 
+    2. StreamAllocation 所持有的Address对象和RealConnection的Address非主机部分不同，则此链接不可复用。至于非主机部分的判定是在Address的equalsNonHost方法来体现。两者Adress对象的非主机部分相等的标准就是dns,Authenticator对象、协议、CA授权验证标准、端口等信息全部相等。
+    3. 在1、2判定条件都为true的话，如果两个Address对象的host或者说url中的host一样，则此链接可复用，正如注释说说，添加1、2、3都满足的话，那么此时这个链接就是This connection is a perfect match。
+
+第一个问题我们解决了，现在我们来解决第二个问题，我们都知道链接如果多了我们如果不回收的话就会卡死，那么我们的链接是怎么回收的呢，链接回收主要降到的就是 ConnectionPool 这个类，这个类中有一个 clean up 方法，我们来看一下他里面做了什么：
+- clean up 方法：(标记清除法)
+    1. 首先标记出最不活跃的链接（空闲链接），之后进行清除
+    2. 如果被标记的链接空闲 socket 超过 5 个，时间大于 5 分钟，那么直接清除。
+    3. 如果此链接空闲，但是不足五分钟，则返回剩余时间，并进行标记，以供下次清除。
+    4. 如果没用空闲链接的话，则五分钟之后再进行清理
+- 判断是否为空闲链接：
+    1. 遍历其中的 StreamAllocation，判断是否为空，如果为空，则没有引用这个 StreamAllocation
+    2. 如果引用数量为 0 ，则为空闲链接
+
+多路复用的原理就讲到这里了，其实很简单，只要吧 ConnectionPool 这个类看明白就很好理解了
+
+**2.缓存**
+- 概述：我们都知道，好的框架都会有缓存的功能，通过缓存我们可以很快的访问我们的资源，那 okhttp 也不例外，从上面的流程中我们可以看到， CacheInterceptor 主要是做缓存的，那么我们来了解一下他的流程是什么：
+
+okhttp 的缓存策略是，key 为 Request的 url 的 MD5 值，value 为 response。
+1. 如果在 okhttpclient 初始化的时候配置了 cache，那么我们则从缓存中读取 caseResponse。
+2. 如果没有指定，那么我们将 request 和 caseResponse 构建一个 CacheStrategy 的类
+3. 判断 cachestrategy 是否有效，如果 request 和 caseResponse 都为空，直接返回 504
+4. 如果 request == null ，cacheResponse 不为空，则返回
+5. 如果为空，那么我们就进行网络请求，如果返回了 304 且我们本地有缓存，那么说明我们的缓存没有过期，可以继续使用
+
+
+
+**3.线程池的引入**
+- 概述：我们之前的请求都是每次都会新建线程去进行请求，这样的话我们如果有 100 个请求就会有 100 个线程，那么会消耗很大的资源，当引入线程池之后，我们就不需要频繁的去创建线程，而且可以复用线程，这样就很节省时间了。
+
+**4.可以进行压缩**
+- 在流程中我们讲到，当我们 response 通过 bridgeInterceptor 处理的时候会进行 gzip 压缩，这样可以大大减小我们的 response ，他不是什么情况下都压缩的，只有支持的时候才会 进行压缩。
+
+
+
+---
+### 运用到的设计模式：
+
+**单例模式**：（`建议用单例模式创建okHttpClient`）OkHttpClient， 可以通过 new OkHttpClient() 或 new OkHttpClient.Builder() 来创建对象， 但是---特别注意， OkHttpClient() 对象最好是共享的， 建议使用单例模式创建。 因为每个 OkHttpClient 对象都管理自己独有的线程池和连接池。 这一点很多同学，甚至在我经历的团队中就有人踩过坑， 每一个请求都创建一个 OkHttpClient 导致内存爆掉
+
+**外观模式** : OKHttpClient 里面组合了很多的类对象。其实是将OKHttp的很多功能模块，全部包装进这个类中，让这个类单独提供对外的API，这种设计叫做外观模式（外观模式：隐藏系统的复杂性，并向客户端提供了一个客户端可以访问系统的接口）
+
+**Builder模式** : OkHttpClient 比较复杂， 太多属性， 而且客户的组合需求多样化， 所以OKhttp使用建造者模式（Build模式：使用多个简单的对象一步一步构建成一个复杂的对象，一个 Builder 类会一步一步构造最终的对象）
+
+**工厂方法模式**：Call接口提供了内部接口Factory(用于将对象的创建延迟到该工厂类的子类中进行，从而实现动态的
+配置，工厂方法模式。（工厂方法模式：这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式。在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。）
+
+**享元模式**：在Dispatcher的线程池中，所用到了享元模式，一个不限容量的线程池 ， 线程空闲时存活时间为 60 秒。线程池实现了对象复用，降低线程创建开销，从设计模式上来讲，使用了享元模式。（享元模式：尝试重用现有的同类对象，如果未找到匹配的对象，则创建新对象，主要用于减少创建对象的数量，以减少内存占用和提高性能）
+
+**责任链模式**：很明显，在okhttp中的拦截器模块，执行过程用到。OkHttp3 的拦截器链中， 内置了5个默认的拦截器，分别用于重试、请求对象转换、缓存、链接、网络读写（责任链模式：为请求创建了一个接收者对象的链。这种模式给予请求的类型，对请求的发送者和接收者进行解耦。这种类型的设计模式属于行为型模式。在这种模式中，通常每个接收者都包含对另一个接收者的引用。如果一个对象不能处理该请求，那么它会把相同的请求传给下一个接收者，依此类推。）
+
+**策略模式** ：CacheInterceptor 实现了数据的选择策略， 来自网络还是来自本地？ 这个场景也是比较契合策略模式场景， CacheInterceptor 需要一个策略提供者提供它一个策略（锦囊）， CacheInterceptor 根据这个策略去选择走网络数据还是本地缓存。
+缓存的策略过程：
+1. 请求头包含 "If-Modified-Since" 或 "If-None-Match" 暂时不走缓存
+2. 客户端通过 cacheControl 指定了无缓存，不走缓存
+3. 客户端通过 cacheControl 指定了缓存，则看缓存过期时间，符合要求走缓存。
+4. 如果走了网络请求，响应状态码为 304（只有客户端请求头包含 "If-Modified-Since" 或 "If-None-Match" ，服务器数据没变化的话会返回304状态码，不会返回响应内容）， 表示客户端继续用缓存。
+
+（策略模式：一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。策略模式中，我们创建表示各种策略的对象和一个行为随着策略对象改变而改变的 context 对象。策略对象改变 context 对象的执行算法。）
+
+
+---
+## PART II——详细分析
 
 ---
 ### OKHttp 流程（以同步请求为例）
