@@ -9,6 +9,9 @@ tags:
     - Android
 ---
 
+>儿童节快乐
+
+---
 ### 概念
 所谓`点击事件(Touch)的事件分发`，其实就是对`MotionEvent(Touch的封装)`事件的分发过程，即当一个MotionEvent产生以后，系统需要把这这个事件传递给那个具体的View。这个传递的过程就是事件分发过程。
 
@@ -180,7 +183,7 @@ public boolean dispatchTouchEvent(MotionEvent ev){
 **事件顺序，老板(MainActivity)要做淘宝，这个事件通过各个部门(ViewGroup)一层一层的往下传，传到最底层的时候，码农小王(View1)发现做不了，于是消息又一层一层的回传到老板那里。**
 
 可以看到整个事件传递路线非常有序。从Activity开始，最后回传给Activity结束(由于我们无法操作Phone Window和DecorView，所以没有它们的信息)。
-```java
+```xml
 MainActivity [老板]: dispatchTouchEvent     经理,我准备发展一下电商业务,下周之前做一个淘宝出来.
 RootView     [经理]: dispatchTouchEvent     呼叫技术部,老板要做淘宝,下周上线.
 RootView     [经理]: onInterceptTouchEvent  (老板可能疯了,但又不是我做.)
@@ -202,7 +205,7 @@ MainActivity [老板]: onTouchEvent           这么简单都做不了,你们都
 **事件顺序，老板(MainActivity)要做改界面，这个事件通过各个部门(ViewGroup)一层一层的往下传，传到最底层的时候，码农小王(View1)就在按钮上添加了一道光(为啥是小王呢？因为公司没有设计师)。**
 
 可以看出，`事件一旦被消费就意味着消息传递的结束，上层View知道了事件已经被消费掉，就不再处理`了。
-```java
+```xml
 MainActivity [老板]: dispatchTouchEvent     把按钮做的好看一点,要有光泽,给人一种点击的欲望.
 RootView     [经理]: dispatchTouchEvent     技术部,老板说按钮不好看,要加一道光.
 RootView     [经理]: onInterceptTouchEvent  
