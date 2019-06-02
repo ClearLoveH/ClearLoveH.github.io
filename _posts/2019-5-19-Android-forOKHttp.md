@@ -77,13 +77,13 @@ tags:
 #### 拦截器的主要功能如下：
 
 1. **RetryAndFollowUpInterceptor（负责失败重试，重定向的）**
-概述：主要的作用就是请求时候创建一个 StreamAllocation 对象，这个对象创建的时候会根据请求的协议不同创建不一样的对象
+    - 概述：主要的作用就是请求时候创建一个 StreamAllocation 对象，这个对象创建的时候会根据请求的协议不同创建不一样的对象
 2. **BridgeInterceptor**(负责把用户构造的请求转换为发送到服务器的请求、把服务器返回的响应转换为用户友好的响应的)
-概述：主要就是把我们的 request 请求加上一些请求头，打包成真正的网络请求的 request，在请求返回的时候，通过 gzip 把我们能的 response 进行压缩
+    - 概述：主要就是把我们的 request 请求加上一些请求头，打包成真正的网络请求的 request，在请求返回的时候，通过 gzip 把我们能的 response 进行压缩
 3. **CacheInterceptor**(负责读取缓存的，如果有缓存就拦截并返回，也负责更新缓存)
-概述：负责读取我们的缓存，如果我们设置了 cache，那么先从这个里面读取，如果读取不到的那么就把 request 和 caseResponse 构建一个 CaheStategy 对象，然后判断这个对象是否有效，如果有效则直接返回，如果无效，那么我们请求，如果请求返回304，证明资源没过期，我们可以读取本地的缓存
+    - 概述：负责读取我们的缓存，如果我们设置了 cache，那么先从这个里面读取，如果读取不到的那么就把 request 和 caseResponse 构建一个 CaheStategy 对象，然后判断这个对象是否有效，如果有效则直接返回，如果无效，那么我们请求，如果请求返回304，证明资源没过期，我们可以读取本地的缓存
 4. **ConnectInterceptor**(负责和服务器建立连接的)
-概述：这个就比较复杂了，这个里面呢主要是进行 socket 的连接，在这个拦截器里首先获取了一个 streamAllocation 对象，然后通过这个对象获取了一个 RealConnection 对象，然后通过这个对象去获取一个 httpcode 对象，这个对象是一个接口，那具体实现有两种一个是 http1，一个是 http2，它会根据我们的请求创建不同的 httpCode ，通过这个对象可以进行下一个拦截器的操作，在我们获取 realconnection 的同时我们调用了 connect 这个方法，这个方法底层调用的就是 socket.connect 的方法，就是进行了 socket 的连接了
+    - 概述：这个就比较复杂了，这个里面呢主要是进行 socket 的连接，在这个拦截器里首先获取了一个 streamAllocation 对象，然后通过这个对象获取了一个 RealConnection 对象，然后通过这个对象去获取一个 httpcode 对象，这个对象是一个接口，那具体实现有两种一个是 http1，一个是 http2，它会根据我们的请求创建不同的 httpCode ，通过这个对象可以进行下一个拦截器的操作，在我们获取 realconnection 的同时我们调用了 connect 这个方法，这个方法底层调用的就是 socket.connect 的方法，就是进行了 socket 的连接了
 5. 配置 OkHttpClient 时设置的 **networkInterceptors**
 6. **CallServerInterceptor**(负责向服务器发送请求数据、从服务器读取响应数据的)
 
