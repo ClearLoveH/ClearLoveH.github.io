@@ -304,7 +304,7 @@ Dispatcher是保存同步和异步Call的地方，并负责执行异步AsyncCall
 ![](/img/in-post/post-Android/OKHttp/dispatcher2.png)
 
 #### 4、拦截器链
-在依次介绍各个拦截器之前，先介绍一个比较重要的类：RealInterceptorChain，直译就是拦截器链类；这个类在什么地方会用到呢？还是3.2节，RealCall的execute方法有这么一段代码：
+在依次介绍各个拦截器之前，先介绍一个比较重要的类：RealInterceptorChain，直译就是拦截器链类；这个类在什么地方会用到呢？还是第2节中，RealCall的execute方法有这么一段代码：
 ```java
 Response result = getResponseWithInterceptorChain();
 ```
