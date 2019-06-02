@@ -33,8 +33,6 @@ tags:
 
 #### DiskLruCache
 
-参考博客：https://blog.csdn.net/guolin_blog/article/details/28863651 
-
 由于DiskLruCache并不是由Google官方编写的，所以这个类并没有被包含在Android API当中，我们需要将这个类从网上下载下来，然后手动添加到项目当中。DiskLruCache的源码在Google Source上，地址如下：android.googlesource.com/platform/libcore/+/jb-mr2-release/luni/src/main/java/libcore/io/DiskLruCache.java
 
 - 网易新闻中的数据都是从网络上获取的，包括了很多的新闻内容和新闻图片，如下图所示：
