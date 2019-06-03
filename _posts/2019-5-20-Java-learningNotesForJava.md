@@ -215,6 +215,22 @@ public abstract class Employee
 
 接口无法被实例化，但是可以被实现。一个实现接口的类，必须实现接口内所描述的所有方法，否则就必须声明为抽象类。另外，在 Java 中，接口类型可用来声明一个变量，他们可以成为一个空指针，或是被绑定在一个以此接口实现的对象。
 
+#### 注意匿名类实现interface的情况！
+```java
+fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent(MainActivity.this, NoteNewActivity.class);
+                intent.putExtra("groupName",groupName);
+                intent.putExtra("NewOrEdit","New");
+                startActivity(intent);
+        }
+    });
+```
+新建匿名类，这样做其实没有new 一个 接口，而是`new 了一个没有名字的 类A，A implements 了 Listener，然后实现了 onClick（）`，他仅仅是简写了而已，其实并没有new 接口
+
+
 #### 接口与类的区别：
 - 接口不能用于实例化对象。
 - 接口没有构造方法。
