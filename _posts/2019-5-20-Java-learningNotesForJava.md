@@ -9,7 +9,7 @@ tags:
     - Java
 ---
 
-### HashTable
+#### HashTable
 
 - 底层数组+链表实现，无论key还是value都不能为null，线程安全，实现线程安全的方式是在修改数据时锁住整个HashTable，效率低，ConcurrentHashMap做了相关优化
 - 初始size为11，扩容：newsize = olesize*2+1
@@ -56,6 +56,8 @@ HashMap和Hashtable的构造器允许指定一个负载极限，HashMap和Hashta
 - 较低的“负载极限”会提高查询数据的性能，但会增加hash表所占用的内存开销
 - 程序猿可以根据实际情况来调整“负载极限”值。
 
+
+
 #### ConcurrentHashMap
 - 底层采用分段的数组+链表实现，线程安全
 - 通过把整个Map分为N个Segment，可以提供相同的线程安全，但是效率提升N倍，默认提升16倍。(读操作不加锁，由于HashEntry的value变量是 volatile的，也能保证读取到最新的值。)
@@ -93,7 +95,234 @@ LinkedHashMap是否线程安全 |	非线程安全
 
 ![](/img/in-post/post-Android/Java/linkedhashmap2.png)
 
+---
+### Hashmap 如果链表过长
 
+---
+### SparseArray——稀疏数组 
+
+![](/img/in-post/post-Android/Java/SparseArray.png)
+
+使用下面的语句创建一个key为整数的hashmap时，AS会提出一个提示：建议使用`SparseArray替代HashMap`来获得更好的表现
+```java
+    HashMap<Integer,Object> map = new HashMap<Integer,Object>;
+```
+
+分析SparseArray源码：
+```java
+public class SparseArray<E> implements Cloneable {
+    private static final Object DELETED = new Object();
+    private boolean mGarbage = false;
+
+    private int[] mKeys;
+    private Object[] mValues;
+    private int mSize;
+
+    /**
+     * Creates a new SparseArray containing no mappings.
+     */
+    public SparseArray() {
+        this(10);
+    }
+
+    /**
+     * Creates a new SparseArray containing no mappings that will not
+     * require any additional memory allocation to store the specified
+     * number of mappings.  If you supply an initial capacity of 0, the
+     * sparse array will be initialized with a light-weight representation
+     * not requiring any additional array allocations.
+     */
+    public SparseArray(int initialCapacity) {
+        if (initialCapacity == 0) {
+            mKeys = EmptyArray.INT;
+            mValues = EmptyArray.OBJECT;
+        } else {
+            mValues = ArrayUtils.newUnpaddedObjectArray(initialCapacity);
+            mKeys = new int[mValues.length];
+        }
+        mSize = 0;
+    }
+    ···
+    ···
+
+    /**
+     * Gets the Object mapped from the specified key, or the specified Object
+     * if no such mapping has been made.
+     */
+    @SuppressWarnings("unchecked")
+    public E get(int key, E valueIfKeyNotFound) {
+        int i = ContainerHelpers.binarySearch(mKeys, mSize, key);
+
+        if (i < 0 || mValues[i] == DELETED) {
+            return valueIfKeyNotFound;
+        } else {
+            return (E) mValues[i];
+        }
+    }
+
+    /**
+     * Removes the mapping from the specified key, if there was any.
+     */
+    public void delete(int key) {
+        int i = ContainerHelpers.binarySearch(mKeys, mSize, key);
+
+        if (i >= 0) {
+            if (mValues[i] != DELETED) {
+                mValues[i] = DELETED;
+                mGarbage = true;
+            }
+        }
+    }
+
+    ······
+
+    private void gc() {
+        // Log.e("SparseArray", "gc start with " + mSize);
+
+        int n = mSize;
+        int o = 0;
+        int[] keys = mKeys;
+        Object[] values = mValues;
+
+        for (int i = 0; i < n; i++) {
+            Object val = values[i];
+
+            if (val != DELETED) {
+                if (i != o) {
+                    keys[o] = keys[i];
+                    values[o] = val;
+                    values[i] = null;
+                }
+
+                o++;
+            }
+        }
+
+        mGarbage = false;
+        mSize = o;
+
+        // Log.e("SparseArray", "gc end with " + mSize);
+    }
+
+    /**
+     * Adds a mapping from the specified key to the specified value,
+     * replacing the previous mapping from the specified key if there
+     * was one.
+     */
+    public void put(int key, E value) {
+        int i = ContainerHelpers.binarySearch(mKeys, mSize, key);
+
+        if (i >= 0) {
+            mValues[i] = value;
+        } else {
+            i = ~i;
+
+            if (i < mSize && mValues[i] == DELETED) {
+                mKeys[i] = key;
+                mValues[i] = value;
+                return;
+            }
+
+            if (mGarbage && mSize >= mKeys.length) {
+                gc();
+
+                // Search again because indices may have changed.
+                i = ~ContainerHelpers.binarySearch(mKeys, mSize, key);
+            }
+
+            mKeys = GrowingArrayUtils.insert(mKeys, mSize, i, key);
+            mValues = GrowingArrayUtils.insert(mValues, mSize, i, value);
+            mSize++;
+        }
+    }
+
+    ···
+    ···
+    ···
+    ···
+
+
+    /**
+     * Returns the index for which {@link #keyAt} would return the
+     * specified key, or a negative number if the specified
+     * key is not mapped.
+     */
+    public int indexOfKey(int key) {
+        if (mGarbage) {
+            gc();
+        }
+
+        return ContainerHelpers.binarySearch(mKeys, mSize, key);
+    }
+
+    /**
+     * Returns an index for which {@link #valueAt} would return the
+     * specified key, or a negative number if no keys map to the
+     * specified value.
+     * <p>Beware that this is a linear search, unlike lookups by key,
+     * and that multiple keys can map to the same value and this will
+     * find only one of them.
+     * <p>Note also that unlike most collections' {@code indexOf} methods,
+     * this method compares values using {@code ==} rather than {@code equals}.
+     */
+    public int indexOfValue(E value) {
+        if (mGarbage) {
+            gc();
+        }
+
+        for (int i = 0; i < mSize; i++) {
+            if (mValues[i] == value) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    ···
+    ···
+
+    /**
+     * Puts a key/value pair into the array, optimizing for the case where
+     * the key is greater than all existing keys in the array.
+     */
+    public void append(int key, E value) {
+        if (mSize != 0 && key <= mKeys[mSize - 1]) {
+            put(key, value);
+            return;
+        }
+
+        if (mGarbage && mSize >= mKeys.length) {
+            gc();
+        }
+
+        mKeys = GrowingArrayUtils.append(mKeys, mSize, key);
+        mValues = GrowingArrayUtils.append(mValues, mSize, value);
+        mSize++;
+    }
+    ···
+    ···
+}
+```
+阅读完源码可以得到以下几点关键信息：
+1. SparseArray默认初始size为10
+2. 通过一个`int数组和一个Object数组`来存储Key-Value对
+3. get方法通过key获取value使用的查找方式是`二分查找`，因此SparseArray在大量数据，千以上时，会效率较低
+4. 相比与HashMap，其采用 `时间换空间` 的方式，使用更少的内存来提高手机APP的运行效率
+
+---
+### android.support.v4.util.ArrayMap
+首先从ArrayMap的四个数组说起。
+- `mHashes`，用于保存key对应的hashCode；
+- `mArray`，用于保存键值对（key，value），其结构为[key1,value1,key2,value2,key3,value3,......]；
+- mBaseCache，缓存，如果ArrayMap的数据量从4，增加到8，用该数组保存之前使用的mHashes和mArray，这样如果数据量再变回4的时候，可以再次使用之前的数组，不需要再次申请空间，这样节省了一定的时间；
+- mTwiceBaseCache，与mBaseCache对应，不过触发的条件是数据量从8增长到12。
+
+上面提到的数据量有8增长到12，为什么不是16？这也算是ArrayMap的一个优化的点，它不是每次增长1倍，而是使用了如下方法`(mSize+(mSize>>1))`，即每次增加1/2。
+
+结构：
+
+![](/img/in-post/post-Android/Java/ArrayMap.png)
 
 ---
 ### 普通内部类持有外部类引用的原理
