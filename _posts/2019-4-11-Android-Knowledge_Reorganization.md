@@ -853,6 +853,34 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 
 View的整个绘制流程还是比较清楚的，整个执行逻辑一共大概需要六步，并且在执行draw()方法的过程中，如果包含子View，那么也会执行子View的draw()方法。这样，经过一系列的方法调用之后，DectorView及其子View就被绘制出来了。
 
+#### DecorView添加到Window上
+
+熟悉Binder跨进程通信的同学应该知道，最后应该是通过`WindowManagerService的openSession()`方法获取到了mWindowSession对象。
+```java
+@Override
+    public IWindowSession openSession(IWindowSessionCallback callback, IInputMethodClient client,
+            IInputContext inputContext) {
+        if (client == null) throw new IllegalArgumentException("null client");
+        if (inputContext == null) throw new IllegalArgumentException("null inputContext");
+        Session session = new Session(this, callback, client, inputContext);
+        return session;
+    }
+```
+我们看到openSession()方法通过new的方式返回了一个`IWindowSession类型`的对象。
+回到ViewRootImpl的setView()方法，我们看到它调用了mWindowSession的addToDisplay()方法，这里也就是调用了Session的addToDisplay()方法。
+
+```java
+// Session # addToDisplay()
+    @Override
+    public int addToDisplay(IWindow window, int seq, WindowManager.LayoutParams attrs,
+            int viewVisibility, int displayId, Rect outContentInsets, Rect outStableInsets,
+            Rect outOutsets, InputChannel outInputChannel) {
+        return mService.addWindow(this, window, seq, attrs, viewVisibility, displayId,
+                outContentInsets, outStableInsets, outOutsets, outInputChannel);
+    }
+```
+
+由源码可知，这里的成员变量mService是`WindowManagerService`对象，所以最终会去调用WindowManagerService的addWindow()方法。因此，最终是`由WindowManagerService来完成将DecorView添加到Window上`。
 
 
 ---
