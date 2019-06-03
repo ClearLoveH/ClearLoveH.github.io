@@ -476,6 +476,17 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 
 ![](/img/in-post/post-Android/review/activity.png)
 
+
+#### 三个阶段关注Activity的生命周期：
+
+- `整个的生命周期`，指的是onCreate(Bundle)和onDestroy()之间过程。Activity在onCreate()设置所有的“全局”状态，在onDestroy()释放所有的资源。
+
+- `可见的生命周期`，指的是onStart()和onStop()之间的过程。在这段时间，可以看到Activity在屏幕上，尽管有可能不在前台，不能和用户交互。在这两个接口之间，需要保持显示给用户的UI数据和资源等。onStart()，onStop()都可以被多次调用，因为Activity随时可以在可见和隐藏之间转换。
+
+- `前台的生命周期`，指的是onResume()和onPause()之间的过程。在这段时间里，该Activity处于所有 Activity的最上面，获得了用户焦点。Activity可以经常性地在RESUMED和PAUSED状态之间切换，所以在**这些接口方法中的代码应该属于非常轻量级的，避免低效的转换**而让用户有等待的感觉。
+
+
+
 - 关于activity的四个状态： running-poused-stopped-killed
   - running->当前显示在屏幕的activity(位于任务栈的顶部)，用户可见状态。
     - paused->依旧在用户可见状态，但是界面焦点已经失去，此Activity无法与用户进行交互。
@@ -1612,3 +1623,82 @@ mImage.setOnTouchListener(new OnTouchListener() {
     }
 });
 ```
+
+---
+### Activity获取控件宽高的最佳时机和方法
+
+Activity的启动流程和Activity的布局文件加载绘制流程，`其实没有相关的关系的，其实两个异步的加载流程`，这样我们在Activity的onCreate和onResume方法调用textView.getHeight或者是textView.getWidth方法的时候，其组件并没有执行完绘制流程，因此此时获取到的组件的宽高都是默认的0，也就是无法获取组件的宽和高。
+
+
+#### 1.onWindowFocusChanged()
+Activity有一个生命周期方法onWindowFocusChanged()，这个方法会在View.onLayout()方法之后执行
+```java
+/**
+ * 重写Acitivty的onWindowFocusChanged方法
+ */ 
+@Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        /**
+         * 当hasFocus为true的时候，说明Activity的Window对象已经获取焦点，进而Activity界面已经加载绘制完成
+         */
+        if (hasFocus) {
+            int widht = titleText.getWidth();
+            int height = titleText.getHeight();
+            Log.i(TAG, "onWindowFocusChanged width:" + widht + "   "
+                            + "  height:" + height;
+        }
+    }
+```
+获取焦点的时候我们就可以通过getWidth和getHeight方法得到组件的宽和高了。但是这时候这个方法的逻辑可能会执行多次，也就是说只要我们的Activity的window对象获取了焦点就会执行该语句，所以我们需要做一些逻辑判断，让它在我们需要打印获取组件宽高的时候在执行。
+
+#### 2.View.post(Runable)
+```java
+myDrawableView.post(new Runnable() {
+    @Override
+    public void run() {
+        Log.d(TAG,"view.post.run");
+        Log.d(TAG,"myDrawableView.getWidth() = "+myDrawableView.getWidth()+",myDrawableView.getHeight() = "+myDrawableView.getHeight());
+    }
+});
+```
+
+---
+### Activity启动流程
+
+Activity的启动流程一般是通过调用startActivity或者是startActivityForResult来开始的
+
+startActivity内部也是通过调用startActivityForResult来启动Activity，只不过传递的requestCode小于0
+
+Activity的启动流程涉及到多个进程之间的通讯这里主要是ActivityThread与ActivityManagerService之间的通讯
+
+ActivityThread向ActivityManagerService传递进程间消息通过ActivityManagerNative，ActivityManagerService向ActivityThread进程间传递消息通过IApplicationThread。
+
+ActivityManagerService接收到应用进程创建Activity的请求之后会执行初始化操作，解析启动模式，保存请求信息等一系列操作。
+
+ActivityManagerService保存完请求信息之后会将当前系统栈顶的Activity执行onPause操作，并且IApplication进程间通讯告诉应用程序继承执行当前栈顶的Activity的onPause方法；
+
+ActivityThread接收到SystemServer的消息之后会统一交个自身定义的Handler对象处理分发；
+
+ActivityThread执行完栈顶的Activity的onPause方法之后会通过ActivityManagerNative执行进程间通讯告诉ActivityManagerService，栈顶Actiity已经执行完成onPause方法，继续执行后续操作；
+
+ActivityManagerService会继续执行启动Activity的逻辑，这时候会判断需要启动的Activity所属的应用进程是否已经启动，若没有启动则首先会启动这个Activity的应用程序进程；
+
+ActivityManagerService会通过socket与Zygote继承通讯，并告知Zygote进程fork出一个新的应用程序进程，然后执行ActivityThread的mani方法；
+
+在ActivityThead.main方法中执行初始化操作，初始化主线程异步消息，然后通知ActivityManagerService执行进程初始化操作；
+
+ActivityManagerService会在执行初始化操作的同时检测当前进程是否有需要创建的Activity对象，若有的话，则执行创建操作；
+
+ActivityManagerService将执行创建Activity的通知告知ActivityThread，然后通过反射机制创建出Activity对象，并执行Activity的onCreate方法，onStart方法，onResume方法；
+
+ActivityThread执行完成onResume方法之后告知ActivityManagerService onResume执行完成，开始执行栈顶Activity的onStop方法；
+
+ActivityManagerService开始执行栈顶的onStop方法并告知ActivityThread；
+
+ActivityThread执行真正的onStop方法；
+--------------------- 
+作者：一片枫叶_刘超 
+来源：CSDN 
+原文：https://blog.csdn.net/qq_23547831/article/details/51224992 
+版权声明：本文为博主原创文章，转载请附上博文链接！
