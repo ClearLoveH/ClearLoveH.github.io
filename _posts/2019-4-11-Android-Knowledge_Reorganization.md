@@ -668,6 +668,191 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 - onLayout()会在onMeasure()方法之后被调用一次，将控件或其子控件进行布局；
 - onDraw()会在onLayout()方法之后调用一次，也会在用户手指触摸屏幕时被调用多次，来绘制控件。
 
+#### 测量
+
+我们就来看一下DecorView的onMeasure()方法。
+```java
+ // DecorView # onMeasure()
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        final int widthMode = getMode(widthMeasureSpec);
+        final int heightMode = getMode(heightMeasureSpec);
+        ... ...
+        boolean measure = false;
+        ... ...
+        if (!fixedWidth && widthMode == AT_MOST) {
+            ... ...
+                if (width < min) {
+                    widthMeasureSpec = MeasureSpec.makeMeasureSpec(min, EXACTLY);
+                    measure = true;
+                }
+            }
+        }
+
+        if (measure) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        }
+    }
+```
+我们可以看到，DecorView的onMeasure()方法主要是用来判断DecorView需不需要测量，如果需要测量，则调用其父类`FrameLayout的onMeasure()方法`:
+```java
+// FrameLayout # onMeasure()
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int count = getChildCount();
+
+        final boolean measureMatchParentChildren =
+                MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY ||
+                MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
+        mMatchParentChildren.clear();
+
+        int maxHeight = 0;
+        int maxWidth = 0;
+        int childState = 0;
+
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (mMeasureAllChildren || child.getVisibility() != GONE) {
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                maxWidth = Math.max(maxWidth,
+                        child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+                maxHeight = Math.max(maxHeight,
+                        child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+                childState = combineMeasuredStates(childState, child.getMeasuredState());
+                if (measureMatchParentChildren) {
+                    if (lp.width == LayoutParams.MATCH_PARENT ||
+                            lp.height == LayoutParams.MATCH_PARENT) {
+                        mMatchParentChildren.add(child);
+                    }
+                }
+            }
+        }
+        ... ...
+        count = mMatchParentChildren.size();
+        if (count > 1) {
+            for (int i = 0; i < count; i++) {
+                final View child = mMatchParentChildren.get(i);
+                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+                final int childWidthMeasureSpec;
+                ... ...
+                final int childHeightMeasureSpec;
+                ... ...
+                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            }
+        }
+    }
+```
+
+由源码可知，这里主要通过for循环，获取该View的所有子View，并执行所有子View的measure方法，如果子View是ViewGroup就会调用ViewGroup的onMeasure()方法，若果子View是View就会调用View的onMeasure()方法。因此，我们还需要看一下View的onMeasure()方法。
+```java
+ // View # onMeasure()
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+                getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
+    }
+    protected final void setMeasuredDimension(int measuredWidth, int measuredHeight) {
+        boolean optical = isLayoutModeOptical(this);
+        if (optical != isLayoutModeOptical(mParent)) {
+            Insets insets = getOpticalInsets();
+            int opticalWidth  = insets.left + insets.right;
+            int opticalHeight = insets.top  + insets.bottom;
+
+            measuredWidth  += optical ? opticalWidth  : -opticalWidth;
+            measuredHeight += optical ? opticalHeight : -opticalHeight;
+        }
+        setMeasuredDimensionRaw(measuredWidth, measuredHeight);
+    }
+    private void setMeasuredDimensionRaw(int measuredWidth, int measuredHeight) {
+        mMeasuredWidth = measuredWidth;
+        mMeasuredHeight = measuredHeight;
+
+        mPrivateFlags |= PFLAG_MEASURED_DIMENSION_SET;
+    }
+```
+
+#### 布局
+
+如果View有变化需要重新布局，则会去调用它的onLayout()方法。所以，接下来我们需要看一下DecorView的onLayout()方法。
+```java
+// DecorView # onLayout()
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        getOutsets(mOutsets);
+        if (mOutsets.left > 0) {
+            offsetLeftAndRight(-mOutsets.left);
+        }
+        if (mOutsets.top > 0) {
+            offsetTopAndBottom(-mOutsets.top);
+        }
+        if (mApplyFloatingVerticalInsets) {
+            offsetTopAndBottom(mFloatingInsets.top);
+        }
+        if (mApplyFloatingHorizontalInsets) {
+            offsetLeftAndRight(mFloatingInsets.left);
+        }
+
+        // If the application changed its SystemUI metrics, we might also have to adapt
+        // our shadow elevation.
+        updateElevation();
+        mAllowUpdateElevation = true;
+
+        if (changed && mResizeMode == RESIZE_MODE_DOCKED_DIVIDER) {
+            getViewRootImpl().requestInvalidateRootRenderNode();
+        }
+    }
+```
+
+我们看到这个方法中又会去调用其父类Framelayout的onLayout()方法。
+```java
+ // Framelayout # onLayout()
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        layoutChildren(left, top, right, bottom, false /* no force left gravity */);
+    }
+
+    void layoutChildren(int left, int top, int right, int bottom, boolean forceLeftGravity) {
+        final int count = getChildCount();
+
+        final int parentLeft = getPaddingLeftWithForeground();
+        final int parentRight = right - left - getPaddingRightWithForeground();
+
+        final int parentTop = getPaddingTopWithForeground();
+        final int parentBottom = bottom - top - getPaddingBottomWithForeground();
+
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                ... ...
+                child.layout(childLeft, childTop, childLeft + width, childTop + height);
+            }
+        }
+    }
+```
+
+与measure类似，这里也是通过for循环获取该View的所有子View，如果子View是ViewGroup则执行ViewGroup的layout()方法，如果子View是View则执行View的layout()方法。
+这样，通过一系列的方法调用就可以把View及其子View的位置信息计算出来并保存在成员变量中。
+
+
+#### 绘制
+
+```java
+        /*
+         * Draw traversal performs several drawing steps which must be executed
+         * in the appropriate order:
+         *
+         *      1. Draw the background
+         *      2. If necessary, save the canvas' layers to prepare for fading
+         *      3. Draw view's content
+         *      4. Draw children
+         *      5. If necessary, draw the fading edges and restore layers
+         *      6. Draw decorations (scrollbars for instance)
+         */
+```
+
+View的整个绘制流程还是比较清楚的，整个执行逻辑一共大概需要六步，并且在执行draw()方法的过程中，如果包含子View，那么也会执行子View的draw()方法。这样，经过一系列的方法调用之后，DectorView及其子View就被绘制出来了。
+
 
 
 ---
