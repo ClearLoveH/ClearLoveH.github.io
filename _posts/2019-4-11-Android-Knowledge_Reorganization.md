@@ -474,6 +474,9 @@ BroadcastReceiver 用于异步接收广播Intent。主要有两大类，用于�
 
 ### Activity生命周期
 
+>An activity represents a single screen with a user interface. For example, an email application might have one activity that shows a list of new emails, another activity to compose an email, and another activity for reading emails. Although the activities work together to form a cohesive user experience in the email application, each one is independent of the others. As such, a different application can start any one of these activities (if the email application allows it). For example, a camera application can start the activity in the email application that composes new mail, in order for the user to share a picture.
+
+
 ![](/img/in-post/post-Android/review/activity.png)
 
 
@@ -967,18 +970,18 @@ View的整个绘制流程还是比较清楚的，整个执行逻辑一共大概�
 
 #### 适用场景
 `singleTop`   
-- 适合接收通知启动的内容显示页面。例如，某个新闻客户端的新闻内容页面，如果收到10个新闻推送，每次都打开一个新闻内容页面是很烦人的。
+- 适合接收通知启动的内容显示页面。例如，某个新闻客户端的新闻内容页面，如果收到10个`新闻推送`，每次都打开一个新闻内容页面是很烦人的。
 - 从外界可能多次跳转到一个界面
 
 `singleTask`	
 - 适合作为程序入口点。
-- 例如浏览器的主界面。不管从多少个应用启动浏览器，只会启动主界面一次，其余情况都会走onNewIntent，并且会清空主界面上面的其他页面。
+- 例如`浏览器的主界面`。不管从多少个应用启动浏览器，只会启动主界面一次，其余情况都会走onNewIntent，并且会清空主界面上面的其他页面。
 - 之前打开过的页面，打开之前的页面就ok，不再新建
 
 `singleInstance`	
-- 电话,闹钟.   
+- `电话，闹钟`
 - 适合需要与程序分离开的页面。例如闹铃提醒，将闹铃提醒与闹铃设置分离。singleInstance不要用于中间页面，如果用于中间页面，跳转会有问题，比如：A -> B (singleInstance) -> C，完全退出后，再次启动，首先打开的是B。
-- 某个应用中用到了google地图，当退出该应用的时候，进入google地图，还是刚才的界面
+- 某个应用中用到了`google地图`，当退出该应用的时候，进入google地图，还是刚才的界面
 
 
 ---
@@ -1033,6 +1036,9 @@ View的整个绘制流程还是比较清楚的，整个执行逻辑一共大概�
 ---
 
 ### Android Binder
+
+![](/img/in-post/post-Android/review/Binder.png)
+
 
 - Android内核是基于Linux系统，而Linux现存多种进程间IPC方式：管道，消息队列，共享内存，套接字，信号量，信号。
 - 目前linux支持的IPC包括传统的管道，System V IPC，即消息队列/共享内存/信号量，以及socket中只有socket支持Client-Server的通信方式。当然也可以在这些底层机制上架设一套协议来实现Client-Server通信，但这样增加了系统的复杂性，在手机这种条件复杂，资源稀缺的环境下可靠性也难以保证。
@@ -1666,39 +1672,34 @@ myDrawableView.post(new Runnable() {
 ---
 ### Activity启动流程
 
-Activity的启动流程一般是通过调用startActivity或者是startActivityForResult来开始的
+- Activity的启动流程一般是通过调用startActivity或者是startActivityForResult来开始的
 
-startActivity内部也是通过调用startActivityForResult来启动Activity，只不过传递的requestCode小于0
+- startActivity内部也是通过调用`startActivityForResult`来启动Activity，只不过传递的requestCode小于0
 
-Activity的启动流程涉及到多个进程之间的通讯这里主要是ActivityThread与ActivityManagerService之间的通讯
+- Activity的启动流程涉及到多个进程之间的通讯这里主要是`ActivityThread`与ActivityManagerService之间的通讯
 
-ActivityThread向ActivityManagerService传递进程间消息通过ActivityManagerNative，ActivityManagerService向ActivityThread进程间传递消息通过IApplicationThread。
+- ActivityThread向`ActivityManagerService`传递进程间消息通过ActivityManagerNative，ActivityManagerService向ActivityThread进程间传递消息通过IApplicationThread。
 
-ActivityManagerService接收到应用进程创建Activity的请求之后会执行初始化操作，解析启动模式，保存请求信息等一系列操作。
+- ActivityManagerService接收到应用进程创建Activity的请求之后会执行初始化操作，解析启动模式，保存请求信息等一系列操作。
 
-ActivityManagerService保存完请求信息之后会将当前系统栈顶的Activity执行onPause操作，并且IApplication进程间通讯告诉应用程序继承执行当前栈顶的Activity的onPause方法；
+- ActivityManagerService保存完请求信息之后会将当前系统栈顶的Activity执行onPause操作，并且IApplication`进程间通讯`告诉应用程序继承执行当前栈顶的Activity的onPause方法；
 
-ActivityThread接收到SystemServer的消息之后会统一交个自身定义的Handler对象处理分发；
+- ActivityThread接收到SystemServer的消息之后会统一交个自身定义的Handler对象处理分发；
 
-ActivityThread执行完栈顶的Activity的onPause方法之后会通过ActivityManagerNative执行进程间通讯告诉ActivityManagerService，栈顶Actiity已经执行完成onPause方法，继续执行后续操作；
+- ActivityThread执行完栈顶的Activity的onPause方法之后会通过ActivityManagerNative执行进程间通讯告诉ActivityManagerService，栈顶Activity已经执行完成onPause方法，继续执行后续操作；
 
-ActivityManagerService会继续执行启动Activity的逻辑，这时候会判断需要启动的Activity所属的应用进程是否已经启动，若没有启动则首先会启动这个Activity的应用程序进程；
+- ActivityManagerService会继续执行启动Activity的逻辑，这时候会判断需要启动的Activity所属的应用进程是否已经启动，若没有启动则首先会启动这个Activity的应用程序进程；
 
-ActivityManagerService会通过socket与Zygote继承通讯，并告知Zygote进程fork出一个新的应用程序进程，然后执行ActivityThread的mani方法；
+- ActivityManagerService会通过socket与Zygote继承通讯，并告知Zygote进程fork出一个新的应用程序进程，然后执行ActivityThread的mani方法；
 
-在ActivityThead.main方法中执行初始化操作，初始化主线程异步消息，然后通知ActivityManagerService执行进程初始化操作；
+- 在ActivityThead.main方法中执行初始化操作，初始化主线程异步消息，然后通知ActivityManagerService执行进程初始化操作；
 
-ActivityManagerService会在执行初始化操作的同时检测当前进程是否有需要创建的Activity对象，若有的话，则执行创建操作；
+- ActivityManagerService会在执行初始化操作的同时检测当前进程是否有需要创建的Activity对象，若有的话，则执行创建操作；
 
-ActivityManagerService将执行创建Activity的通知告知ActivityThread，然后通过反射机制创建出Activity对象，并执行Activity的onCreate方法，onStart方法，onResume方法；
+- ActivityManagerService将执行创建Activity的通知告知ActivityThread，`然后通过反射机制创建出Activity对象`，并执行Activity的onCreate方法，onStart方法，onResume方法；
 
-ActivityThread执行完成onResume方法之后告知ActivityManagerService onResume执行完成，开始执行栈顶Activity的onStop方法；
+- ActivityThread执行完成onResume方法之后告知ActivityManagerService onResume执行完成，开始执行栈顶Activity的onStop方法；
 
-ActivityManagerService开始执行栈顶的onStop方法并告知ActivityThread；
+- ActivityManagerService开始执行栈顶的onStop方法并告知ActivityThread；
 
-ActivityThread执行真正的onStop方法；
---------------------- 
-作者：一片枫叶_刘超 
-来源：CSDN 
-原文：https://blog.csdn.net/qq_23547831/article/details/51224992 
-版权声明：本文为博主原创文章，转载请附上博文链接！
+- ActivityThread执行真正的onStop方法；
