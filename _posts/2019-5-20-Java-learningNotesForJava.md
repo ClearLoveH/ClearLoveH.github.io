@@ -1245,6 +1245,12 @@ public class StringBufferTest {
 重量级锁|线程竞争不使用自旋，不会消耗CPU。|线程阻塞，响应时间缓慢。|追求吞吐量。同步块执行时间较长。
 
 ---
+### JVM
+
+![](/img/in-post/post-Android/Java/JVM_inDetail.png)
+
+
+---
 ### JVM内存模型 与 GC
 
 #### Jvm内存浅析
