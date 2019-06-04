@@ -1367,6 +1367,207 @@ java 与 C语言相比的一个优势是，可以通过自己的JVM自动分配�
 3. 并发收集:相对于串行收集和并行收集而言，`前面两个在进行垃圾回收工作时，需要暂停整个运行环境`，而只有垃圾回收程序在运行，因此，系统在垃圾回收时会有明显的暂停，而且暂停时间会因为堆越大而越长`。并发收集器不会暂停应用，适合响应时间优先的应用。保证系统的响应时间，减少垃圾收集时的停顿时间。适用于应用服务器、电信领域等`。
 
 ---
+### GC Root
+
+GC管理的主要区域是Java堆，一般情况下只针对堆进行垃圾回收。方法区、JVM栈和Native栈不被GC所管理，因而选择这些`非堆区的对象作为GC roots`，被GC roots引用的对象不被GC回收。
+
+一个对象可以属于多个root，GC root有几下种：
+- **Class** - 由系统类加载器(system class loader)加载的对象，这些类不可以被回收，他们可以以静态字段的方式持有其它对象。我们需要注意的一点就是，通过用户自定义的类加载器加载的类，除非相应的java.lang.Class实例以其它的某种（或多种）方式成为roots，否则它们并不是roots，.
+- **Thread** - 活着的线程
+- **Stack Local** - Java方法的local变量或参数（存在于所有Java线程当前活跃的栈帧里，它们会指向堆里的对象）
+- 【Java类的运行时常量池里的引用类型常量（String或Class类型）】（先不考虑）
+- 【String常量池（StringTable）里的引用】（先不考虑）
+- **JNI Local** - JNI方法的local变量或参数
+- **JNI Global** - 全局JNI引用
+- **Monitor Used** - Monitor被持有，用于同步互斥的对象
+- **Held by JVM** - 用于JVM特殊目的由GC保留的对象，但实际上这个与JVM的实现是有关的。可能已知的一些类型是：**系统类加载器**、一些JVM知道的**重要的异常类**、一些用于**处理异常的预分配对象**以及一些**自定义的类加载器**等。JVM的一些静态数据成员会指向堆里的对象
+
+GC收集那些`不是GC roots且没有被GC roots引用的对象`。
+
+---
+### String，StringBuilder，StringBuffer
+
+这三个类之间的区别主要是在两个方面，即`运行速度和线程安全`这两方面。
+
+#### 运行速度
+
+或者说是执行速度，在这方面运行速度快慢为：**StringBuilder > StringBuffer > String**
+
+String最慢的原因：
+- String的底层代码为一个用`final修饰的char数组`，这意味着定义一个String变量以后，该变量的内容是不可变的。而StringBuilder 与StringBuffer都继承自AbstractStringBuilder，该类的char数组并没有用final修饰，内容是可变的
+- String为`字符串常量`，而StringBuilder和StringBuffer均为`字符串变量`，即String对象一旦创建之后该对象是不可更改的，但后两者的对象是变量，是可以更改的。以下面一段代码为例：
+
+```java
+String str="abc";
+System.out.println(str);
+str=str+"de";
+System.out.println(str);
+```
+
+如果运行这段代码会发现先输出“abc”，然后又输出“abcde”，好像是str这个对象被更改了，其实，这只是一种假象罢了，JVM对于这几行代码是这样处理的，`首先创建一个String对象str，并把“abc”赋值给str，然后在第三行中，其实JVM又创建了一个新的对象也名为str，然后再把原来的str的值和“de”加起来再赋值给新的str`，而**原来的str就会被JVM的垃圾回收机制（GC）给回收掉**了，所以，str实际上并没有被更改，也就是前面说的String对象一旦创建之后就不可更改了。所以，**Java中对String对象进行的操作实际上是一个不断创建新的对象并且将旧的对象回收的一个过程，所以执行速度很慢。**
+
+而StringBuilder和StringBuffer的对象是`变量`，对变量进行操作就是直接对该对象进行更改，而不进行创建和回收的操作，所以速度要比String快很多。
+
+另外，有时候我们会这样对字符串进行赋值
+```java
+String str="abc"+"de";
+StringBuilder stringBuilder=new StringBuilder().append("abc").append("de");
+System.out.println(str);
+System.out.println(stringBuilder.toString());
+```　　
+这样输出结果也是“abcde”和“abcde”，但是String的速度却比StringBuilder的反应速度要快很多，这是因为第1行中的操作和
+```java
+String str="abcde";
+```
+是完全一样的，所以会很快，而如果写成下面这种形式
+
+String str1="abc";
+String str2="de";
+String str=str1+str2;
+
+那么JVM就会像上面说的那样，不断的`创建、回收对象`来进行这个操作了。速度就会很慢。
+
+#### 线程安全
+
+在线程安全上，`StringBuilder是线程不安全的，而StringBuffer是线程安全的`
+
+如果一个StringBuffer对象在字符串缓冲区被多个线程使用时，StringBuffer中很多方法可以带有synchronized关键字，所以可以保证线程是安全的，但StringBuilder的方法则没有该关键字，所以不能保证线程安全，有可能会出现一些错误的操作。所以如果要进行的操作是多线程的，那么就要使用StringBuffer，但是在`单线程的情况下，还是建议使用速度比较快的StringBuilder`。
+
+总结一下
+- `String`：适用于`少量的字符串操作`的情况
+- `StringBuilder`：适用于单线程下在字符缓冲区进行大量操作的情况
+- `StringBuffer`：适用多线程下在字符缓冲区进行大量操作的情况
+
+---
+### equals 和 ==
+顺带提一下Object类中的equals()方法与运算符 == 的区别:
+
+#### ==
+
+== 比较的是变量(栈)`内存中存放的对象的(堆)内存地址，用来判断两个对象的地址是否相同，即是否是指相同一个对象`。比较的是`真正意义上的指针操作。`
+
+1. 比较的是操作符两端的操作数是否是同一个对象。
+2. 两边的操作数必须是同一类型的（可以是父子类之间）才能编译通过。
+3. 比较的是地址，如果`是具体的阿拉伯数字的比较，值相等则为true`，如：`int a=10 与 long b=10L 与 double c=10.0都是相同的（为true）`，因为他们都指向地址为10的堆。
+
+#### equals
+equals用来比较的是`两个对象的内容是否相等`，由于所有的类都是继承自java.lang.Object类的，所以适用于所有对象，`如果没有对该方法进行覆盖的话，调用的仍然是Object类中的方法，而Object中的equals方法返回的却是==的判断。`可以看Object类中equals()方法的源码：
+```java
+public boolean equals(Object obj) {
+    return (this == obj);
+    }
+```
+
+String s="abce"是一种非常特殊的形式，和`new 有本质的区别`。它是`java中唯一不需要new 就可以产生对象的途径`。以 String s="abce" 形式赋值在java中叫直接量,它是在`常量池`中而不是象new一样放在压缩堆中。这种形式的字符串，在JVM内部发生字符串拘留，即当声明这样的一个字符串后，`JVM会在常量池中先查找有有没有一个值为"abcd"的对象,如果有,就会把它赋给当前引用`。即原来那个引用和现在这个引用指点向了同一对象,如果没有,则在常量池中新创建一个"abcd",下一次如果有String s1 = "abcd";又会将s1指向"abcd"这个对象,即以这形式声明的字符串,`只要值相等,任何多个引用都指向同一对象`。
+
+而String s = new String("abcd")；和其它任何对象一样，`每调用一次就产生一个对象`，只要它们调用。
+
+也可以这么理解: String str1 = "hello"; 先在内存中找是不是有"hello"这个对象,如果有，就让str指向那个"hello".如果内存里没有"hello"，就创建一个新的对象保存"hello". String str2=new String ("hello") 就是`不管内存里是不是已经有"hello"这个对象，都新建一个对象保存"hello"`。
+
+那么此时内存中有两个hello对象，如果这时使用 String str3 = "hello"; 引用的会是 str1还是str2呢？验证一下：
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String str1 = "hello";
+        String str1_1 = "hello";
+        System.out.println("str1 == str1_1 ? " + (str1 == str1_1));
+
+        String str2 = new String("hello");
+        System.out.println("str2 == str1 ? " + (str2 == str1));
+
+        String str3 = "hello";
+        System.out.println("str3 == str1 ? " + (str3 == str1));
+        System.out.println("str3 == str2 ? " + (str3 == str2));
+        System.out.println("str3.equals(str2) ? " + str3.equals(str2));
+    }
+}
+```
+
+结果显示，`str3 == str1 != str2` 对于在常量池中同值的多个对象，是按最先创建的那个去给新的引用分配的。
+
+下面详细讨论String的比较问题 ↓
+
+---
+### String 比较
+前面理解了String 类型的底层实现原理，知道了String的底层代码是一个用`final修饰的char数组`实现的。所以对于String的字符串对象，其值是存储在常量池中的。那么对于字符串的比较就有可以探究的东西了。
+
+#### 比较1：使用 == 
+```java
+public class StringDemo01{
+    public static void main(String args[]){
+        String str1 = "hello" ;                 // 直接赋值
+        String str2 = new String("hello") ;     // 通过new赋值
+        String str3 = str2 ;                    // 传递引用
+        System.out.println("str1 == str2 --> " + (str1==str2)) ;    // false
+        System.out.println("str1 == str3 --> " + (str1==str3)) ;    // false
+        System.out.println("str2 == str3 --> " + (str2==str3)) ;    // true
+    }
+};
+```
+
+![](/img/in-post/post-Android/Java/String1.png)
+
+分析：
+
+![](/img/in-post/post-Android/Java/String1analyse.png)
+
+这里简单的就认为内容开辟在了堆内存中了，这个堆可以理解为广义上的用来保存内容的内存区域，栈内存可以简单认为是用来保存引用的内存地址。具体的内存地址划分，牵扯太多，就不深入说了。（`其实这String的内容是保存在常量池的`）
+
+因为String的值存储在常量池中，所以不论申明再多的String对象，只要其值相同，这些对象指向的都是同一个内存地址
+
+```java
+public class StringDemo04{
+    public static void main(String args[]){
+        String str1 = "hello" ;                 // 直接赋值
+        String str2 = "hello" ;                 // 直接赋值
+        String str3 = "hello" ;                 // 直接赋值
+        System.out.println("str1 == str2 --> " + (str1==str2)) ;    // true
+        System.out.println("str1 == str3 --> " + (str1==str3)) ;    // true
+        System.out.println("str2 == str3 --> " + (str2==str3)) ;    // true
+    }
+};
+```
+![](/img/in-post/post-Android/Java/String1_2.png)
+
+
+
+#### 比较2：使用equals()
+```java
+public class StringDemo02{
+    public static void main(String args[]){
+        String str1 = "hello" ;                 // 直接赋值
+        String str2 = new String("hello") ;     // 通过new赋值
+        String str3 = str2 ;                    // 传递引用
+        System.out.println("str1 equals str2 --> " + (str1.equals(str2))) ; // true
+        System.out.println("str1 equals str3 --> " + (str1.equals(str3))) ; // true
+        System.out.println("str2 equals str3 --> " + (str2.equals(str3))) ; // true
+    }
+};
+```
+
+![](/img/in-post/post-Android/Java/String2.png)
+
+原因：`“==”判断的是地址值，equals()方法判断的是内容。`
+```java
+public class StringDemo03{
+    public static void main(String args[]){
+        String str1 = "hello" ;                 // 直接赋值
+        String str2 = new String("hello") ;     // 通过new赋值
+        String str3 = str2 ;                    // 传递引用
+        System.out.println("str1-hashCode == str2-hashCode --> " + (str1.hashCode()==str2.hashCode())) ;    // false
+        System.out.println("str1-hashCode == str3-hashCode --> " + (str1.hashCode()==str3.hashCode())) ;    // false
+        System.out.println("str2-hashCode == str3-hashCode --> " + (str2.hashCode()==str3.hashCode())) ;    // true
+    }
+}
+```
+![](/img/in-post/post-Android/Java/String2_2.png)
+
+看到hashCode是一样的，hashCode相同可能是同一个对象，也可能是不同的对象，但是hashCode不同就肯定是不同的对象。
+- 如果两个对象equals相等，那么这两个对象的HashCode一定也相同
+- 如果两个对象的HashCode相同，不代表两个对象就相同，只能说明这两个对象`在散列存储结构中，存放于同一个位置`
+
+---
 ### 访问控制修饰符
 Java中，可以使用访问控制符来保护对类、变量、方法和构造方法的访问。Java 支持 4 种不同的访问权限。
 - `default` (即缺省，什么也不写）: 在同一包内可见，不使用任何修饰符。使用对象：类、接口、变量、方法。
