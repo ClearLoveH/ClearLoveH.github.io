@@ -1435,3 +1435,71 @@ public class Test impements A.B {//类的多实现本质上就是多继承
 ```
 
 ---
+### Java注解——Annotation
+
+#### 注解分类
+![](/img/in-post/post-Android/Java/Annotation2.png)
+
+![](/img/in-post/post-Android/Java/Annotation1.png)
+
+![](/img/in-post/post-Android/Java/Annotation3.png)
+
+按照来源来分的话，有如下三类：
+1. JDK自带的注解（Java目前只内置了三种`标准注解`：@Override、@Deprecated、@SuppressWarnings，以及四种`元注解`：@Target、@Retention、@Documented、@Inherited）
+2. 第三方的注解——这一类注解是我们接触最多和作用最大的一类
+3. 自定义注解——也可以看作是我们编写的注解，其他的都是他人编写注解
+
+#### JDK 标准注解
+
+**想像代码具有生命，注解就是对于代码中某些鲜活个体的贴上去的一张标签。简化来讲，注解如同一张标签。**
+
+`@Override` 表示覆盖或重写父类的方法；
+
+`@Deprecated` 表示该方法已经过时了。（当方法或是类上面有@Deprecated注解时，说明该方法或是类都已经过期不能再用，但不影响以前项目使用，提醒你新替代待的方法或是类。如果程序员不小心使用了它的元素,那么编译器会发出警告信息。）
+
+`@SuppressWarnings` 表示忽略指定警告，比如@Suppvisewarnings("Deprecation")
+
+#### 元注解
+
+![](/img/in-post/post-Android/Java/元Annotation.png)
+
+`@Target` 是注解的作用域 ：表示该注解可以用于一个类中的那些属性及方法上，如果作用域类型有多个用英文逗号分隔
+
+`@Retention`：表示该注解的生命周期
+
+`@Inherited`:此注解是标识性的元注解，表示当前注解可以由子注解来继承
+
+`@Documented`:表示生成javadoc的时候会包含注解
+
+#### 第三方注解
+
+![](/img/in-post/post-Android/Java/第三方Annotation.png)
+
+#### 自定义注解
+
+![](/img/in-post/post-Android/Java/自定义注解1.png)
+
+![](/img/in-post/post-Android/Java/自定义注解2.png)
+
+注解的定义看起来很像接口的定义，事实上，与`其他任何Java接口一样，注解也将会编译成class文件`。
+
+定义注解时，`会需要一些元注解（meta-annotation），如@Target和@Retention。@Target用来定义你的注解将用于什么地方`（例如是一个方法或一个域）。`@Retention用来定义该注解在哪一个级别可用`，在源代码（SOURCE）、类文件中（CLASS）或者运行时（RUNTIME）
+
+示例：
+
+![](/img/in-post/post-Android/Java/自定义注解3.png)
+
+#### 解析注解
+
+通过`反射获取类、函数或成员上运行时注解信息`，从而实现动态控制程序运行的逻辑。
+
+如:
+
+![](/img/in-post/post-Android/Java/注解解析.png)
+
+使用forName()方法加载类，并使用getAnnotation(Description.class)检查该类是否带有@Description注解。
+
+注解的继承只能作用在类上，方法上的注解不会被继承，Interface中的所有注解不会被继承。
+
+---
+### Java 反射
