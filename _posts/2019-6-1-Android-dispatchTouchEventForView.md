@@ -158,6 +158,8 @@ public boolean dispatchTouchEvent(MotionEvent ev){
 
 这种设计是非常精巧的，**上层View既可以直接拦截该事件，自己处理，也可以先询问(分发给)子View，如果子View需要就交给子View处理，如果子View不需要还能继续交给上层View处理**。既保证了事件的有序性，又非常的灵活。
 
+**一个使用事件分发机制的重要场景，就是scrollView 嵌套 RecyclerView时，解决滑动冲突的问题，这种时候就是在RecyclerView的父GroupView中对滑动事件进行拦截就行了。**
+
 ---
 **对比实际生活场景：**
 
