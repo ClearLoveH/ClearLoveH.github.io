@@ -21,6 +21,8 @@ tags:
 ---
 ### Java 类加载器
 
+注：static变量是静态变量，`当加载类时即已加载，非static变量实例对象时加载`。
+
 #### 1.java.lang.ClassLoader类介绍
 java.lang.ClassLoader类的基本职责就是根据一个指定的类的名称，找到或者生成其对应的字节代码，然后从这些字节代码中定义出一个Java 类，即 java.lang.Class类的一个实例。
 
