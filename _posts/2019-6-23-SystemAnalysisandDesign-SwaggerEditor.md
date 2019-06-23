@@ -28,10 +28,10 @@ Swagger 是最受欢迎的RESTful API设计文档生成工具之一，专门用�
 4. 进入swagger-editor的根目录打开cmd窗口，运行http-server，默认端口为8080。 
 ![](/img/in-post/post-SystemAnalyse/final/SwaggerEditor2.png)
 
-5. 浏览器访问 http://127.0.0.1:8080/ 就可以看到swagger页面了。
+5. 浏览器访问 http://127.0.0.1:8080  或者 localhost:8080 就可以直接本地访问到swagger页面了。
 ![](/img/in-post/post-SystemAnalyse/final/SwaggerEditor3.png)
 
-- 也可以直接访问在线版的Swagger Editor，可以直接使用，无需部署：  http://editor.swagger.io/
+- 也可以直接访问在线版的[Swagger Editor](http://editor.swagger.io/)，可以直接使用，无需部署。
 
 
 ---
