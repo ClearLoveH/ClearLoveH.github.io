@@ -1507,5 +1507,3 @@ public class Test impements A.B {//类的多实现本质上就是多继承
 
 注解的继承只能作用在类上，方法上的注解不会被继承，Interface中的所有注解不会被继承。
 
----
-### Java 反射
