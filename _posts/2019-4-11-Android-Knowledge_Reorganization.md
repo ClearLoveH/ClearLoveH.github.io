@@ -12,37 +12,6 @@ tags:
 >还要更努力
 
 ---
-
-### 红黑树——R-B Tree，全称是Red-Black Tree
-
-红黑树的特性:
-1. 每个节点或者是黑色，或者是红色。
-2. 根节点是黑色。
-3. 每个叶子节点（NIL）是黑色。 [注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！]
-4. 如果一个节点是红色的，则它的子节点必须是黑色的。
-5. 从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。
-
-正是由于这些原因使得红黑树是一个`平衡二叉树`
-
-**第一步: 将红黑树当作一颗二叉查找树，将节点插入。**
-
-- 红黑树本身就是一颗二叉查找树，将节点插入后，该树仍然是一颗二叉查找树。也就意味着，树的键值仍然是有序的。此外，无论是左旋还是右旋，若旋转之前这棵树是二叉查找树，旋转之后它一定还是二叉查找树。这也就意味着，任何的旋转和重新着色操作，都不会改变它仍然是一颗二叉查找树的事实。
-
-**第二步：将插入的节点着色为"红色"。**
-
-- 将插入的节点着色为红色，不会违背"特性(5)"！
-
-**第三步: 通过一系列的旋转或着色等操作，使之重新成为一颗红黑树。**
-
-- 第二步中，将插入节点着色为"红色"之后，不会违背"特性(5)"。那它到底会违背哪些特性呢？
-- 对于"特性(1)"，显然不会违背了。因为我们已经将它涂成红色了。
-- 对于"特性(2)"，显然也不会违背。在第一步中，我们是将红黑树当作二叉查找树，然后执行的插入操作。而根据二叉查找数的特点，插入操作不会改变根节点。所以，根节点仍然是黑色。
-- 对于"特性(3)"，显然不会违背了。这里的叶子节点是指的空叶子节点，插入非空节点并不会对它们造成影响。
-- 对于"特性(4)"，是有可能违背的！
-- 那接下来，想办法使之"满足特性(4)"，就可以将树重新构造成红黑树了。
-
----
-
 ### Android四大组件
 
 **Activity 略**
@@ -1722,7 +1691,6 @@ Active Routes              Default Route              Persistent Route.
 在上面的过程中，可以看到有一个路由表查询过程，而这个路由表的建立则依赖于路由算法。也就是说路由算法实际上只是用来路由器之间更新维护路由表， 真正的数据传输过程并不执行这个算法，只查看路由表。这个概念也很重要，需要理解常用的路由算法。而整个tcp协议比较复杂，跟链路层的协议有些相似，其 中有很重要的一些机制或者概念需要认真理解，比如编号与确认，流量控制，重发机制，发送接受窗口。
 
 ---
-
 ### Activity 与 Window 与 View 之间的关系  
  
 https://blog.csdn.net/zane402075316/article/details/69822438
@@ -1744,6 +1712,34 @@ https://blog.csdn.net/zane402075316/article/details/69822438
 
 5. Activity、View、Window三者如何关联？ 
     - 答：Activity包含了一个PhoneWindow，而PhoneWindow就是继承于Window的，Activity通过setContentView将View设置到了PhoneWindow上。Window的添加过程以及Activity的启动流程都是一次IPC的过程。Activity的启动需要通过AMS完成；Window的添加过程需要通过WindowSession完成。
+
+---
+### 调节屏幕亮度的注意事项 
+调节屏幕亮度常通过 window 的attributes 来获取并改变屏幕亮度，如下：
+```java
+public static float getScreenBrightness(Activity activity) {
+    float brightnessValue = 0f;
+    if (activity == null) {
+        return brightnessValue;
+    }
+    try {
+        WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+        brightnessValue = lp.screenBrightness;
+    } catch (Exception e) {
+        // ignore
+    }
+    return brightnessValue;
+}
+```
+但是这样会有一个问题，window 亮度初值若获取不到可以考虑去获取系统亮度：
+```java
+try {
+    brightnessValue = android.provider.Settings.System.getInt(activity.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS);
+} catch (Exception e) {
+    e.printStackTrace();
+}
+```
+注意通过try去执行，这代码可能会抛出异常，不try的话会crash
 
 ---
 ### View实现等待加载的转圈动画效果
@@ -2000,6 +1996,5 @@ myDrawableView.post(new Runnable() {
 - ActivityManagerService开始执行栈顶的onStop方法并告知ActivityThread；
 
 - ActivityThread执行真正的onStop方法；
-
 
 ---
