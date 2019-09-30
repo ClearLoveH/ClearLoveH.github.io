@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Java 单例与Double-Checked Locking"
+title:      "单例与Double-Checked Locking"
 date:       2019-9-29 14:27
 author:     "Heng"
 header-img: "img/弗雷尔卓德2.jpg"
@@ -116,17 +116,17 @@ private Object readResolve() throws ObjectStreamException{
 #### 7.使用容器实现单例模式
 ```java
 public class SingletonManager { 
-　　private static Map<String, Object> objMap = new HashMap<String,Object>();
-　　private Singleton() { 
-　　}
-　　public static void registerService(String key, Objectinstance) {
-　　　　if (!objMap.containsKey(key) ) {
-　　　　　　objMap.put(key, instance) ;
-　　　　}
-　　}
-　　public static ObjectgetService(String key) {
-　　　　return objMap.get(key) ;
-　　}
+    private static Map<String, Object> objMap = new HashMap<String,Object>();
+    private Singleton() { 
+    }
+    public static void registerService(String key, Objectinstance) {
+        if (!objMap.containsKey(key) ) {
+            objMap.put(key, instance);
+        }
+    }
+    public static ObjectgetService(String key) {
+        return objMap.get(key);
+    }
 }
 ```
 - 用SingletonManager 将多种的单例类统一管理，**在使用时根据key获取对象对应类型的对象**。这种方式使得我们可以**管理多种类型的单例，并且在使用时可以通过统一的接口进行获取操作**，降低了用户的使用成本，也对用户隐藏了具体实现，降低了耦合度。
@@ -276,4 +276,4 @@ class test {
 ### 总结
 1. 懒汉式单例没有同步机制，**在多线程环境下实例可能被重复创建**；而双重检测锁的问题则是**getInstance 获取到的实例可能未被初始化**。
 2. java的线程是映射到操作系统原生线程之上的，如果要阻塞或唤醒一个线程就需要操作系统介入，**需要在用户态与核心态之间切换，这种切换会消耗大量的系统资源**，因为用户态与内核态都有各自专用的内存空间，专用的寄存器等，用户态切换至内核态需要传递给许多变量、参数给内核，内核也需要保护好用户态在切换时的一些寄存器值、变量等，以便内核态调用结束后切换回用户态继续工作
-3. DCL相对于饿汉式的好处：Synchronized在方法上是一个重量级锁操作(建议看一下锁升级步骤)，是需要切换上下文的，很耗时，如果已经创建了一个对象，但是每次调用都需要重新加锁解锁切换上下文才能拿到_instance不合理，但是双重加锁就不一样儿了，一旦创建对象以后就不会进行锁操作了，效率提升很多!
+3. DCL相对于饿汉式的好处：Synchronized在方法上是一个重量级锁操作(建议看一下锁升级步骤)，是需要切换上下文的，很耗时，如果已经创建了一个对象，但是每次调用都需要重新加锁解锁切换上下文才能拿到_instance不合理，但是双重加锁就不一样了，一旦创建对象以后就不会进行锁操作了，效率提升很多!
